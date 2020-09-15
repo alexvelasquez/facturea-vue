@@ -1,0 +1,18 @@
+<template>
+  <div class="text-center">
+    <v-overlay :value="overlay">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+  </div>
+</template>
+
+<script>
+export default {
+
+    computed:{
+        overlay(){
+            return this.$store.getters.loading
+        }
+    }
+}
+</script>
