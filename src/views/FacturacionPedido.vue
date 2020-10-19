@@ -1,6 +1,6 @@
 <template>
   <div>
-    <facturacion-component></facturacion-component>
+    <facturacion-component :pedidoId="pedido"></facturacion-component>
   </div>
 </template>
 <script>
@@ -9,5 +9,10 @@ export default {
   components:{
     FacturacionComponent
   },
+  computed:{
+    pedido(){
+      return this.$route.params.pedido ?? null;
+    }
+  }
 }
 </script>

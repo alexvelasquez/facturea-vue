@@ -29,7 +29,7 @@
                                         <v-autocomplete v-model="producto.marca.marca_id" item-value="marca_id" :items="marcas" :label="'Marca'" placeholder="seleccione una marca" item-text="descripcion" persistent-hint :rules="obligatorio" outlined dense>
                                         </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12" sm="12" md="6" class="pt-md-0">
+                                    <v-col cols="12" sm="12" md="5" class="pt-md-0">
                                         <v-row>
                                             <v-col cols="12" sm="12" md="12">
                                                 <v-textarea height="120px" v-model="producto.descripcion" label="Descripción" placeholder="descripción del producto ó servicio" :rules="obligatorio" outlined dense>
@@ -37,10 +37,14 @@
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                    <v-col cols="12" sm="12" md="6" class="pt-md-0">
+                                    <v-col cols="12" sm="12" md="7" class="pt-md-0">
                                         <v-row>
-                                            <v-col cols="12" sm="12" md="12">
+                                            <v-col cols="12" sm="12" md="8">
                                                 <v-text-field v-model="producto.codigo" label="Código" placeholder="código del producto" :rules="obligatorio" outlined dense>
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" sm="6" md="4" >
+                                                <v-text-field v-model="producto.stock" label="Stock" placeholder="0" :rules="obligatorio" type="number" outlined dense>
                                                 </v-text-field>
                                             </v-col>
                                             <v-col cols="12" sm="6" md="6" class="pt-md-0">
@@ -53,16 +57,7 @@
                                             </v-col>
                                         </v-row>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="3" class="pt-md-0">
-                                        <v-text-field v-model="producto.stock" label="Cantidad" placeholder="0" :rules="obligatorio" type="number" outlined dense>
-                                        </v-text-field>
-                                    </v-col>
 
-
-                                    <v-col cols="12" sm="6" md="3" class="pt-md-0">
-                                        <v-select v-model="producto.iva" item-value="Id" :items="aliCuotas" label='IVA(%) por defecto' placeholder="0%" item-text="Desc" :rules="obligatorio" outlined dense>
-                                            ></v-select>
-                                    </v-col>
                                 </v-row>
                             </v-container>
                         </v-card-text>
@@ -160,19 +155,7 @@ export default {
             ],
         }
     },
-    mounted() {
-        this.cargarOpcionesIva();
-    },
     methods: {
-        cargarOpcionesIva() {
-                axios.get(`afip/tiposAliCuotas`)
-                    .then(response => {
-                        this.aliCuotas = response.data.data;
-                    })
-                    .catch(error => {
-                        console.log(error)
-                    })
-            },
 
             agregarProducto() {
                 if (this.$refs.form.validate()) {

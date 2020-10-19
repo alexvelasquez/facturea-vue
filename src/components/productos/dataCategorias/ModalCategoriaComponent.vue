@@ -26,6 +26,30 @@
                                                 <v-text-field v-model="itemCategoria.descripcion" label="Nombre" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
                                                 </v-text-field>
                                             </v-col>
+                                            <v-col cols="12" style="margin-top: -46px;">
+                                              <v-checkbox
+                                              v-model="incrementar"
+                                              color="secondary"
+                                              label="Aumentar"
+                                            ></v-checkbox>
+                                            </v-col>
+                                            <v-col cols="12" md="4" v-if="incrementar" style="margin-top: -30px;">
+                                              <v-text-field
+                                                  type="number"
+                                                  label="Porcentaje %"
+                                                  color="#385F73"
+                                                  placeholder="0"
+                                                  outlined
+                                                  dense>
+                                              </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12" md="8" style="margin-top: -45px;" v-if="incrementar">
+                                              <v-checkbox
+                                              v-model="aplicarCuenta"
+                                              color="secondary"
+                                              label="Aplicar cuenta corriente"
+                                            ></v-checkbox>
+                                            </v-col>
                                         </v-row>
                                     </v-col>
                                 </v-row>
@@ -102,6 +126,8 @@ export default {
             /** NUEVO PRODUCTO */
             marcas: [],
             files: [],
+            incrementar:false,
+            aplicarCuenta:false,
             model: null,
             allow: false,
             tab: null,

@@ -45,6 +45,30 @@
                                     dense>
                                 </v-text-field>
                                 </v-col>
+                                <v-col cols="12" style="margin-top: -46px;" v-if="editable">
+                                  <v-checkbox
+                                  v-model="checkbox"
+                                  color="secondary"
+                                  label="Aumentar"
+                                ></v-checkbox>
+                                </v-col>
+                                <v-col cols="12" md="4" v-if="checkbox" style="margin-top: -30px;" >
+                                  <v-text-field
+                                      type="number"
+                                      label="Porcentaje %"
+                                      color="#385F73"
+                                      placeholder="0"
+                                      outlined
+                                      dense>
+                                  </v-text-field>
+                                </v-col>
+                                <v-col cols="12" md="8" style="margin-top: -45px;" v-if="checkbox">
+                                  <v-checkbox
+                                  v-model="checkbox"
+                                  color="secondary"
+                                  label="Aplicar cuenta corriente"
+                                ></v-checkbox>
+                                </v-col>
                             </v-row>
                         </v-col>
                     </v-row>
@@ -127,6 +151,7 @@ export default {
         return {
           /** NUEVO PRODUCTO */
             marcas:[],
+            checkbox:false,
             files:[],
             model: null,
             allow:false,

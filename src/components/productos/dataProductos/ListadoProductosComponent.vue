@@ -27,12 +27,22 @@
                 <span>{{item.f_modificacion|formatDate}}</span>
             </template>
             <template v-slot:[`item.actions`]="{item}">
-                <v-icon medium color="#385F73" class="mr-2" @click="modalProducto(item)" v-bind="item">
-                    mdi-pencil
-                </v-icon>
-                <v-icon medium color="#385F73" @click="eliminarProducto(item)">
-                    mdi-close
-                </v-icon>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
+                          mdi-pencil
+                      </v-icon>
+                  </template>
+                  <span>Editar</span>
+              </v-tooltip>
+              <v-tooltip top >
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarProducto(item)">
+                          mdi-close
+                      </v-icon>
+                  </template>
+                  <span>Eliminar</span>
+              </v-tooltip>
             </template>
         </v-data-table>
         <v-row id="actions-productos">
@@ -93,7 +103,7 @@ export default {
             value: 'f_modificacion',
             sortable: true
         }, {
-            text: 'Actions',
+            text: 'Acciones',
             value: 'actions',
             sortable: false
         }, ],
@@ -138,7 +148,7 @@ export default {
                         this.marcas = marcas.data.data;
                     }))
                     .catch(error => {
-                        console.log(error)
+                        this.notificacion('Ha ocurrido al recuperar los datos','error')
                     })
             },
 
@@ -154,6 +164,9 @@ export default {
                         this.notificacion('Producto agregado correctamente', "success");
                         this.close();
                     })
+                    .catch(error => {
+                        this.notificacion('Ha ocurrido al agregar el producto','error')
+                    })
             },
 
             editarProducto(item) {
@@ -168,6 +181,9 @@ export default {
                                 Object.assign(this.productos[this.indexEditable], response.data.data)
                                 this.notificacion('Producto modificado correctamente', 'success');
                                 this.close();
+                            })
+                            .catch(error => {
+                                this.notificacion('Ha ocurrido al modificar el producto','error')
                             })
                     }
                 })
@@ -185,6 +201,9 @@ export default {
                                 const index = this.productos.indexOf(item)
                                 this.productos.splice(index, 1)
                                 this.notificacion('Eliminado correctamente', 'success')
+                            })
+                            .catch(error => {
+                                this.notificacion('Ha ocurrido un error al eliminar el producto','error')
                             })
                     }
                 })

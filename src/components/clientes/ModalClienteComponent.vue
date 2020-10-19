@@ -52,11 +52,14 @@
                                         outlined dense>
                                         </v-autocomplete>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="8">
+                                    <v-col cols="12" sm="6" md="6">
                                         <v-text-field v-model="cliente.direccion" label="Direccion" placeholder=" " :rules="obligatorio" autocomplete="new-password" outlined dense>
                                         </v-text-field>
                                     </v-col>
-
+                                    <v-col cols="12" sm="6" md="6">
+                                        <v-text-field v-model="cliente.telefono" label="Teléfono" placeholder=" " :rules="obligatorio" autocomplete="new-password" outlined dense>
+                                        </v-text-field>
+                                    </v-col>
                                 </v-row>
                             </v-container>
                         </v-card-text>
@@ -178,7 +181,7 @@ export default {
             },
             cliente() {
                 if (this.$refs.form && !this.editable) {
-                    this.$refs.form.reset()
+                    this.$refs.form.resetValidation()
                 }
             },
             provinciaCliente() {

@@ -1,7 +1,4 @@
-
-
 <template>
-
 <div>
     <v-row no-gutters>
         <v-col cols="12">
@@ -20,6 +17,9 @@
 
         </v-card-title>
         <v-data-table v-model="seleccionados" :headers="cabeceras" item-key="cliente_id" :items="clientes" :search="search" show-select>
+            <template v-slot:[`item.direccion`]="{ item }">
+                <span>{{item.localidad.descripcion|capitalize}}</span>
+            </template>
             <template v-slot:[`item.precio_compra`]="{ item }">
                 <span>{{item|precioNeto}}</span>
             </template>
@@ -27,15 +27,30 @@
                 <span>{{item.f_modificacion|formatDate}}</span>
             </template>
             <template v-slot:[`item.actions`]="{item}">
-                <v-icon medium color="#385F73" class="mr-2" @click="modalProducto(item)" v-bind="item">
-                    event_note
-                </v-icon>
-                <v-icon medium color="#385F73" class="mr-2" @click="modalProducto(item)" v-bind="item">
-                    mdi-pencil
-                </v-icon>
-                <v-icon medium color="#385F73" @click="eliminarProducto(item)">
-                    mdi-close
-                </v-icon>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
+                          mdi-pencil
+                      </v-icon>
+                  </template>
+                  <span>Editar</span>
+              </v-tooltip>
+              <v-tooltip top >
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarProducto(item)">
+                          mdi-close
+                      </v-icon>
+                  </template>
+                  <span>Eliminar</span>
+              </v-tooltip>
+              <v-tooltip top>
+                  <template v-slot:activator="{ on, attrs }">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
+                          event_note
+                      </v-icon>
+                  </template>
+                  <span>Cuenta Corriente</span>
+              </v-tooltip>
             </template>
         </v-data-table>
         <v-row id="actions-clientes">
@@ -72,14 +87,6 @@ export default {
             text: 'Email',
             value: 'email'
         }, {
-            text: 'Provincia',
-            align: 'center',
-            value: 'localidad.provincia.descripcion'
-        }, {
-            text: 'Localidad',
-            value: 'localidad.descripcion',
-            sortable: true
-        }, {
             text: 'Direccion',
             value: 'direccion',
             sortable: true
@@ -92,8 +99,9 @@ export default {
             value: 'condicion_iva.descripcion',
             sortable: true
         }, {
-            text: 'Actions',
+            text: 'Acciones',
             value: 'actions',
+            align: 'center',
             sortable: false
         }, ],
         search: '',

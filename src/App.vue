@@ -13,9 +13,10 @@ import axios from 'axios'
 import BaseComponent from '@/components/BaseComponent'
 import Loader from '@/components/Loader'
 import Notificacion from '@/components/Notificacion'
+
 export default {
   name: 'App',
-  components:{BaseComponent,Loader,Notificacion},
+  components:{BaseComponent,Loader,Notificacion}
 
 };
 </script>

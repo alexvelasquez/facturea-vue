@@ -30,31 +30,22 @@
         show-select
         >
         <template v-slot:[`item.actions`]="{item}">
-          <v-icon
-              medium
-              color="#385F73"
-              class="mr-2"
-              @click="modalProducto(item)"
-              v-bind="item"
-          >
-          monetization_on
-          </v-icon>
-          <v-icon
-              medium
-              color="#385F73"
-              class="mr-2"
-              @click="modalProducto(item)"
-              v-bind="item"
-          >
-              mdi-pencil
-          </v-icon>
-          <v-icon
-              medium
-              color="#385F73"
-              @click="eliminarProducto(item)"
-          >
-              mdi-close
-          </v-icon>
+          <v-tooltip top>
+              <template v-slot:activator="{ on, attrs }">
+                  <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalCategoria(item)">
+                      mdi-pencil
+                  </v-icon>
+              </template>
+              <span>Editar</span>
+          </v-tooltip>
+          <v-tooltip top >
+              <template v-slot:activator="{ on, attrs }">
+                  <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarProducto(item)">
+                      mdi-close
+                  </v-icon>
+              </template>
+              <span>Eliminar</span>
+          </v-tooltip>
         </template>
         </v-data-table>
         <v-row id="actions-productos">
@@ -169,7 +160,7 @@
             })
       },
 
-      modalProducto (item) {
+      modalCategoria (item) {
         this.indexEditable = this.categorias.indexOf(item);
         this.itemCategoria = Object.assign({}, item)
         this.dialog = true

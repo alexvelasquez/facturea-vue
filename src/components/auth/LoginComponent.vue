@@ -5,7 +5,7 @@
             <p >CON FACTUREA MANEJAR TU NEGOCIO, ES OTRA COSA</p>
         </v-col>
     </v-row>
-  <v-card 
+  <v-card
     class="mx-auto mt-10"
     max-width="400"
     outlined
@@ -38,29 +38,32 @@
         </v-col>
   </v-row>
    <v-row>
-          <v-col cols="12" sm="12" md="12" align="center">
-              <v-btn
+      <v-col cols="12" sm="12" md="12" align="center">
+          <v-btn
+          outlined
+          color="#385F73"
+          dark
+          class="mb-2 mr-md-2"
+          @click="login()"
+        >Iniciar sesion</v-btn>
+        <modal-registro :dialog="dialog" @cerrar-dialog="dialog=false" @click="dialog=true"></modal-registro>
+        <br>
+         <a><p color="#385F73" class="text-subtitle-2">¿Olvidaste tu contraseña?</p></a>
 
-              outlined
-              color="#385F73"
-              dark
-              class="mb-2 mr-md-2"
-              @click="login()"
-            >Iniciar sesion</v-btn><br>
-             <a><p color="#385F73" class="text-subtitle-2">¿Olvidaste tu contraseña?</p></a>
-          </v-col>
-
-
+      </v-col>
    </v-row>
   </v-card>
     </div>
 </template>
 <script>
+import ModalRegistro from './ModalRegistro'
 export default {
+    components:{ModalRegistro},
     data() {
       return {
         username:'',
-        pass:''
+        pass:'',
+        dialog:false,
       }
     },
     methods: {

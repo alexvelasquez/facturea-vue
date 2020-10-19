@@ -6,93 +6,92 @@
     </v-row>
     <v-card>
         <v-container>
-            <v-card-text class="text-subtitle-1">
-                Datos Adicionales</v-card-text>
-            <v-col cols="12">
-                <v-row>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="negocio.razon_social" label="Razón social" outlined placeholder="0" dense></v-text-field>
+            <p class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Empresa</p>
+            <v-row>
+            <v-col cols="12" md="8">
+                <v-row style="margin-bottom:-30px">
+                    <v-col cols="12" md="6">
+                        <v-text-field v-model="razonSocial" label="Razón social" outlined placeholder="0" dense></v-text-field>
                     </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field v-model="negocio.telefono" label="Teléfono" outlined placeholder="0" dense></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="5">
-                        <v-text-field v-model="negocio.email" label="Email" outlined placeholder="0" dense></v-text-field>
-                    </v-col>
-                </v-row>
-                <v-row>
-
-                    <v-col cols="12" md="3">
-                        <v-autocomplete v-model="negocio.condicion_iva.condicion_iva_id" :items="condicionesIva" item-value="condicion_iva_id" item-text="descripcion" label="Condición ante al IVA" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73">
-                        </v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field v-model="negocio.cuit_cuil" label="CUIT/CUIL" outlined placeholder="0" dense></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date" transition="scale-transition" offset-y min-width="290px">
-                            <template v-slot:activator="{ on, attrs }">
-                                <v-text-field v-model="negocio.inicio_actividad" label="Inicio Actividades" placeholder="dd/mm/yyyy" prepend-icon="event" readonly v-bind="attrs" v-on="on" dense outlined clearable></v-text-field>
-                            </template>
-                            <v-date-picker v-model="negocio.inicio_actividad" no-title scrollable>
-                                <v-spacer></v-spacer>
-                                <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
-                                <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
-                            </v-date-picker>
-                        </v-menu>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field v-model="negocio.iibb" label="IIBB" outlined placeholder="0" dense></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="2">
-                        <v-text-field v-model="negocio.punto_vta" label="Punto de Venta" outlined placeholder="0" type="number" dense></v-text-field>
-                    </v-col>
-                </v-row>
-                <v-row>
-                    <v-col cols="12" md="3">
-                        <v-autocomplete v-model="negocio.localidad.provincia.provincia_id" :items="provincias" label="Provincia" item-value="provincia_id" item-text="descripcion" placeholder="Seleccione una opción" autocomplete="new-password" outlined persistent-hint dense color="#385F73">
-                        </v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" md="3">
-                        <v-autocomplete v-model="negocio.localidad.localidad_id" :items="localidades" label="Localidad" item-value="localidad_id" item-text="descripcion" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73" :disabled="negocio.localidad.provincia.provincia_id == null">
-                        </v-autocomplete>
-                    </v-col>
-                    <v-col cols="12" md="1">
-                        <v-text-field v-model="negocio.codigo_postal" label="C. Postal" outlined placeholder="0" dense></v-text-field>
-                    </v-col>
-                    <v-col cols="12" md="4">
-                        <v-text-field v-model="negocio.direccion" label="Dirección fiscal" outlined placeholder="0" dense></v-text-field>
+                    <v-col cols="12" md="6">
+                        <v-text-field v-model="email" label="Email" outlined placeholder="0" dense></v-text-field>
                     </v-col>
 
                 </v-row>
-                <v-row>
-                    <v-col cols="12" md="12" align="center">
-                      <v-col cols="12" md="6" align="center">
-                        <v-file-input v-if="!editable" @change="onFileChange" accept="image/png, image/jpeg" placeholder="Cargue el logo de la empresa" prepend-icon="mdi-camera" label="Logo" :error-messages="errorImagen" outlined persistent-hint hint="Tamaño máximo recomendable 220x220px"
-                        dense></v-file-input>
-                        <div v-else>
-                            <v-alert outlined color="grey">
-                                <div class="subtitle-1" align="center">LOGO</div>
-                                <div>
-                                    <v-hover v-slot:default="{ hover }">
-                                        <v-card :key="refreshImg" :max-width="imagen.width" :width="imagen.width" :elevation="hover ? 12 : 2" class="card-img" :class="{ 'on-hover': hover }">
-                                            <v-img :key="refreshImg" :src="imagen.url">
-                                                <div align="end">
-                                                    <v-btn @click="editable=false" circle :color="hover ? 'black' : 'transparent'" title="eliminar" icon>
-                                                        <v-icon circle medium :color="hover ? 'black' : 'transparent'">
-                                                            close
-                                                        </v-icon>
-                                                    </v-btn>
-                                                </div>
-                                            </v-img>
-                                        </v-card>
-                                    </v-hover>
-                                </div>
-                            </v-alert>
-                        </div>
-                      </v-col >
-
+                <v-row style="margin-bottom:-30px">
+                    <v-col cols="12" md="6">
+                        <v-autocomplete v-model="provincia" :items="provincias" label="Provincia" item-value="provincia_id" item-text="descripcion" placeholder="Seleccione una opción" autocomplete="new-password" outlined persistent-hint dense color="#385F73">
+                        </v-autocomplete>
                     </v-col>
+                    <v-col cols="12" md="6">
+                        <v-autocomplete v-model="localidad" :items="localidades" label="Localidad" item-value="localidad_id" item-text="descripcion" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73" :disabled="localidad == null">
+                        </v-autocomplete>
+                    </v-col>
+                </v-row>
+                <v-row>
+                  <v-col cols="12" md="6">
+                      <v-text-field v-model="direccion" label="Dirección fiscal" outlined placeholder="0" dense></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                      <v-text-field v-model="telefono" label="Teléfono" outlined placeholder="0" dense></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="3">
+                      <v-text-field v-model="cuitCuil" label="CUIT/CUIL" outlined placeholder="0" dense></v-text-field>
+                  </v-col>
+                </v-row>
+                <p v-if="facturaElectronicaRegistrada" class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Facturación</p>
+                <v-row v-if="facturaElectronicaRegistrada" style="margin-bottom:-30px">
+                    <v-col cols="12" md="6">
+                      <v-select v-model="condicionIva" :items="condicionesIva" item-value="condicion_iva_id" item-text="descripcion" label="Condición ante al IVA" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73"></v-select>
+                    </v-col>
+                </v-row>
+                <v-row v-if="facturaElectronicaRegistrada" style="margin-bottom:-30px">
+                  <v-col cols="12" md="4">
+                      <v-text-field v-model="iibb" label="IIBB" outlined placeholder="0" dense></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                      <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date" transition="scale-transition" offset-y min-width="290px">
+                          <template v-slot:activator="{ on, attrs }">
+                              <v-text-field v-model="inicioActividad" label="Inic. Actividades" placeholder="YYYY-MM-DD"  prepend-icon="event" readonly v-bind="attrs" v-on="on" dense outlined clearable></v-text-field>
+                          </template>
+                          <v-date-picker v-model="inicioActividad" no-title scrollable>
+                              <v-spacer></v-spacer>
+                              <v-btn text color="primary" @click="menu = false">Cancelar</v-btn>
+                              <v-btn text color="primary" @click="$refs.menu.save(date)">Aceptar</v-btn>
+                          </v-date-picker>
+                      </v-menu>
+                  </v-col>
+                  <v-col cols="12" md="4">
+                      <v-text-field v-model="puntoVenta" label="Punto de Venta" outlined placeholder="0" type="number" dense></v-text-field>
+                  </v-col>
+                </v-row>
+                </v-col>
+                <v-col cols="12" md="4" align="center">
+                  <v-col cols="12" md="12" align="center">
+                    <v-file-input v-if="!editable" @change="onFileChange" accept="image/png, image/jpeg" placeholder="Click aquí para agregar logo" prepend-icon="mdi-camera" label="Logo" :error-messages="errorImagen" outlined persistent-hint hint="Tamaño máximo recomendable 220x220px"
+                    dense></v-file-input>
+                    <div v-else>
+                      <div class="subtitle-1" align="left">Logo Empresa</div>
+                        <v-alert outlined color="grey">
+                            <div>
+                                <v-hover v-slot:default="{ hover }">
+                                    <v-card  :max-width="imagen.width" :width="imagen.width" :elevation="hover ? 12 : 2" class="card-img" :class="{ 'on-hover': hover }">
+                                        <v-img :src="logo">
+                                            <div align="end">
+                                                <v-btn @click="eliminarLogo" circle :color="hover ? 'black' : 'transparent'" title="eliminar" icon>
+                                                    <v-icon circle medium :color="hover ? 'black' : 'transparent'">
+                                                        close
+                                                    </v-icon>
+                                                </v-btn>
+                                            </div>
+                                        </v-img>
+                                    </v-card>
+                                </v-hover>
+                            </div>
+                        </v-alert>
+                    </div>
+                  </v-col >
+                </v-col>
                 </v-row>
                 <v-row>
                     <v-col cols="12" sm="12" md="12" align="end">
@@ -100,6 +99,7 @@
                     </v-col>
                 </v-row>
             </v-col>
+
         </v-container>
     </v-card>
 </div>
@@ -119,12 +119,11 @@ export default {
                 editable: false,
                 url: '',
                 errorImagen: null,
-                refreshImg: 0,
                 condicionesIva: [],
                 provincias: [],
                 localidades: [],
                 valor: 'valorr',
-                date: new Date().toISOString().substr(0, 10),
+                date: moment().format('YYYY-MM-DD'),
 
                 razonSocialRules: [
                     v => !!v || 'Razon Social es requerida'
@@ -147,7 +146,7 @@ export default {
                         .then(axios.spread((provincias, condicionesIva) => {
                             this.provincias = provincias.data.data;
                             this.condicionesIva = condicionesIva.data.data;
-                            if (this.provinciaNegocio) {
+                            if (this.provincia) {
                                 axios.get(`datosGeograficos/localidades/${this.provinciaNegocio}`)
                                     .then(response => {
                                         this.localidades = response.data.data;
@@ -155,22 +154,20 @@ export default {
                             }
                         }))
                         .catch(error => {
-                            console.log(error)
+
                         })
                 },
                 cargarDatosLogo() {
-                    if (this.negocio.logo) {
+                    if (this.logo) {
                         this.imagen = new Image();
-                        this.imagen.src = this.urlImage(this.negocio.logo);
-                        this.imagen.url = this.urlImage(this.negocio.logo);
-                        this.refreshImg = new Date().getTime();
+                        this.imagen.src = this.logo
+                        this.imagen.url = this.logo
                         this.editable = true;
                     }
                 },
                 onFileChange(e) {
                     if (e) {
-                        console.log(e);
-                        this.negocio.logo = e;
+                        this.logo = e;
                         var reader = new FileReader();
                         reader.readAsDataURL(e);
                         reader.onload = (e) => {
@@ -187,11 +184,11 @@ export default {
                                 }
                             }
                             img.src = e.target.result
-                            this.negocio.logo = img.src;
+                            this.logo = img.src;
                         }
                     } else {
                         this.errorImagen = null
-                        this.negocio.logo = null
+                        this.logo = null
                         this.editable = false;
                     }
                 },
@@ -199,10 +196,15 @@ export default {
                 modificar() {
                     axios.put(`negocio/editar/${this.negocio.negocio_id}`, this.negocio)
                         .then(response => {
+                            /** Guardo el usuario en el localStorage */
                             this.$store.dispatch('changeUserNegocio', response.data.data)
-                            this.notificacion('Datos guardados correctamente','success')
+                            this.notificacion('MODIFICADO CORRECTAMENTE','success')
                         })
                 },
+                eliminarLogo(){
+                  this.editable = false;
+                  this.logo = '';
+                }
         },
         watch: {
             provinciaNegocio() {
@@ -217,10 +219,107 @@ export default {
         computed: {
             negocio() {
                     return this.$store.getters.negocioUser
+            },
+            razonSocial:{
+                get(){
+                  return this.$store.getters.getNegocioRazonSocial
                 },
-                provinciaNegocio() {
-                    return this.$store.getters.negocioUser.localidad.provincia.provincia_id
+                set(value){
+                  this.$store.commit('setNegocioRazonSocial',value)
                 }
+            },
+            email:{
+              get(){
+                return this.$store.getters.getNegocioEmail
+              },
+              set(value){
+                this.$store.commit('setNegocioEmail',value)
+              }
+            },
+            provincia:{
+              get(){
+                return this.$store.getters.getNegocioProvincia
+              },
+              set(value){
+                this.$store.commit('setNegocioProvincia',value)
+              }
+            },
+            localidad:{
+              get(){
+                return this.$store.getters.getNegocioLocalidad
+              },
+              set(value){
+                this.$store.commit('setNegocioLocalidad',value)
+              }
+            },
+            direccion:{
+              get(){
+                return this.$store.getters.getNegocioDireccion
+              },
+              set(value){
+                this.$store.commit('setNegocioDireccion',value)
+              }
+            },
+            telefono:{
+              get(){
+                return this.$store.getters.getNegocioTelefono
+              },
+              set(value){
+                this.$store.commit('setNegocioTelefono',value)
+              }
+            },
+            cuitCuil:{
+              get(){
+                return this.$store.getters.getNegocioCuitCuil
+              },
+              set(value){
+                this.$store.commit('setNegocioCuitCuil',value)
+              }
+            },
+            condicionIva:{
+              get(){
+                return this.$store.getters.getNegocioCondicionIva
+              },
+              set(value){
+                this.$store.commit('setNegocioCondicionIva',value)
+              }
+            },
+            puntoVenta:{
+              get(){
+                return this.$store.getters.getNegocioPuntoVenta;
+              },
+              set(value){
+                this.$store.commit('setNegocioPuntoVenta',value)
+              }
+            },
+            logo:{
+              get(){
+                return this.$store.getters.getNegocioLogo;
+              },
+              set(value){
+                this.$store.commit('setNegocioLogo',value)
+              }
+            },
+            iibb:{
+                get(){
+                  return this.$store.getters.getNegocioIibb
+                },
+                set(value){
+                  this.$store.commit('setNegocioIibb',value)
+                }
+            },
+            inicioActividad:{
+              get(){
+                return this.$store.getters.getNegocioInicioActividad
+              },
+              set(value){
+                this.$store.commit('setNegocioInicioActividad',value)
+              }
+            },
+
+            provinciaNegocio() {
+                return this.$store.getters.negocioUser.localidad.provincia.provincia_id
+            }
         }
 }
 
@@ -238,6 +337,10 @@ export default {
 
 .card-img:hover {
     opacity: 0.6;
+}
+
+.v-file-input__text.v-file-input__text--placeholder{
+  height: 150px;
 }
 
 </style>

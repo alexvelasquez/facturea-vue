@@ -1,22 +1,10 @@
-<style l>
-
-.v-expansion-panel-content__wrap {
-    padding: 0px !important;
-}
-
-.v-expansion-panel-header__icon {
-    margin-bottom: 15px !important;
-}
-
-</style>
-
 <template>
 
 <div>
     <!-- user login  -->
     <div v-if="logginIn">
         <!-- sidebar -->
-        <v-navigation-drawer color="#385F73" v-model="drawer" absolute temporary dark>
+        <v-navigation-drawer color="#385F73" v-model="drawer" fixed temporary dark>
             <v-list-item>
                 <v-list-item-content>
                     <v-list-item-title justify="center">Facturea</v-list-item-title>
@@ -25,41 +13,35 @@
 
             <v-divider></v-divider>
             <v-list dense>
-                <v-list-item v-for="item in options" :key="item.title" link :href="item.link">
+                <v-list-item v-for="item in options" :key="item.title" link @click="redirect(item.link)">
                     <v-list-item-icon>
                         <v-icon>{{item.icon}}</v-icon>
                     </v-list-item-icon>
 
-                    <v-list-item-content>
+                    <v-list-item-content >
                         <v-list-item-title> {{ item.title }}</v-list-item-title>
                     </v-list-item-content>
 
                 </v-list-item>
-                <v-list-item>
-                    <v-expansion-panels flat dark>
-                        <v-expansion-panel v-for="(item,i) in optionsColapse" :key="i">
 
-                            <v-expansion-panel-header color="#385F73" class="px-0">
-                                <p class=" v-list-item__title">
-                                    <v-icon class="pr-8">groups</v-icon>{{item.title}} </p>
-                            </v-expansion-panel-header>
-
-                            <v-expansion-panel-content color="#385F73">
-                                <v-list class="mx-0" dense>
-                                    <v-list-item v-for="value in item.options" :key="value.title" link :href="value.link">
-                                        <v-list-item-icon>
-                                            <v-icon>{{value.icon}}</v-icon>
-                                        </v-list-item-icon>
-                                        <v-list-item-content>
-                                            <v-list-item-title> {{ value.title }}</v-list-item-title>
-                                        </v-list-item-content>
-                                    </v-list-item>
-                                </v-list>
-                            </v-expansion-panel-content>
-
-                        </v-expansion-panel>
-                    </v-expansion-panels>
-                </v-list-item>
+                <v-list-group
+                      :value="false"
+                      prepend-icon="vpn_lock"
+                      sub-group
+                      class="organizacion"
+                    >
+                      <template v-slot:activator>
+                        <v-list-item-title class="organizacion-text">MI ORGANIZACIÓN</v-list-item-title>
+                      </template>
+                        <v-list-item
+                        class="organizacion" v-for="(item,index) in optionsColapse"
+                        :key="item.title" @click="redirect(item.link)">
+                        <v-list-item-icon>
+                          <v-icon>{{item.icon}}</v-icon>
+                        </v-list-item-icon>
+                        <v-list-item-title>{{item.title}}</v-list-item-title>
+                        </v-list-item>
+              </v-list-group>
             </v-list>
         </v-navigation-drawer>
 
@@ -67,7 +49,15 @@
         <v-app-bar app color="#385F73">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
-            <div class="text-caption white--text">Alex Velasquez</div>
+            <v-badge
+              color="green"
+              content="6"
+              mx="2"
+            >
+              <v-icon>mail_outline</v-icon>
+            </v-badge>
+
+            <div class="text-caption white--text">{{userName.toUpperCase()}}</div>
             <v-menu transition="slide-x-reverse-transition">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on" icon>
@@ -75,7 +65,7 @@
                     </v-btn>
                 </template>
                 <v-list>
-                    <v-list-item v-for="(item,index) in optionsUser" :key="index" link>
+                    <v-list-item v-for="(item,index) in optionsUser" :key="index" link  @click="redirect(item.link)">
                         <v-icon class="pr-4">{{item.icon}}</v-icon>
                         <v-list-item-title class="text-caption">{{item.title}}</v-list-item-title>
                     </v-list-item>
@@ -113,7 +103,6 @@
 </template>
 
 <script>
-
 export default {
     data() {
             return {
@@ -127,41 +116,41 @@ export default {
                         link: '/comprobantes',
                         icon: 'wysiwyg'
                     }, {
-                        title: 'FACTURACIÓN',
+                        title: 'GENERAR COMPROBANTE',
                         link: '/facturacion',
                         icon: 'book_online'
                     },
 
                 ],
                 optionsColapse: [{
-                    title: 'MI ORGANIZACIÓN',
-                    options: [{
                         title: 'CLIENTES',
                         link: '/clientes',
-                        icon: 'people'
+                        icon: 'supervised_user_circle'
                     }, {
                         title: 'PRODUCTOS Y SERVICIOS',
                         link: '/productos',
-                        icon: 'shopping_bag'
+                        icon: 'fastfood'
                     }, {
                         title: 'PEDIDOS',
                         link: '/pedidos',
-                        icon: 'pending_actions'
+                        icon: 'moped'
                     }, {
-                        title: 'EMPRESA',
+                        title: 'CONFIGURACIÓN',
                         link: '/empresa',
-                        icon: 'store'
-                    }, ]
+                        icon: 'miscellaneous_services'
                 }],
                 optionsUser: [{
                     title: 'Mi Perfil',
-                    icon: 'person'
+                    icon: 'person',
+                    link:''
                 }, {
                     title: 'Cambiar Contraseña',
-                    icon: 'vpn_key'
+                    icon: 'lock_open',
+                    link:''
                 }, {
                     title: 'Salir',
-                    icon: 'login'
+                    icon: 'exit_to_app',
+                    link:'/logout'
                 }, ]
 
             }
@@ -169,11 +158,22 @@ export default {
         computed: {
             logginIn() {
                 return this.$store.getters.loggedIn
+            },
+            userName() {
+              return this.$store.getters.user.name;
             }
         }
 }
 
 </script>
 <style>
-
+.v-list-group.v-list-group--active.v-list-group--sub-group.primary--text{
+  color:white !important;
+}
+.organizacion .v-list-group__header.v-list-item.v-list-item--link.theme--dark{
+  margin-left: -7px;
+}
+.organizacion-text{
+  margin-left: 15px;
+}
 </style>

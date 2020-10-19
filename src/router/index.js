@@ -78,9 +78,25 @@ const routes = [
       }
     },
     {
+      path: '/pedidos/editar/:pedido',
+      name: 'EditarPedido',
+      component: () => import('../views/EditarPedido.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/facturacion',
       name: 'Facturacion',
       component: () => import('../views/Facturacion.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
+      path: '/facturacion/:pedido',
+      name: 'FacturacionPedido',
+      component: () => import('../views/FacturacionPedido.vue'),
       meta: {
         requiresAuth: true
       }
@@ -129,7 +145,9 @@ router.beforeEach((to, from, next) => {
           next()
       }
   } else {
-      next()
+      next({
+          name: 'Home'
+      })
   }
 })
 export default router
