@@ -228,9 +228,8 @@ export default {
                             })
                             .then(response => {
                                 if (response.data.code == 200) {
-                                    const index = this.pedidos.indexOf(item);
-                                    this.pedidos.splice(index, 1)
-                                    this.notificacion('Pedido Eliminado', 'success');
+                                    this.listadoPedidos();
+                                    this.notificacion('Pedido Cancelado', 'success');
                                 }
                             })
                     }
@@ -307,9 +306,6 @@ export default {
 
     },
     computed: {
-        negocio() {
-                return this.$store.getters.negocioUser
-            },
             formTitle() {
                 return this.editedIndex === -1 ? 'Nuevo Producto' : 'Editar Producto'
             },
@@ -344,13 +340,13 @@ export default {
             },
             title() {
                 switch (this.estado) {
-                    case 1:
+                    case this.estadoPendiente:
                         return 'Pendientes'
                         break;
-                    case 2:
+                    case this.estadoRealizado:
                         return 'Realizados'
                         break;
-                    case 4:
+                    case this.estadoCancelado:
                         return 'Cancelado'
                         break;
                     default:

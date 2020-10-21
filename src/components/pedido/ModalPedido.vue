@@ -119,11 +119,6 @@ export default {
         }
       }
     },
-    computed:{
-      esResponsableInscripto(){
-        this.$store.getters.responsableInscripto;
-      }
-    }
 }
 
 </script>

@@ -14,7 +14,7 @@ const routes = [
       }
     },
     {
-      path: '/empresa',
+      path: '/configuracion',
       name: 'Empresa',
       component: () => import('../views/Empresa.vue'),
       meta: {
@@ -133,8 +133,9 @@ router.beforeEach((to, from, next) => {
           next({
               name: 'Login'
           })
-      } else {
-          next()
+      }
+      else{
+        next()
       }
   } else if (to.matched.some(record => record.meta.requiresVisitor)) {
       if (store.getters.loggedIn) {

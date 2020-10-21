@@ -50,9 +50,6 @@
                         <v-row class="py-0">
                             <v-col cols="12" sm="6" md="5">
                                 <v-autocomplete v-model="facturacion.cliente" :rules="reglasValidacion.campoRequerido" :items="clientes" label="Buscar cliente" item-text="razon_social" item-value="cliente_id" hint="campo obligatorio(*)" outlined persistent-hint dense return-object>
-                                    <template slot="selection" slot-scope="data">
-                                        {{ data.item.razon_social }}
-                                    </template>
                                 </v-autocomplete>
                             </v-col>
                             <v-col cols="12" sm="3" md="3">
@@ -557,9 +554,6 @@ export default {
 
     },
     computed: {
-        negocio() {
-                return this.$store.getters.negocioUser
-            },
             conceptoFactura() {
                 return this.facturacion.concepto;
             },

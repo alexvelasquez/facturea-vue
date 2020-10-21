@@ -49,7 +49,8 @@ axios.interceptors.response.use(response => {
             router.push('/logout')
           })
       }
-    }
+      return error;
+  }
 
 );
 

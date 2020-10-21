@@ -10,14 +10,12 @@
     </v-row>
     <v-card>
         <v-card-title>
-            <v-col cols="6" sm="4">
+            <v-col cols="12" sm="4">
                 <v-row>
                     <v-text-field v-model="search" append-icon="mdi-magnify" label="Buscar Producto" single-line hide-details></v-text-field>
                 </v-row>
             </v-col>
             <v-spacer></v-spacer>
-
-
         </v-card-title>
         <v-data-table v-model="seleccionados" :headers="cabeceras" item-key="producto_id" :items="productos" :search="search" show-select>
             <template v-slot:[`item.precio_compra`]="{ item }">
@@ -47,13 +45,13 @@
         </v-data-table>
         <v-row id="actions-productos">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2">EXPORTAR XLS
+                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2 ">EXPORTAR XLS
                 </v-btn>
                 <v-btn v-if="seleccionados.length > 0" @click="eliminarSeleccionados" outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
                 <v-btn @click="$router.push('/marcas')" outlined color="#385F73" dark class="mb-2 mr-md-2">MARCAS
                 </v-btn>
-                <v-btn @click="$router.push('/categorias')" outlined color="#385F73" dark class="mb-2 mr-md-2">CATEGORIAS
+                <v-btn @click="$router.push('/categorias')" outlined color="#385F73" dark class="mb-2 mr-md-2 ">CATEGORIAS
                 </v-btn>
                 <modal-producto :categorias="categorias" :marcas="marcas" :editable="editable" :dialog="dialog" :producto="itemProducto" @cerrar-dialog="close" @agregar-producto="agregarProducto($event)" @editar-producto="editarProducto($event)">
                 </modal-producto>
@@ -138,9 +136,9 @@ export default {
     },
     methods: {
         cargarProductosYCategorias() {
-                axios.all([axios.get(`productos/negocio/${this.$store.getters.negocioUser.negocio_id}`),
-                        axios.get(`categorias/negocio/${this.$store.getters.negocioUser.negocio_id}`),
-                        axios.get(`marcas/negocio/${this.$store.getters.negocioUser.negocio_id}`)
+                axios.all([axios.get(`productos/negocio/${this.negocio.negocio_id}`),
+                        axios.get(`categorias/negocio/${this.negocio.negocio_id}`),
+                        axios.get(`marcas/negocio/${this.negocio.negocio_id}`)
                     ])
                     .then(axios.spread((productos, categorias, marcas) => {
                         this.productos = productos.data.data;
@@ -148,7 +146,9 @@ export default {
                         this.marcas = marcas.data.data;
                     }))
                     .catch(error => {
+                      if(this.$store.getters.token){
                         this.notificacion('Ha ocurrido al recuperar los datos','error')
+                      }
                     })
             },
 
@@ -158,7 +158,7 @@ export default {
                 this.dialog = true
             },
             agregarProducto(item) {
-                axios.post(`productos/negocio/${this.$store.getters.negocioUser.negocio_id}/nuevo`, item)
+                axios.post(`productos/negocio/${this.negocio.negocio_id}/nuevo`, item)
                     .then(response => {
                         this.productos.push(response.data.data);
                         this.notificacion('Producto agregado correctamente', "success");
@@ -247,3 +247,9 @@ export default {
 }
 
 </script>
+<style>
+.v-data-table-header-mobile__wrapper {
+  display: flex;
+  margin-left: -21px;
+}
+</style>

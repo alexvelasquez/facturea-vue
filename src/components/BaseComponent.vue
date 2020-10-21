@@ -49,15 +49,7 @@
         <v-app-bar app color="#385F73">
             <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
-            <v-badge
-              color="green"
-              content="6"
-              mx="2"
-            >
-              <v-icon>mail_outline</v-icon>
-            </v-badge>
-
-            <div class="text-caption white--text">{{userName.toUpperCase()}}</div>
+            <div class="text-caption white--text">{{userName.toUpperCase() }}</div>
             <v-menu transition="slide-x-reverse-transition">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on" icon>
@@ -136,7 +128,7 @@ export default {
                         icon: 'moped'
                     }, {
                         title: 'CONFIGURACIÓN',
-                        link: '/empresa',
+                        link: '/configuracion',
                         icon: 'miscellaneous_services'
                 }],
                 optionsUser: [{
@@ -160,7 +152,7 @@ export default {
                 return this.$store.getters.loggedIn
             },
             userName() {
-              return this.$store.getters.user.name;
+              return this.$store.getters.user.name+' '+this.$store.getters.user.lastname;
             }
         }
 }

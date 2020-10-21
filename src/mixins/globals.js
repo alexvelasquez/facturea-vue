@@ -3,13 +3,31 @@ import store from '../store';
 import router from '../router';
 export default {
   computed:{
+    estadoPendiente(){
+      return 1
+    },
+    estadoRealizado(){
+      return 2
+    },
+    estadoCancelado(){
+      return 4
+    },
+    estadoPagado(){
+      return 3
+    },
+    estadoPendientePago(){
+      return 5
+    },
 
     facturaElectronicaRegistrada(){
-      return store.getters.facturaElectronicaRegistrada
+      return store.getters.facturaElectronicaRegistrada ?? null
     },
     esResponsableInscripto(){
-      return store.getters.responsableInscripto;
-    }
+      return store.getters.responsableInscripto ?? null;
+    },
+    negocio() {
+            return this.$store.getters.negocio
+    },
   },
   methods: {
     notificacion(texto,tipo){
@@ -20,7 +38,7 @@ export default {
       })
     },
     redirect(link){
-      router.push(link)
+      router.push(link).catch(()=>{});
     },
     ordenar(data){
       return data.sort((a,b) => (a.descripcion > b.descripcion) ? 1 : ((b.descripcion > a.descripcion) ? -1 : 0));
@@ -104,6 +122,14 @@ export default {
          * @param {String} descripcion
          */
         lowerCase: (value) => value.toLowerCase(),
+
+        /**
+         * lowercase
+         *
+         * @param {String} descripcion
+         */
+        upper: (value) => value.toLowerCase(),
+
         /**
          * lowercase
          *

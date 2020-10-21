@@ -150,7 +150,7 @@ export default {
     },
     methods: {
         cargarDatosClientes() {
-                axios.all([axios.get(`clientes/negocio/${this.$store.getters.negocioUser.negocio_id}`),
+                axios.all([axios.get(`clientes/negocio/${this.negocio.negocio_id}`),
                         axios.get(`datosGeograficos/provincias`),
                         axios.get(`afip/tiposDocumentos`),
                         axios.get(`afip/condicionesIva`)
@@ -162,7 +162,9 @@ export default {
                         this.condicionesIva = condicionesIva.data.data;
                     }))
                     .catch(error => {
-                        console.log(error)
+                        if(this.$store.getters.token){
+                          this.notificacion('Ha ocurrido al recuperar los datos','error')
+                        }
                     })
             },
 
@@ -172,7 +174,7 @@ export default {
                 this.dialog = true
             },
             agregarProducto(item) {
-                axios.post(`clientes/negocio/${this.$store.getters.negocioUser.negocio_id}/nuevo`, item)
+                axios.post(`clientes/negocio/${this.negocio.negocio_id}/nuevo`, item)
                     .then(response => {
                         this.clientes.push(response.data.data);
                         this.notificacion('Producto agregado correctamente', "success");

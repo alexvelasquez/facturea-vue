@@ -447,12 +447,6 @@ export default {
                     this.pedido.productos = value;
                 }
         },
-        negocio() {
-            return this.$store.getters.negocioUser
-        },
-        esResponsableInscripto() {
-            return this.negocio.condicion_iva.afip_id === 1;
-        },
         options() {
             return [{
                 text: 'Pedidos',

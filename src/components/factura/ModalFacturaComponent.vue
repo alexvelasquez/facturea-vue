@@ -93,9 +93,6 @@ export default {
             ],
         }
     },
-    mounted() {
-        //this.cargarOpcionesIva();
-    },
     methods: {
 
             editarProducto() {

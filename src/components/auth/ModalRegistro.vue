@@ -17,27 +17,27 @@
                         <v-container>
                             <v-row>
                                     <v-col cols="12" md="6"  style="margin-bottom:-25px">
-                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.nombre" label="Nombre" placeholder="Ingrese su nombre" outlined dense>
+                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.name" label="Nombre" placeholder="Ingrese su nombre" outlined dense>
                                       </v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6"  style="margin-bottom:-25px">
-                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.apellido" label="Apellido" placeholder="Ingrese su apellido" outlined dense>
+                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.lastname" label="Apellido" placeholder="Ingrese su apellido" outlined dense>
                                       </v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6" style="margin-bottom:-25px">
-                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.user" label="Nombre de usuario" placeholder="Ingrese su nombre de usuario" outlined dense>
+                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.username" label="Nombre de usuario" placeholder="Ingrese su nombre de usuario" outlined dense>
                                       </v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6" style="margin-bottom:-25px">
-                                      <v-text-field :rules="reglasValidacion.campoRequerido" v-model="registro.email" label="Email" placeholder=" " outlined dense>
+                                      <v-text-field :rules="reglasValidacion.emailRules" v-model="registro.email" label="Email" placeholder="Ingrese un email" outlined dense>
                                       </v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6" style="margin-bottom:-25px">
-                                      <v-text-field  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'" :rules="reglasValidacion.campoRequerido" v-model="registro.clave" label="Contraseña" placeholder=" " outlined dense @click:append="show = !show">
+                                      <v-text-field  :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'" :type="show ? 'text' : 'password'" :rules="reglasValidacion.campoRequerido" v-model="registro.password" label="Contraseña" placeholder="Ingrese una contraseña" outlined dense @click:append="show = !show">
                                       </v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="6" style="margin-bottom:-25px">
-                                      <v-text-field :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" :rules="reglasValidacion.claveSimilar" v-model="registro.repetirClave" label="Repetir contraseña" placeholder=" "  @click:append="show1 = !show1" outlined dense>
+                                      <v-text-field :append-icon="show1 ? 'mdi-eye' : 'mdi-eye-off'" :type="show1 ? 'text' : 'password'" :rules="reglasValidacion.claveSimilar" v-model="repetirClave" label="Repetir contraseña" placeholder="Repetir contraseña"  @click:append="show1 = !show1" outlined dense>
                                       </v-text-field>
                                     </v-col>
                             </v-row>
@@ -64,7 +64,6 @@ export default {
         dialog: {
             type: Boolean
         },
-
     },
 
     data() {
@@ -79,30 +78,37 @@ export default {
             allow: false,
             tab: null,
             activar: true,
+            repetirClave:null,
             dialogRegister: this.dialog,
         }
     },
     methods: {
-
         registrarme() {
-                if (this.$refs.form.validate()) {
-                    this.dialogProducto = false;
-                    this.$emit('registrar', this.producto)
-                }
-            },
-
-            cerrarDialog() {
-               this.dialogRegister = false;
-               this.$emit('cerrar-dialog');
+            if (this.$refs.form.validate()) {
+                this.dialogRegister = false;
+                axios.post(`register`,this.registro)
+                .then(response => {
+                  this.notificacion('Registrado correctamente','success')
+                })
+                .catch(error=>{
+                  this.dialogRegister = true;
+                  this.notificacion(error.response.data.message,'error')
+                  this.$store.dispatch('loading',false);
+                })
             }
+        },
+        cerrarDialog() {
+           this.dialogRegister = false;
+           this.$emit('cerrar-dialog');
+        }
     },
     watch: {
         dialog() {
-                if(this.$refs.form){
-                  this.$refs.form.reset();
-                }
-                this.dialogRegister = this.dialog;
-            },
+            if(this.$refs.form){
+              this.$refs.form.reset();
+            }
+            this.dialogRegister = this.dialog;
+        },
     },
     computed:{
       reglasValidacion() {
@@ -110,12 +116,13 @@ export default {
               campoRequerido: [
                   v => !!v || 'Este campo es requerido',
               ],
-              emailSimilar: [
-                  v => this.registro.email == this.registro.repetirEmail|| 'Las contraseñas no coindicen'
-              ],
+              emailRules: [
+                      v => !!v || 'Este campo es requerido',
+                      v => /.+@.+\..+/.test(v) || 'Email no valido',
+                    ],
               claveSimilar: [
                   v => !!v || 'Este campo es requerido',
-                  v => this.registro.clave == this.registro.repetirClave || 'Las contraseñas no coindicen'
+                  v => this.registro.password == this.repetirClave || 'Las contraseñas no coindicen'
               ]
           }
       }

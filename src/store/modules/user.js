@@ -2,11 +2,17 @@ import axios from 'axios';
 export default{
     state: {
         token:localStorage.getItem('access_token') || null,
-        user:JSON.parse(localStorage.getItem('user_token')) || null,
+        user:JSON.parse(localStorage.getItem('user')) || {},
+        negocio:JSON.parse(localStorage.getItem('negocio')) || {
+                                                                  condicion_iva:{ afip_id:null,
+                                                                                  condicion_iva_id:null},
+                                                                  localidad:{provincia:{provincia_id:null},
+                                                                             localidad_id:null},
+                                                                },
     },
     getters: {
         loggedIn(state){
-            return state.user !== null;
+            return Object.keys(state.user).length > 0;
         },
         token(state){
             return state.token;
@@ -14,50 +20,51 @@ export default{
         user(state){
             return state.user;
         },
+        negocio(state){
+          return state.negocio;
+        },
         responsableInscripto(state){
-          return state.user.negocio.condicion_iva ? state.user.negocio.condicion_iva.afip_id == 1 : false;
+          return  state.negocio.condicion_iva.afip_id ? state.negocio.condicion_iva.afip_id == 1 : null;
         },
         getNegocioRazonSocial(state){
-          return state.user.negocio.razon_social ?? null;
+            return state.negocio.razon_social;
+
         },
         getNegocioEmail(state){
-          return state.user.negocio.email ?? null;
+            return state.negocio.email;
         },
         getNegocioProvincia(state){
-          return state.user.negocio.localidad.provincia ? state.user.negocio.localidad.provincia.provincia_id : null;
+            return state.negocio.localidad.provincia.provincia_id;
         },
         getNegocioLocalidad(state){
-          return state.user.negocio.localidad ? state.user.negocio.localidad.localidad_id : null;
+            return state.negocio.localidad.localidad_id;
         },
         getNegocioDireccion(state){
-          return state.user.negocio.direccion ?? null;
+            return state.negocio.direccion
         },
         getNegocioTelefono(state){
-          return state.user.negocio.telefono ?? null;
+          return state.negocio.telefono
         },
         getNegocioCuitCuil(state){
-          return state.user.negocio.cuit_cuil ?? null;
+          return state.negocio.cuit_cuil
         },
         getNegocioCondicionIva(state){
-          return state.user.negocio.condicion_iva ? state.user.negocio.condicion_iva.condicion_iva_id : null;
+          return   state.negocio.condicion_iva.condicion_iva_id
         },
         getNegocioInicioActividad(state){
-          return state.user.negocio.inicio_actividad ?  moment(state.user.negocio.inicio_actividad).format('YYYY-MM-DD') : null;
+          return state.negocio.inicio_actividad;
         },
         getNegocioLogo(state){
-          return state.user.negocio.logo ?? null;
+          return state.negocio.logo;
         },
         getNegocioPuntoVenta(state){
-          return state.user.negocio.punto_vta ?? null;
+          return state.negocio.punto_vta;
         },
         getNegocioIibb(state){
-          return state.user.negocio.iibb ?? null;
+          return state.negocio.iibb;
         },
         facturaElectronicaRegistrada(state){
-          return state.user.factura_electronica ?? null;
-        },
-        negocioUser(state){
-          return state.user.negocio;
+          return state.user.factura_electronica == 'S';
         },
 
     },
@@ -68,99 +75,62 @@ export default{
         setUser(state,user){
             state.user = user
         },
-        setUserNegocio(state,negocio){
-            state.user.negocio = negocio
-            localStorage.setItem('user_token',JSON.stringify(state.user))
+        setNegocio(state,negocio){
+            localStorage.setItem('negocio',JSON.stringify(state.negocio))
+            state.negocio = negocio
         },
-        setNegocioRazonSocial(state,value){
-          return state.user.negocio.razon_social=value;
+        setNegocioRazonSocial(state, value){
+            state.negocio.razon_social = value;
         },
         setNegocioEmail(state,value){
-          return state.user.negocio.email=value;
+           state.negocio.email=value;
         },
         setNegocioProvincia(state,value){
-          return state.user.negocio.localidad.provincia = value;
+            state.negocio.localidad.provincia.provincia_id = value;
         },
         setNegocioLocalidad(state,value){
-          return state.user.negocio.localidad = value;
+          state.negocio.localidad.localidad_id = value;
         },
         setNegocioDireccion(state,value){
-          return state.user.negocio.direccion=value;
+          state.negocio.direccion=value;
         },
         setNegocioTelefono(state,value){
-          return state.user.negocio.telefono=value;
+          state.negocio.telefono=value;
         },
         setNegocioCuitCuil(state,value){
-          return state.user.negocio.cuit_cuil=value;
+          state.negocio.cuit_cuil=value;
         },
         setNegocioCondicionIva(state,value){
-          return state.user.negocio.condicionIva = value;
+          state.negocio.condicionIva = value;
         },
         setNegocioInicioActividad(state,value){
-          return state.user.negocio.inicio_actividad=value;
+          state.negocio.inicio_actividad=value;
         },
         setNegocioLogo(state,value){
-          return state.user.negocio.logo=value;
+          state.negocio.logo=value;
         },
         setNegocioIbb(state,value){
-          return state.user.negocio.iibb=value;
+          state.negocio.iibb=value;
         },
         setNegocioPuntoVenta(state,value){
-          return state.user.negocio.punto_vta=value;
+          state.negocio.punto_vta=value;
         },
     },
     actions: {
         changeUserNegocio:({commit},negocio)=>{
-            commit('setUserNegocio',negocio);
-        },
-
-        login:({commit},params)=>{
-            return new Promise((resolve,reject) => {
-                axios.post(`login_check`,params)
-                .then(response=>{
-                    const token = response.data.token;
-                    commit('setToken',token);
-                    axios.get(`currentUser`)
-                    .then(response=>{
-                        commit('setNotificacion',{activo:true,texto:'Obteniendo datos del usuario',tipo:'success'})
-                        /** config item token */
-                        localStorage.setItem('access_token',token)
-                        /** config del usuario */
-                        const user = response.data.user;
-                        /** verifico la condicion y localidad del usuario*/
-                        if(user.negocio.inicio_actividad){
-                          user.negocio.inicio_actividad = moment().format('YYYY-MM-DD');
-                        }
-                        if(!user.negocio.condicion_iva && !user.negocio.localidad) {
-                            user.negocio.condicion_iva = {}
-                            user.negocio.localidad = {
-                              provincia : {}
-                            }
-                        }
-                        commit('setNotificacion',{activo:true,texto:`BIENVENIDO ${user.name.toUpperCase()}`,tipo:'success'})
-                        localStorage.setItem('user_token',JSON.stringify(user))
-                        commit('setUser',user);
-                        resolve(true);
-                    })
-                    .catch(error=>{
-                        commit('setToken',null);
-                    })
-                })
-                .catch(error => {
-                    reject(error);
-                })
-            });
+            commit('setnegocio',negocio);
         },
         logout:({commit})=>{
             return new Promise((resolve,reject) => {
                 localStorage.removeItem('access_token')
-                localStorage.removeItem('user_token')
-
+                localStorage.removeItem('user')
+                localStorage.removeItem('negocio')
                 commit('setToken',null);
-                commit('setUser',null);
+                commit('setUser',{});
+                commit('setNegocio',{});
                 resolve(true)
             });
-            }
-        },
+        }
+    },
 
 }

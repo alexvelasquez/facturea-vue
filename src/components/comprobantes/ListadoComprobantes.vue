@@ -2,7 +2,6 @@
 
 .periodo {
     background-color: #E0E0E0;
-    margin-bottom: -47px;
 }
 
 </style>
@@ -16,8 +15,8 @@
         </v-col>
     </v-row>
     <v-card>
-        <v-card-title class="periodo">
-            <v-row justify="center">
+        <v-card-title class="text-center periodo">
+            <v-row>
                 <v-col cols="12" md="7" offset-md="4">
                     <v-row>
                         <v-col cols="12" md="4">
@@ -45,7 +44,7 @@
                             </v-menu>
                         </v-col>
                         <v-col cols="12" md="4">
-                            <v-btn outlined color="#385F73" @click="cargarComprobantes">
+                            <v-btn block outlined color="#385F73" @click="cargarComprobantes">
                                 <v-icon left>
                                     search
                                 </v-icon>buscar</v-btn>
@@ -158,12 +157,6 @@ export default {
             },
 
     },
-    computed: {
-        negocio() {
-                return this.$store.getters.negocioUser
-            },
-
-    }
 
 }
 

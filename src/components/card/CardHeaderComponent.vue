@@ -2,7 +2,7 @@
     <div>
         <v-row justify="center">
         <v-col
-            v-for="(c,index) in cards"
+            v-for="(c,index) in cards[0]"
             :key = index
             cols="mx-auto"
         >
@@ -15,9 +15,6 @@
               justify="center">
               <v-col align = "center" cols="12" md="10" class="text-center">
                 <span >{{c.value}}</span>
-              </v-col>
-              <v-col cols="12" md="12" align="center">
-                    <v-btn text>VER PACIENTES</v-btn>
               </v-col>
               </v-row>
           </v-card>
