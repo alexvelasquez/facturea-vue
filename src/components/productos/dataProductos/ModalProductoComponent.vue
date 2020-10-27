@@ -21,12 +21,43 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-autocomplete v-model="producto.categoria.categoria_id" item-value="categoria_id" :items="categorias" :label="'Categoria'" placeholder="seleccione una categoria" item-text="descripcion" persistent-hint :rules="obligatorio" outlined dense>
+                                        <v-autocomplete v-model="producto.categoria.categoria_id" item-value="categoria_id" :items="categorias" :label="'Categoria'" placeholder="seleccione una categoria" item-text="descripcion" :search-input.sync="itemCategoria.descripcion" persistent-hint :rules="obligatorio"
+                                        no-data-text="Escribir nombre de categoria" outlined dense>
+                                            <template slot="no-data">
+                                                <v-list v-if="itemCategoria.descripcion" dense>
+                                                    <v-list-item-group color="primary">
+                                                        <v-list-item>
+                                                            <v-list-item-content>
+                                                                    <v-btn text color="primary" @click="agregarCategoria">
+                                                                      <v-list-item-title>"{{itemCategoria.descripcion}}"
+                                                                          AGREGAR A CATEGORIAS
+                                                                      </v-list-item-title>
+                                                                    </v-btn>
+                                                            </v-list-item-content>
+                                                        </v-list-item>
+                                                    </v-list-item-group>
+                                                </v-list>
+                                            </template>
                                         </v-autocomplete>
                                     </v-col>
 
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-autocomplete v-model="producto.marca.marca_id" item-value="marca_id" :items="marcas" :label="'Marca'" placeholder="seleccione una marca" item-text="descripcion" persistent-hint :rules="obligatorio" outlined dense>
+                                        <v-autocomplete v-model="producto.marca.marca_id" item-value="marca_id" :items="marcas" :label="'Marca'" placeholder="seleccione una marca" item-text="descripcion" persistent-hint :rules="obligatorio" :search-input.sync="itemMarca.descripcion" outlined dense>
+                                          <template slot="no-data">
+                                              <v-list v-if="itemMarca.descripcion" dense>
+                                                  <v-list-item-group color="primary">
+                                                      <v-list-item>
+                                                          <v-list-item-content>
+                                                                  <v-btn text color="primary" @click="agregarMarca">
+                                                                    <v-list-item-title>"{{itemMarca.descripcion}}"
+                                                                        AGREGAR A MARCAS
+                                                                    </v-list-item-title>
+                                                                  </v-btn>
+                                                          </v-list-item-content>
+                                                      </v-list-item>
+                                                  </v-list-item-group>
+                                              </v-list>
+                                          </template>
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="5" class="pt-md-0">
@@ -43,7 +74,7 @@
                                                 <v-text-field v-model="producto.codigo" label="Código" placeholder="código del producto" :rules="obligatorio" outlined dense>
                                                 </v-text-field>
                                             </v-col>
-                                            <v-col cols="12" sm="6" md="4" >
+                                            <v-col cols="12" sm="6" md="4">
                                                 <v-text-field v-model="producto.stock" label="Stock" placeholder="0" :rules="obligatorio" type="number" outlined dense>
                                                 </v-text-field>
                                             </v-col>
@@ -85,21 +116,26 @@
                                         </template>
                                     </v-file-input>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="12" justify="end" align="center">
-                                    <p class="text-button">¿ No sabes como crear el archivo ?</p>
+                                <v-col cols="12" sm="12" md="12" align="center">
+                                    <p class="overline">¿No sabes como crear el archivo?</p>
                                 </v-col>
-                                <v-col cols="12" sm="12" md="12" justify="end" align="center" ondrop="dropHandler(event);">
-                                    <v-btn outlined color="#385F73" class="mr-md-3" dark>Descargar modelo XSLX</v-btn>
+                                <v-row style="margin-top: -34px;">
+                                  <v-col cols="12" md="6" align="right">
+                                      <v-btn block outlined color="#385F73" class="mr-md-3" @click="exportarXlsx(`productos/exportar_modelo`,'modelo.xlsx')" dark>Descargar modelo XSLX</v-btn>
 
-                                    <v-btn outlined color="#385F73" dark>Descargar ejemplo</v-btn>
-                                </v-col>
+                                  </v-col>
+                                  <v-col cols="12" md="6" align="left">
+
+                                      <v-btn block outlined color="#385F73" dark @click="exportarXlsx(`productos/exportar_ejemplo`,'ejemplo.xlsx')">Descargar ejemplo</v-btn>
+                                  </v-col>
+                                </v-row>
                             </v-row>
                         </v-container>
                     </v-card-text>
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn color="#385F73" text>Cancelar</v-btn>
-                        <v-btn color="#385F73" text>Agregar</v-btn>
+                        <v-btn color="#385F73" @click="cerrarDialog" text>Cancelar</v-btn>
+                        <v-btn color="#385F73" @click="cargarArchivo" text>Agregar</v-btn>
                     </v-card-actions>
                 </v-card>
             </v-tab-item>
@@ -143,7 +179,9 @@ export default {
     data() {
         return {
             /** NUEVO PRODUCTO */
-            files: [],
+            itemCategoria:{},
+            itemMarca:{},
+            files: null,
             aliCuotas: [],
             model: null,
             allow: false,
@@ -158,19 +196,59 @@ export default {
     methods: {
 
             agregarProducto() {
-                if (this.$refs.form.validate()) {
-                    this.dialogProducto = false;
-                    this.$emit('agregar-producto', this.producto)
-                }
-            },
+                    if (this.$refs.form.validate()) {
+                        this.dialogProducto = false;
+                        this.$emit('agregar-producto', this.producto)
+                    }
+                },
             editarProducto() {
                 if (this.$refs.form.validate()) {
                     this.$emit('editar-producto', this.producto);
 
                 }
             },
+            agregarCategoria(){
+                this.notificacion('Agregando categoria','warning')
+                axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,this.itemCategoria)
+                .then(response=>{
+                  this.categorias.push(response.data.data);
+                  this.notificacion('Categoria agregada correctamente','success')
+                })
+            },
+            agregarMarca() {
+              this.notificacion('Agregando marca','warning')
+                axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`,this.itemMarca)
+                    .then(response => {
+                        this.marcas.push(response.data.data);
+                        this.notificacion('Marca agregada correctamente', 'success')
+                    })
+                    .catch(error => {
+                        this.notificacion('Ha ocurrido al agregar la marca','error')
+                    })
+            },
             cerrarDialog() {
                 !this.editable ? this.dialogProducto = false : this.$emit('cerrar-dialog');
+            },
+            cargarArchivo() {
+                let formData = new FormData();
+                formData.append('file', this.files[0]);
+                axios.post(`productos/importar_excel`,
+                        formData, {
+                            headers: {
+                                'Content-Type': 'multipart/form-data'
+                            }
+                        }
+                    ).then(response => {
+                        this.notificacion(response.data.data, 'success')
+                    })
+                    .catch(error => {
+                        this.notificacion('Ha ocurrido un error al cargar el archivo', 'error');
+                    })
+            },
+            exportarXlsx(link,name){
+              this.notificacion('Descargando..','warning');
+              this.exportar(link,name);
+              this.notificacion('Decargado','success');
             }
     },
     watch: {
@@ -181,7 +259,7 @@ export default {
                 if (this.$refs.form && !this.editable) {
                     this.$refs.form.reset()
                 };
-            }
+            },
     }
 }
 

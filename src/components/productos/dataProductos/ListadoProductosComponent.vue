@@ -45,7 +45,7 @@
         </v-data-table>
         <v-row id="actions-productos">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2 ">EXPORTAR XLS
+                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`productos/exportar`,'listado_productos.xlsx')">EXPORTAR XLS
                 </v-btn>
                 <v-btn v-if="seleccionados.length > 0" @click="eliminarSeleccionados" outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
@@ -53,7 +53,7 @@
                 </v-btn>
                 <v-btn @click="$router.push('/categorias')" outlined color="#385F73" dark class="mb-2 mr-md-2 ">CATEGORIAS
                 </v-btn>
-                <modal-producto :categorias="categorias" :marcas="marcas" :editable="editable" :dialog="dialog" :producto="itemProducto" @cerrar-dialog="close" @agregar-producto="agregarProducto($event)" @editar-producto="editarProducto($event)">
+                <modal-producto :categorias="categorias" :marcas="marcas" :editable="editable" :dialog="dialog" :producto="itemProducto" @cerrar-dialog="close" @agregar-producto="agregarProducto($event)" @editar-producto="editarProducto($event)" @agregar-categoria="agregarCategoria($event)" @agregar-marca="agregarMarca($event)">
                 </modal-producto>
             </v-col>
         </v-row>
@@ -187,6 +187,25 @@ export default {
                             })
                     }
                 })
+            },
+            agregarCategoria(item){
+                axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,item)
+                .then(response=>{
+                  this.modalProducto()
+                  this.categorias.push(response.data.data);
+                  this.notificacion('Categoria agregada correctamente','success')
+                })
+            },
+            agregarMarca(item) {
+                axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`,item)
+                    .then(response => {
+                        this.dialog = true;
+                        this.marcas.push(response.data.data);
+                        this.notificacion('Marca agregada correctamente', 'success')
+                    })
+                    .catch(error => {
+                        this.notificacion('Ha ocurrido al agregar la marca','error')
+                    })
             },
 
             eliminarProducto(item) {

@@ -1,7 +1,3 @@
-
-
-
-
 <script>
 
 import {
@@ -10,57 +6,28 @@ import {
 from 'vue-chartjs'
 export default {
     props: {
-        dataMontos: {
-            type: Object,
+        labels:{
+          type:Array,
+          default:[]
+        },
+        datasets:{
+          type:Array,
+          default:[]
+        },
+        titulo:{
+          type:String,
+          default:null
         },
     },
     extends: Line,
-    // props:{
-    //   totales{
-    //     type:Object,
-    //     default:[]
-    //   },
-    //   pagados{
-    //     type:Object,
-    //     default:[]
-    //   },
-    //   pendientes{
-    //     type:Object,
-    //     default:[]
-    //   },
-    // }
-    mounted() {
 
+    mounted() {
+        // console.log(this.data.datasets);
         this.renderChart({
-          labels : [
-              "Enero",
-              "Febrero",
-              "Marzo",
-              "Abril",
-              "Mayo",
-              "Junio",
-              "Julio",
-              "Agosto",
-              "Septiembre",
-              "Octubre",
-              "Noviembre",
-              "Diciembre"
-          ],
+          labels : this.labels,
             datasets: [{
-                label: "Pagadas",
-                data: this.dataMontos[this.estadoPagado.toString()],
-                backgroundColor: "transparent",
-                borderColor: "rgba(1, 116, 188, 0.50)",
-                pointBackgroundColor: "rgba(171, 71, 188, 1)"
-            },{
-                label: "Pendientes Pago",
-                data: this.dataMontos[this.estadoPendientePago.toString()],
-                backgroundColor: "transparent",
-                borderColor: "rgba(1, 116, 188, 0.50)",
-                pointBackgroundColor: "rgba(171, 71, 188, 1)"
-            },{
-                label: "Totales",
-                data: this.dataMontos['total'],
+                label: 'Monto Cobrado ',
+                data: this.datasets,
                 backgroundColor: "transparent",
                 borderColor: "rgba(1, 116, 188, 0.50)",
                 pointBackgroundColor: "rgba(171, 71, 188, 1)"
@@ -70,7 +37,7 @@ export default {
             maintainAspectRatio: false,
             title: {
                 display: true,
-                text: "Ventas"
+                text: "GENERADO Y COBRADO"
             }
         });
     },

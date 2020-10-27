@@ -117,11 +117,9 @@
 
 <script>
 
-import CardHeader from '@/components/card/CardHeaderComponent.vue'
 import ModalDetalle from '@/components/pedido/ModalDetalle.vue'
 export default {
     components: {
-        CardHeader,
         ModalDetalle
     },
     data: () => ({

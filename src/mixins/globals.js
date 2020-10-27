@@ -18,7 +18,6 @@ export default {
     estadoPendientePago(){
       return 5
     },
-
     facturaElectronicaRegistrada(){
       return store.getters.facturaElectronicaRegistrada ?? null
     },
@@ -36,6 +35,28 @@ export default {
         texto:texto,
         tipo:tipo
       })
+    },
+    //
+    // loading(value){
+    //   store.dispatch('loading',value)
+    // },
+    /** descargo el comprobante **/
+    exportar(url,nombre) {
+        axios.get(url)
+            .then((response) => {
+                const link = document.createElement('a');
+                link.href = response.data.data.file;
+                link.setAttribute('download', nombre);
+                document.body.appendChild(link);
+                link.click();
+            })
+            .catch((error) => {
+                this.notificacion('Ha ocurrido un error', 'error');
+            });
+    },
+
+    formatMoment(date){
+      return momemt(date).format('DD/MM/YYYY')
     },
     redirect(link){
       router.push(link).catch(()=>{});
@@ -88,14 +109,21 @@ export default {
          *
          * @param {Number} un numero
          */
-        formatPrecio: (value) => '$ '+value.toFixed(2).replace('.', ',') ,
+        formatPrecio: (value) => value ? '$ '+value.toFixed(2).replace('.', ',') : '$ 0',
 
         /**
          * Formatea el number con la máscara  #,## , por ej 5 --> 5,00
          *
          * @param {Number} un numero
          */
-        formatNumber: (value) => parseFloat(value).toFixed(2).replace('.', ',') ,
+        formatNumber: (value) => value ? parseFloat(value).toFixed(2).replace('.', ',') : 0,
+
+        /**
+         * Formatea el number con la máscara  #,## , por ej 5 --> 5,00
+         *
+         * @param {Number} un numero
+         */
+        number: (value) => value ? value : 0,
 
         /**
          * Devuelve una fecha con formato

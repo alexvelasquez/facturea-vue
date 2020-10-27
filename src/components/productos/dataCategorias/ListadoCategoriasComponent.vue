@@ -124,7 +124,7 @@
     },
     methods: {
       cargarCategorias () {
-        axios.get(`categorias/negocio/${this.$store.getters.negocioUser.negocio_id}`)
+        axios.get(`categorias/negocio/${this.negocio.negocio_id}`)
         .then(response => {
                 this.categorias = response.data.data;
             })
@@ -134,8 +134,7 @@
       },
 
       agregarCategoria(item){
-          const negocioUser = this.$store.getters.negocioUser.negocio_id;
-          axios.post(`categorias/negocio/${negocioUser}/nuevo`,item)
+          axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,item)
           .then(response=>{
             this.categorias.push(response.data.data);
             this.notificacion('Categoria agregada correctamente','success')

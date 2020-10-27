@@ -84,11 +84,8 @@
 
 <script>
 
-import CardHeader from '@/components/card/CardHeaderComponent.vue';
 export default {
-    components: {
-        CardHeader
-    },
+
     data() {
         return {
             date: moment().format('YYYY-MM-DD'),

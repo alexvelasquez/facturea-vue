@@ -104,7 +104,7 @@ export default {
     },
     methods: {
         cargarMarcas() {
-                axios.get(`marcas/negocio/${this.$store.getters.negocioUser.negocio_id}`)
+                axios.get(`marcas/negocio/${this.negocio.negocio_id}`)
                     .then(response => {
                         this.marcas = response.data.data;
                     })
@@ -114,7 +114,7 @@ export default {
             },
 
             agregarMarca(item) {
-                axios.post(`marcas/negocio/${this.$store.getters.negocioUser.negocio_id}/nuevo`, item)
+                axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`, item)
                     .then(response => {
                         this.marcas.push(response.data.data);
                         this.notificacion('Marca agregada correctamente', 'success')
