@@ -156,7 +156,7 @@ export default {
          *
          * @param {String} descripcion
          */
-        upper: (value) => value.toLowerCase(),
+        upper: (value) => value.toUpperCase(),
 
         /**
          * lowercase

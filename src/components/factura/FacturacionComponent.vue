@@ -461,7 +461,9 @@ export default {
             },
             /** descargo el comprobante **/
             descargarComprobante() {
-                axios.post(`comprobantes/generar`, this.facturacion)
+                let dataComprobante = Object.assign({}, this.facturacion);
+                dataComprobante.cliente =dataComprobante.cliente.cliente_id;
+                axios.post(`comprobantes/generar`, dataComprobante)
                     .then((response) => {
                         const link = document.createElement('a');
                         link.href = response.data.data.file;

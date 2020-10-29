@@ -62,6 +62,14 @@ const routes = [
       }
     },
     {
+      path: '/clientes/cuentacorriente/:cliente',
+      name: 'CuentaCorriente',
+      component: () => import('../views/CuentaCorriente.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/pedidos',
       name: 'Pedidos',
       component: () => import('../views/Pedidos.vue'),

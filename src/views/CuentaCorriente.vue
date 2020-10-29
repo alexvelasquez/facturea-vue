@@ -1,0 +1,18 @@
+<template>
+  <div>
+    <cuenta-corriente :clienteId="cliente"></cuenta-corriente>
+  </div>
+</template>
+<script>
+import CuentaCorriente from '@/components/clientes/CuentaCorriente'
+export default {
+  components:{
+    CuentaCorriente
+  },
+  computed:{
+    cliente(){
+      return this.$route.params.cliente ?? null;
+    }
+  }
+}
+</script>

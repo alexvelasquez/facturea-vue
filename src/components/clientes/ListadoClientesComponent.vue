@@ -45,7 +45,7 @@
               </v-tooltip>
               <v-tooltip top>
                   <template v-slot:activator="{ on, attrs }">
-                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
+                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)">
                           event_note
                       </v-icon>
                   </template>

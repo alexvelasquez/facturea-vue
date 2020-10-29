@@ -1,7 +1,4 @@
-
-
 <template>
-
 <div>
     <v-row no-gutters>
         <v-col cols="12">

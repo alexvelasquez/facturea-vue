@@ -61,8 +61,8 @@
             <template v-slot:[`item.numero`]="{ item }">
                 <span>{{zfill(item.numero,8)}}</span>
             </template>
-            <template v-slot:[`item.punto_venta`]="{ item }">
-                <span>{{zfill(item.punto_venta,5)}}</span>
+            <template v-slot:[`item.punto_venta`]="{ item }" >
+                <span v-if="item.punto_venta">{{zfill(item.punto_venta,5)}}</span>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
                 <td :colspan="headers.length">
@@ -113,21 +113,21 @@ export default {
                 value: 'cliente',
                 align: 'center',
             }, {
-                text: 'Tipo de Comprobante',
-                value: 'tipo_comprobante',
-                align: 'center',
-            }, {
-                text: 'Punto de venta',
-                value: 'punto_venta',
+              text: 'Condición de venta',
+              value: 'condicion_vta',
                 align: 'center',
             }, {
                 text: 'Número de Comprobante',
                 value: 'numero',
                 align: 'center',
             }, {
-                text: 'Condición de venta',
-                value: 'condicion_vta'
+              text: 'Tipo de Comprobante',
+              value: 'tipo_comprobante',
             }, {
+                text: 'Punto de venta',
+                value: 'punto_venta',
+                align: 'center',
+            },{
                 text: '',
                 value: 'data-table-expand'
             }, ],
