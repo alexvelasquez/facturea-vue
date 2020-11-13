@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import CuentaCorriente from '@/components/clientes/CuentaCorriente'
+import CuentaCorriente from '@/components/clientes/cuentaCorriente/CuentaCorriente'
 export default {
   components:{
     CuentaCorriente

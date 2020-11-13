@@ -18,6 +18,12 @@ export default {
     estadoPendientePago(){
       return 5
     },
+    consumidorFinal(){
+      return 3
+    },
+    otroDocumento(){
+      return 6
+    },
     facturaElectronicaRegistrada(){
       return store.getters.facturaElectronicaRegistrada ?? null
     },
@@ -130,7 +136,7 @@ export default {
          *
          * @param {String} dateTime
          */
-        formatDateTime: (value) => moment(String(value)).format('DD/MM/YYYY hh:mm'),
+        formatDateTime: (value) => moment(String(value)).format('DD/MM/YYYY HH:mm'),
         /**
          * Devuelve una fecha con formato
          *

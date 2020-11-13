@@ -45,15 +45,15 @@
         </v-data-table>
         <v-row id="actions-productos">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`productos/exportar`,'listado_productos.xlsx')">EXPORTAR XLS
+                <v-btn outlined v-if="categorias.length > 0" color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`productos/negocio/${negocio.negocio_id}/exportar`,'listado_productos.xlsx')">EXPORTAR XLS
                 </v-btn>
                 <v-btn v-if="seleccionados.length > 0" @click="eliminarSeleccionados" outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
-                <v-btn @click="$router.push('/marcas')" outlined color="#385F73" dark class="mb-2 mr-md-2">MARCAS
+                <v-btn @click="$router.push('/marcas')" outlined color="#385F73" dark class="mb-2 mr-md-2">IR A MARCAS
                 </v-btn>
-                <v-btn @click="$router.push('/categorias')" outlined color="#385F73" dark class="mb-2 mr-md-2 ">CATEGORIAS
+                <v-btn @click="$router.push('/categorias')" outlined color="#385F73" dark class="mb-2 mr-md-2 ">IR A CATEGORIAS
                 </v-btn>
-                <modal-producto :categorias="categorias" :marcas="marcas" :editable="editable" :dialog="dialog" :producto="itemProducto" @cerrar-dialog="close" @agregar-producto="agregarProducto($event)" @editar-producto="editarProducto($event)" @agregar-categoria="agregarCategoria($event)" @agregar-marca="agregarMarca($event)">
+                <modal-producto @reload="cargarProductosYCategorias" :categorias="categorias" :marcas="marcas" :editable="editable" :dialog="dialog" :producto="itemProducto" @cerrar-dialog="close" @agregar-producto="agregarProducto($event)" @editar-producto="editarProducto($event)" @agregar-categoria="agregarCategoria($event)" @agregar-marca="agregarMarca($event)">
                 </modal-producto>
             </v-col>
         </v-row>
@@ -170,6 +170,7 @@ export default {
             },
 
             editarProducto(item) {
+
                 this.$swal({
                     title: "¿Estas seguro que deseas modificar este producto?",
                     showCancelButton: true,

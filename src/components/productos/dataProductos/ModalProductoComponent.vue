@@ -121,7 +121,7 @@
                                 </v-col>
                                 <v-row style="margin-top: -34px;">
                                   <v-col cols="12" md="6" align="right">
-                                      <v-btn block outlined color="#385F73" class="mr-md-3" @click="exportarXlsx(`productos/exportar_modelo`,'modelo.xlsx')" dark>Descargar modelo XSLX</v-btn>
+                                      <v-btn block outlined color="#385F73" class="mr-md-3" @click="exportarXlsx(`productos/exportar_modelo`,'modelo.xlsx')" dark>Descargar modelo XSL</v-btn>
 
                                   </v-col>
                                   <v-col cols="12" md="6" align="left">
@@ -232,16 +232,24 @@ export default {
             cargarArchivo() {
                 let formData = new FormData();
                 formData.append('file', this.files[0]);
-                axios.post(`productos/importar_excel`,
+                this.dialogProducto = false;
+                axios.post(`productos/negocio/${this.negocio.negocio_id}/importar_excel`,
                         formData, {
                             headers: {
                                 'Content-Type': 'multipart/form-data'
                             }
                         }
                     ).then(response => {
-                        this.notificacion(response.data.data, 'success')
+                        if(response.response){
+                            this.notificacion(response.response.data.message, 'error')
+                        }
+                        else{
+                          this.notificacion('Archivo subido correctamente', 'success')
+                          this.$emit('reload');  
+                        }
                     })
                     .catch(error => {
+                      console.log(error.response.code);
                         this.notificacion('Ha ocurrido un error al cargar el archivo', 'error');
                     })
             },
@@ -256,7 +264,7 @@ export default {
                 this.dialogProducto = this.dialog;
             },
             producto() {
-                if (this.$refs.form && !this.editable) {
+                if (this.$refs.form && !this.editable && Object.keys(this.itemMarca).length == 0 &&  Object.keys(this.itemCategoria).length == 0) {
                     this.$refs.form.reset()
                 };
             },

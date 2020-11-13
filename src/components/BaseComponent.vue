@@ -117,7 +117,7 @@ export default {
                 optionsColapse: [{
                         title: 'CLIENTES',
                         link: '/clientes',
-                        icon: 'supervised_user_circle'
+                        icon: 'groups'
                     }, {
                         title: 'PRODUCTOS Y SERVICIOS',
                         link: '/productos',

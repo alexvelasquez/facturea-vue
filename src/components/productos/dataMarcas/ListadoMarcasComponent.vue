@@ -17,7 +17,7 @@
 
 
         </v-card-title>
-        <v-data-table v-model="selected" :headers="cabeceras" item-key="name" :items="marcas" :search="search" show-select>
+        <v-data-table v-model="seleccionados" :headers="cabeceras" item-key="marca_id" :items="marcas" :search="search" show-select>
             <template v-slot:[`item.actions`]="{item}">
                 <v-tooltip top>
                     <template v-slot:activator="{ on, attrs }">
@@ -39,14 +39,15 @@
         </v-data-table>
         <v-row id="actions-productos">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2">EXPORTAR XLS
+                <v-btn outlined v-if="seleccionados.length > 0" @click="eliminarSeleccionados" color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
-                </v-btn>
-                <v-btn outlined @click="$router.push('/productos')" color="#385F73" dark class="mb-2 mr-md-2">PRODUCTOS
+                <modal-aumento :marcas="marcas"></modal-aumento>
+
+                <v-btn outlined @click="$router.push('/productos')" color="#385F73" dark class="mb-2 mr-md-2">IR A PRODUCTOS
                 </v-btn>
                 <modal-marca :editable="editable" :dialog="dialog" :marca="itemMarca" @cerrar-dialog="close" @agregar-marca="agregarMarca($event)" @editar-marca="editarMarca($event)">
                 </modal-marca>
+                <v-btn outlined v-if="marcas.length > 0" color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`marcas/exportar/${negocio.negocio_id}`,'listado_marcas.pdf')">EXPORTAR</v-btn>
             </v-col>
         </v-row>
     </v-card>
@@ -57,9 +58,11 @@
 <script>
 
 import ModalMarca from '@/components/productos/dataMarcas/ModalMarcaComponent'
+import ModalAumento from '@/components/productos/dataMarcas/ModalAumento'
 export default {
     components: {
-        ModalMarca
+        ModalMarca,
+        ModalAumento
     },
     data: () => ({
         dialog: false,
@@ -81,7 +84,7 @@ export default {
 
         search: '',
         indexEditable: -1,
-        selected: [],
+        seleccionados: [],
         itemMarca: {},
         defaultMarca: {},
         options: [{
@@ -140,7 +143,45 @@ export default {
                     }
                 })
             },
-
+            eliminarMarca(item) {
+                this.$swal({
+                    icon: 'question',
+                    title: "¿Estas seguro que deseas eliminar esta marca?",
+                    showCancelButton: true,
+                }).then((result) => {
+                    if (result.value) {
+                        axios.put(`marcas/eliminar/${item.marca_id}`)
+                            .then(response => {
+                                const index = this.marcas.indexOf(item)
+                                this.marcas.splice(index, 1)
+                                this.notificacion('Eliminado correctamente', 'success')
+                            })
+                            .catch(error => {
+                                this.notificacion('Ha ocurrido un error al eliminar la marca','error')
+                            })
+                    }
+                })
+            },
+            eliminarSeleccionados() {
+                this.$swal({
+                    icon: 'question',
+                    title: "¿Estas seguro que deseas eliminar las marcas seleccionadas?",
+                    showCancelButton: true,
+                }).then((result) => {
+                    if (result.value) {
+                        axios.put(`marcas/eliminarMarcas`, {
+                                marcas: JSON.stringify(this.seleccionados)
+                            })
+                            .then(response => {
+                                this.seleccionados.forEach(element => this.marcas.splice(this.marcas.indexOf(element), 1))
+                                this.notificacion('Eliminados correctamente', 'success')
+                            })
+                            .catch(error => {
+                                this.notificacion('Ha ocurrido un error', 'error')
+                            })
+                    }
+                })
+            },
             modalMarca(item) {
                 this.indexEditable = this.marcas.indexOf(item);
                 this.itemMarca = Object.assign({}, item)

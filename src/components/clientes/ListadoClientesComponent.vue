@@ -13,18 +13,25 @@
                 </v-row>
             </v-col>
             <v-spacer></v-spacer>
-
-
         </v-card-title>
         <v-data-table v-model="seleccionados" :headers="cabeceras" item-key="cliente_id" :items="clientes" :search="search" show-select>
             <template v-slot:[`item.direccion`]="{ item }">
-                <span>{{item.localidad.descripcion|capitalize}}</span>
+                <span>{{item.localidad.descripcion|capitalize}} - {{item.localidad.provincia.descripcion|upper}}</span>
             </template>
             <template v-slot:[`item.precio_compra`]="{ item }">
                 <span>{{item|precioNeto}}</span>
             </template>
+            <template v-slot:[`item.email`]="{ item }">
+                <span>{{item.email ? item.email : '--'}}</span>
+            </template>
+            <template v-slot:[`item.telefono`]="{ item }">
+                <span>{{item.telefono ? item.telefono : '--'}}</span>
+            </template>
             <template v-slot:[`item.f_modificacion`]="{ item }">
                 <span>{{item.f_modificacion|formatDate}}</span>
+            </template>
+            <template v-slot:[`item.monto_debido`]="{ item }">
+                <span>{{item.monto_debido|formatPrecio }}</span>
             </template>
             <template v-slot:[`item.actions`]="{item}">
               <v-tooltip top>
@@ -43,10 +50,10 @@
                   </template>
                   <span>Eliminar</span>
               </v-tooltip>
-              <v-tooltip top>
+              <v-tooltip top v-if="item.monto_debido > 0">
                   <template v-slot:activator="{ on, attrs }">
                       <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)">
-                          event_note
+                          style
                       </v-icon>
                   </template>
                   <span>Cuenta Corriente</span>
@@ -55,8 +62,8 @@
         </v-data-table>
         <v-row id="actions-clientes">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2">EXPORTAR XLS
-                </v-btn>
+                <!-- <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2">EXPORTAR XLS
+                </v-btn> -->
                 <v-btn v-if="seleccionados.length > 0" @click="eliminarSeleccionados" outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
                 <modal-cliente :provincias="provincias" :tiposDocumentos="tiposDocumentos" :condicionesIva="condicionesIva" :editable="editable" :dialog="dialog" :cliente="itemCliente" @cerrar-dialog="close" @agregar-cliente="agregarProducto($event)" @editar-cliente="editarProducto($event)">
@@ -85,20 +92,28 @@ export default {
             value: 'razon_social'
         }, {
             text: 'Email',
+            align: 'center',
             value: 'email'
         }, {
             text: 'Direccion',
             value: 'direccion',
             sortable: true
         }, {
-            text: 'Documento',
-            value: 'documento',
+            text: 'Teléfono',
+            value: 'telefono',
+              align: 'center',
             sortable: true
         }, {
             text: 'Condición IVA',
             value: 'condicion_iva.descripcion',
             sortable: true
-        }, {
+        },
+        {
+            text: 'Deuda',
+            value: 'monto_debido',
+            sortable: true
+        },
+        {
             text: 'Acciones',
             value: 'actions',
             align: 'center',
@@ -256,6 +271,9 @@ export default {
         editable() {
             return this.indexEditable > -1 ? true : false;
         },
+        clienteCondicionIva(){
+          return this.itemCliente;
+        }
     }
 }
 
