@@ -6,11 +6,10 @@
         <!-- sidebar -->
         <v-navigation-drawer color="#385F73" v-model="drawer" fixed temporary dark>
             <v-list-item>
-                <v-list-item-content>
-                    <v-list-item-title justify="center">Facturea</v-list-item-title>
+                <v-list-item-content  justify="center">
+                    <v-list-item-title><img :src="logo" style="margin-bottom:-10px"><span style="font-weight: bold;">FACTUREA</span></v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-
             <v-divider></v-divider>
             <v-list dense>
                 <v-list-item v-for="item in options" :key="item.title" link @click="redirect(item.link)">
@@ -66,7 +65,7 @@
         </v-app-bar>
 
         <!-- container  -->
-        <v-main class="blue-grey lighten-5">
+        <v-main class=" app-auth blue-grey lighten-5">
             <v-container fluid class="pa-md-10 ">
                 <!-- content routes -->
                 <router-view>
@@ -95,9 +94,11 @@
 </template>
 
 <script>
+import logo from '@/assets/images/logo.png'
 export default {
     data() {
             return {
+                logo:logo,
                 drawer: null,
                 options: [{
                         title: 'INICIO',
@@ -168,4 +169,5 @@ export default {
 .organizacion-text{
   margin-left: 15px;
 }
+
 </style>

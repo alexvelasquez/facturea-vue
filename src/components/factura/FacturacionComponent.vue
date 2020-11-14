@@ -137,9 +137,9 @@
                                 <v-select v-model="facturacion.condicion_vta" :rules="reglasValidacion.campoRequerido" hint="campo obligatorio(*)" persistent-hint :items="condicionesVta" item-value="condicion_venta_id" item-text="descripcion" placeholder="Seleccione una opción" label="Condición de venta"
                                 dense outlined></v-select>
                             </v-col>
-                            <v-col cols="12" sm="6" md="3">
+                            <!-- <v-col cols="12" sm="6" md="3">
                                 <v-text-field color="#385F73" label="Nro Remito" outlined placeholder="0" type="number" dense></v-text-field>
-                            </v-col>
+                            </v-col> -->
                         </v-row>
                     </v-form>
                     <v-divider></v-divider>

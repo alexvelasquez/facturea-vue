@@ -10,8 +10,3 @@ export default {
     components:{LoginComponent}
 }
 </script>
-<style>
-#app{
-    background-color: #385F73;
-}
-</style>

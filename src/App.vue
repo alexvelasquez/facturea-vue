@@ -1,5 +1,5 @@
 <template>
-  <v-app id="app">
+  <v-app id="app" :class="loggedIn ? 'app-logued' : 'app-not-logued'">
     <loader></loader>
     <base-component>
     </base-component>
@@ -20,3 +20,13 @@ export default {
 
 };
 </script>
+<style media="screen">
+  .app-logued{
+    background-color: #eceff1 !important;
+    border-color: #eceff1 !important;
+  }
+  .app-not-logued{
+    background-color: #385F73 !important;
+  }
+
+</style>

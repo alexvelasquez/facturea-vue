@@ -2,7 +2,7 @@
 <div>
     <v-row>
         <v-col cols="12" align="center" class="text-h5 font-weight-black white--text">
-            <p>CON FACTUREA MANEJAR TU NEGOCIO, ES OTRA COSA</p>
+            <p><img :src="logo" style="margin-bottom: -15px;"><span>CON FACTUREA MANEJAR TU NEGOCIO, ES OTRA COSA</span></p>
         </v-col>
     </v-row>
     <v-card class="mx-auto mt-10" max-width="400" outlined>
@@ -36,7 +36,7 @@
 </template>
 
 <script>
-
+import logo from '@/assets/images/logo.png'
 import ModalRegistro from './ModalRegistro'
 export default {
     components: {
@@ -44,6 +44,7 @@ export default {
     },
     data() {
         return {
+            logo : logo,
             auth:{},
             dialog: false,
             obligatorio: [

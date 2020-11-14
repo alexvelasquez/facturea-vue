@@ -24,6 +24,9 @@ export default {
     otroDocumento(){
       return 6
     },
+    loggedIn(){
+      return store.getters.loggedIn
+    },
     facturaElectronicaRegistrada(){
       return store.getters.facturaElectronicaRegistrada ?? null
     },
