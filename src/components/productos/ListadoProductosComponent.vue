@@ -65,7 +65,7 @@
 
 <script>
 
-import ModalProducto from '@/components/productos/dataProductos/ModalProductoComponent'
+import ModalProducto from '@/components/productos/ModalProductoComponent'
 export default {
     components: {
         ModalProducto
@@ -188,25 +188,6 @@ export default {
                             })
                     }
                 })
-            },
-            agregarCategoria(item){
-                axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,item)
-                .then(response=>{
-                  this.modalProducto()
-                  this.categorias.push(response.data.data);
-                  this.notificacion('Categoria agregada correctamente','success')
-                })
-            },
-            agregarMarca(item) {
-                axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`,item)
-                    .then(response => {
-                        this.dialog = true;
-                        this.marcas.push(response.data.data);
-                        this.notificacion('Marca agregada correctamente', 'success')
-                    })
-                    .catch(error => {
-                        this.notificacion('Ha ocurrido al agregar la marca','error')
-                    })
             },
 
             eliminarProducto(item) {

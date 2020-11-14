@@ -27,14 +27,14 @@
                     </template>
                     <span>Editar</span>
                 </v-tooltip>
-                <v-tooltip top >
+                <!-- <v-tooltip top >
                     <template v-slot:activator="{ on, attrs }">
                         <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarMarca(item)">
                             mdi-close
                         </v-icon>
                     </template>
                     <span>Eliminar</span>
-                </v-tooltip>
+                </v-tooltip> -->
             </template>
         </v-data-table>
         <v-row id="actions-productos">
@@ -57,8 +57,8 @@
 
 <script>
 
-import ModalMarca from '@/components/productos/dataMarcas/ModalMarcaComponent'
-import ModalAumento from '@/components/productos/dataMarcas/ModalAumento'
+import ModalMarca from '@/components/productos/marcas/ModalMarcaComponent'
+import ModalAumento from '@/components/productos/ModalAumento'
 export default {
     components: {
         ModalMarca,

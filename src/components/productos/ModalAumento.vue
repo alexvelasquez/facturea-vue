@@ -4,7 +4,7 @@
 
 <v-dialog v-model="dialog" max-width="550" persistent>
     <template v-slot:activator="{ on, attrs }">
-        <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" v-bind="attrs" v-on="on" @click="dialog=true">AUMENTO POR MARCA</v-btn>
+        <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" v-bind="attrs" v-on="on" @click="dialog=true">AUMENTO POR {{marcas ? 'MARCA' : 'CATEGORIA'}}</v-btn>
     </template>
     <v-card>
         <v-tabs v-model="tab" background-color="transparent" color="#385F73" grow>
@@ -22,7 +22,9 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="12" md="7">
-                                        <v-autocomplete v-model="aumento.marca" :items="marcas" item-value="marca_id" item-text="descripcion" :rules="requerido" label="Descripción" hint="campo obligatorio(*)" placeholder="Buscar marca" outlined persistent-hint dense color="#385F73">
+                                        <v-autocomplete v-if="marcas" v-model="aumento.marca" :items="marcas" item-value="marca_id" item-text="descripcion" :rules="requerido" label="Marca" hint="campo obligatorio(*)" placeholder="Buscar marca" outlined persistent-hint dense color="#385F73">
+                                        </v-autocomplete>
+                                        <v-autocomplete v-else v-model="aumento.categoria" :items="categorias" item-value="categoria_id" item-text="descripcion" :rules="requerido" label="Categoria" hint="campo obligatorio(*)" placeholder="Buscar categoria" outlined persistent-hint dense color="#385F73">
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" sm="12" md="5">
@@ -64,8 +66,9 @@ export default {
             tab: null,
             dialog: false,
             aumento: {
+                incremento: null,
                 marca: null,
-                incremento: null
+                categoria : null
             },
             requerido: [
                 v => !!v || 'Este campo es requerido'
@@ -74,6 +77,7 @@ export default {
     },
     methods: {
         aumentar() {
+            let url_aumentar = this.marcas ? 'marcas/incremento' : 'categorias/incremento';
             if (this.$refs.form.validate()) {
               this.$swal({
                   title: "¿Quieres aplicar este aumento a las cuentas de los clientes?",
@@ -82,7 +86,7 @@ export default {
               }).then((result) => {
                   this.dialog = false;
                   this.aumento['cuentaCorriente']= (result.value) ? 1 : 0;
-                  axios.put(`marcas/incremento`, this.aumento)
+                  axios.put(url_aumentar, this.aumento)
                       .then(response => {
                           if(response.data.code == 200){
                             this.notificacion('Aumento aplicado correctamente','success');

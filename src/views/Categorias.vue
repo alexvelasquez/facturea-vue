@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import CategoriasComponent from '@/components/productos/dataCategorias/ListadoCategoriasComponent'
+import CategoriasComponent from '@/components/productos/categorias/ListadoCategoriasComponent'
 export default {
   components:{
     CategoriasComponent

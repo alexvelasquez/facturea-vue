@@ -176,6 +176,7 @@ export default {
                 this.disabled = false
                 if(this.cliente.condicion_iva.condicion_iva_id == this.consumidorFinal){
                     this.cliente.tipo_documento.tipo_documento_id = this.otroDocumento;
+                    this.cliente.documento = 0;
                     this.disabled = true
                 }
               }

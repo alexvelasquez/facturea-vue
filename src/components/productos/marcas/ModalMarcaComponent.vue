@@ -1,7 +1,4 @@
-
-
 <template>
-
 <v-dialog v-model="dialog" :max-width="'500px'" persistent>
     <template v-slot:activator="{ on, attrs }">
         <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" v-bind="attrs" v-on="on">Nueva Marca</v-btn>
@@ -65,13 +62,8 @@ export default {
     data() {
         return {
             /** NUEVO PRODUCTO */
-            marcas: [],
-            checkbox: false,
-            files: [],
             model: null,
-            allow: false,
             tab: null,
-            activar: true,
             tabImpor: false,
             obligatorio: [
                 v => !!v || 'Este campo es requerido'

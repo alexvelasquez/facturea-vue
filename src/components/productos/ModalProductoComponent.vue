@@ -21,8 +21,18 @@
                             <v-container>
                                 <v-row>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-autocomplete v-model="producto.categoria.categoria_id" item-value="categoria_id" :items="categorias" :label="'Categoria'" placeholder="seleccione una categoria" item-text="descripcion" :search-input.sync="itemCategoria.descripcion" persistent-hint :rules="obligatorio"
-                                        no-data-text="Escribir nombre de categoria" outlined dense>
+                                        <v-autocomplete
+                                        v-model="producto.categoria.categoria_id"
+                                        item-value="categoria_id"
+                                        :items="categorias"
+                                        :label="'Categoria'"
+                                        placeholder="seleccione una categoria"
+                                        item-text="descripcion"
+                                        :search-input.sync="itemCategoria.descripcion"
+                                        persistent-hint
+                                        :rules="obligatorio"
+                                        no-data-text="Escribir nombre de categoria"
+                                        outlined dense>
                                             <template slot="no-data">
                                                 <v-list v-if="itemCategoria.descripcion" dense>
                                                     <v-list-item-group color="primary">
@@ -42,7 +52,17 @@
                                     </v-col>
 
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-autocomplete v-model="producto.marca.marca_id" item-value="marca_id" :items="marcas" :label="'Marca'" placeholder="seleccione una marca" item-text="descripcion" persistent-hint :rules="obligatorio" :search-input.sync="itemMarca.descripcion" outlined dense>
+                                        <v-autocomplete
+                                        v-model="producto.marca.marca_id"
+                                        item-value="marca_id"
+                                        item-text="descripcion"
+                                        :items="marcas"
+                                        label="Marca"
+                                        placeholder="seleccione una marca"
+                                        :rules="obligatorio"
+                                        :search-input.sync="itemMarca.descripcion"
+                                        no-data-text="Escribir nombre de marca"
+                                        outlined dense>
                                           <template slot="no-data">
                                               <v-list v-if="itemMarca.descripcion" dense>
                                                   <v-list-item-group color="primary">
@@ -212,6 +232,7 @@ export default {
                 axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,this.itemCategoria)
                 .then(response=>{
                   this.categorias.push(response.data.data);
+                  this.producto['categoria'] = response.data.data;
                   this.notificacion('Categoria agregada correctamente','success')
                 })
             },
@@ -220,6 +241,7 @@ export default {
                 axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`,this.itemMarca)
                     .then(response => {
                         this.marcas.push(response.data.data);
+                        this.producto['marca'] = response.data.data;
                         this.notificacion('Marca agregada correctamente', 'success')
                     })
                     .catch(error => {
@@ -245,11 +267,10 @@ export default {
                         }
                         else{
                           this.notificacion('Archivo subido correctamente', 'success')
-                          this.$emit('reload');  
+                          this.$emit('reload');
                         }
                     })
                     .catch(error => {
-                      console.log(error.response.code);
                         this.notificacion('Ha ocurrido un error al cargar el archivo', 'error');
                     })
             },
@@ -260,14 +281,22 @@ export default {
             }
     },
     watch: {
-        dialog() {
+            dialog() {
                 this.dialogProducto = this.dialog;
             },
             producto() {
-                if (this.$refs.form && !this.editable && Object.keys(this.itemMarca).length == 0 &&  Object.keys(this.itemCategoria).length == 0) {
+                if(!this.editable && this.itemMarcasCategoriasVacias){
+                  this.$refs.form.reset()
+                }
+                if (this.$refs.form && !this.editable) {
                     this.$refs.form.reset()
                 };
             },
+    },
+    computed:{
+      itemMarcasCategoriasVacias(){
+        return !this.itemMarca.descripcion && !this.itemCategoria.descripcion
+      }
     }
 }
 

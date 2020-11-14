@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-import MarcasComponent from '@/components/productos/dataMarcas/ListadoMarcasComponent'
+import MarcasComponent from '@/components/productos/marcas/ListadoMarcasComponent'
 export default {
   components:{
     MarcasComponent
