@@ -7,6 +7,9 @@
 <script>
 import LoginComponent from '@/components/auth/LoginComponent.vue'
 export default {
-    components:{LoginComponent}
+    components:{LoginComponent},
+    mounted(){
+      console.log(axios.defaults.baseURL)
+    }
 }
 </script>

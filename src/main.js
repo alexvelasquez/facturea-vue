@@ -23,7 +23,8 @@ const options = {
 Vue.use(VueSweetalert2,options);
 
 Vue.use(VModal)
-axios.defaults.baseURL = 'http://localhost/api-facturea/public/index.php/api/';
+axios.defaults.baseURL = process.env.VUE_APP_API;
+
 
 /** capture los request error */
 var value = 0
