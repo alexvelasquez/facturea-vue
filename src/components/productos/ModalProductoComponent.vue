@@ -249,7 +249,8 @@ export default {
                     })
             },
             cerrarDialog() {
-                !this.editable ? this.dialogProducto = false : this.$emit('cerrar-dialog');
+                this.dialogProducto = false;
+                this.$emit('cerrar-dialog');
             },
             cargarArchivo() {
                 let formData = new FormData();
@@ -285,10 +286,8 @@ export default {
                 this.dialogProducto = this.dialog;
             },
             producto() {
-                if(!this.editable && this.itemMarcasCategoriasVacias){
-                  this.$refs.form.reset()
-                }
                 if (this.$refs.form && !this.editable) {
+                    console.log('aa')
                     this.$refs.form.reset()
                 };
             },

@@ -43,7 +43,7 @@ axios.interceptors.response.use(response => {
   return response;
 },error => {
       store.dispatch('loading',false)
-      if(error.response.status == 401 && error.response.data.message === "Expired JWT Token")
+      if(error.response.status == 401 && (error.response.data.message === "Expired JWT Token" || error.response.data.message === "Invalid JWT Token"))
       {
           store.dispatch('logout')
           .then(response=>{

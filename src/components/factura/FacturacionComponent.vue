@@ -86,9 +86,9 @@
                             <v-col cols="12" sm="6" md="6">
                                 <v-row>
                                     <v-col cols="12" sm="12" md="12">
-                                        <v-autocomplete :rules="reglasValidacion.campoRequerido" hint="campo obligatorio(*)" persistent-hint v-model="facturacion.concepto" :items="tiposConceptos" item-value="Id" item-text="Desc" label="Conceptos" placeholder="Seleccione un concepto" outlined
+                                        <v-select :rules="reglasValidacion.campoRequerido" hint="campo obligatorio(*)" persistent-hint v-model="facturacion.concepto" :items="tiposConceptos" item-value="afip_id" item-text="descripcion" label="Conceptos" placeholder="Seleccione un concepto" outlined
                                         persistent-hint dense color="#385F73">
-                                        </v-autocomplete>
+                                      </v-select>
                                     </v-col>
                                     <v-col cols="12" sm="4" md="4" v-show="facturacion.concepto && !conceptoProduto">
                                         <v-menu ref="fDesde" v-model="menuDate.fechaDesde" :close-on-content-click="false" :return-value.sync="facturacion.fecha_desde" transition="scale-transition" offset-y min-width="290px">
