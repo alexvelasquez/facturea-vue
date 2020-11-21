@@ -286,15 +286,14 @@ export default {
                 this.dialogProducto = this.dialog;
             },
             producto() {
-                if (this.$refs.form && !this.editable) {
-                    console.log('aa')
+                if (this.$refs.form && !this.editable && !this.productoNoEsVacio) {
                     this.$refs.form.reset()
                 };
             },
     },
     computed:{
-      itemMarcasCategoriasVacias(){
-        return !this.itemMarca.descripcion && !this.itemCategoria.descripcion
+      productoNoEsVacio(){
+        return this.producto.marca.marca_id && this.producto.categoria.categoria_id;
       }
     }
 }
