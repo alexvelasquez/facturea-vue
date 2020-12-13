@@ -1,3 +1,19 @@
+<style>
+
+.v-list-group.v-list-group--active.v-list-group--sub-group.primary--text {
+    color: white !important;
+}
+
+.organizacion .v-list-group__header.v-list-item.v-list-item--link.theme--dark {
+    margin-left: -7px;
+}
+
+.organizacion-text {
+    margin-left: 15px;
+}
+
+</style>
+
 <template>
 
 <div>
@@ -5,48 +21,12 @@
     <div v-if="logginIn">
         <!-- sidebar -->
         <v-navigation-drawer color="#385F73" v-model="drawer" fixed temporary dark>
-            <v-list-item>
-                <v-list-item-content  justify="center">
-                    <v-list-item-title><img :src="logo" style="margin-bottom:-10px"><span style="font-weight: bold;">FACTUREA</span></v-list-item-title>
-                </v-list-item-content>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list dense>
-                <v-list-item v-for="item in options" :key="item.title" link @click="redirect(item.link)">
-                    <v-list-item-icon>
-                        <v-icon>{{item.icon}}</v-icon>
-                    </v-list-item-icon>
-
-                    <v-list-item-content >
-                        <v-list-item-title> {{ item.title }}</v-list-item-title>
-                    </v-list-item-content>
-
-                </v-list-item>
-
-                <v-list-group
-                      :value="false"
-                      prepend-icon="vpn_lock"
-                      sub-group
-                      class="organizacion"
-                    >
-                      <template v-slot:activator>
-                        <v-list-item-title class="organizacion-text">MI ORGANIZACIÓN</v-list-item-title>
-                      </template>
-                        <v-list-item
-                        class="organizacion" v-for="(item,index) in optionsColapse"
-                        :key="item.title" @click="redirect(item.link)">
-                        <v-list-item-icon>
-                          <v-icon>{{item.icon}}</v-icon>
-                        </v-list-item-icon>
-                        <v-list-item-title>{{item.title}}</v-list-item-title>
-                        </v-list-item>
-              </v-list-group>
-            </v-list>
+          <sidebar></sidebar>
         </v-navigation-drawer>
 
         <!-- header -->
         <v-app-bar app color="#385F73">
-            <v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+            <v-app-bar-nav-icon color="white" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
             <div class="text-caption white--text">{{userName.toUpperCase() }}</div>
             <v-menu transition="slide-x-reverse-transition">
@@ -56,9 +36,17 @@
                     </v-btn>
                 </template>
                 <v-list>
-                    <v-list-item v-for="(item,index) in optionsUser" :key="index" link  @click="redirect(item.link)">
-                        <v-icon class="pr-4">{{item.icon}}</v-icon>
-                        <v-list-item-title class="text-caption">{{item.title}}</v-list-item-title>
+                    <v-list-item @click="dialogPerfil=true">
+                        <v-icon class="pr-4">person</v-icon>
+                        <v-list-item-title class="text-caption">Mi Perfil</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="dialogContraseña=true">
+                        <v-icon class="pr-4">lock_open</v-icon>
+                        <v-list-item-title class="text-caption">Cambiar Contraseña</v-list-item-title>
+                    </v-list-item>
+                    <v-list-item @click="redirect('/logout')">
+                        <v-icon class="pr-4">exit_to_app</v-icon>
+                        <v-list-item-title class="text-caption">Salir</v-list-item-title>
                     </v-list-item>
                 </v-list>
             </v-menu>
@@ -83,6 +71,11 @@
             </v-container>
         </v-main>
     </div>
+    <!-- Modal Perfil -->
+    <modal-perfil :dialog="dialogPerfil" @cerrar-dialog="dialogPerfil=false"></modal-perfil>
+
+    <!-- Modal cambio contraseña -->
+    <modal-clave :dialog="dialogContraseña" @cerrar-dialog="dialogContraseña=false"></modal-clave>
     <!-- footer -->
     <v-footer app>
         <v-col class="text-center text-sm-body-2" cols="12">
@@ -94,80 +87,33 @@
 </template>
 
 <script>
+
 import logo from '@/assets/images/logo.png'
+import ModalPerfil from '@/components/usuario/ModalPerfil.vue'
+import ModalClave from '@/components/usuario/ModalCambioClave.vue'
+import Sidebar from '@/components/modulos/Sidebar.vue'
 export default {
+  components:{
+    ModalPerfil,
+    ModalClave,
+    Sidebar
+  },
     data() {
             return {
-                logo:logo,
+                logo: logo,
                 drawer: null,
-                options: [{
-                        title: 'INICIO',
-                        link: '/',
-                        icon: 'home'
-                    }, {
-                        title: 'COMPROBANTES',
-                        link: '/comprobantes',
-                        icon: 'wysiwyg'
-                    }, {
-                        title: 'GENERAR COMPROBANTE',
-                        link: '/facturacion',
-                        icon: 'book_online'
-                    },
-
-                ],
-                optionsColapse: [{
-                        title: 'CLIENTES',
-                        link: '/clientes',
-                        icon: 'groups'
-                    }, {
-                        title: 'PRODUCTOS Y SERVICIOS',
-                        link: '/productos',
-                        icon: 'fastfood'
-                    }, {
-                        title: 'PEDIDOS',
-                        link: '/pedidos',
-                        icon: 'moped'
-                    }, {
-                        title: 'CONFIGURACIÓN',
-                        link: '/configuracion',
-                        icon: 'miscellaneous_services'
-                }],
-                optionsUser: [{
-                    title: 'Mi Perfil',
-                    icon: 'person',
-                    link:''
-                }, {
-                    title: 'Cambiar Contraseña',
-                    icon: 'lock_open',
-                    link:''
-                }, {
-                    title: 'Salir',
-                    icon: 'exit_to_app',
-                    link:'/logout'
-                }, ]
-
+                dialogPerfil: false,
+                dialogContraseña: false,
             }
         },
         computed: {
             logginIn() {
-                return this.$store.getters.loggedIn
-            },
-            userName() {
-              return this.$store.getters.user.name+' '+this.$store.getters.user.lastname;
-            }
+                    return this.$store.getters.loggedIn
+                },
+                userName() {
+                    return this.$store.getters.user.name + ' ' + this.$store.getters.user.lastname;
+                }
         }
 }
 
 </script>
-<style>
-.v-list-group.v-list-group--active.v-list-group--sub-group.primary--text{
-  color:white !important;
-}
-.organizacion .v-list-group__header.v-list-item.v-list-item--link.theme--dark{
-  margin-left: -7px;
-}
-.organizacion-text{
-  margin-left: 15px;
-}
-
-</style>

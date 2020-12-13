@@ -161,6 +161,12 @@
             </v-tab-item>
         </v-tabs-items>
     </v-card>
+    <v-overlay :absolute="true" :value="busqueda">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
 </v-dialog>
 
 </template>
@@ -201,6 +207,7 @@ export default {
             /** NUEVO PRODUCTO */
             itemCategoria:{},
             itemMarca:{},
+            busqueda:false,
             files: null,
             aliCuotas: [],
             model: null,
@@ -228,21 +235,23 @@ export default {
                 }
             },
             agregarCategoria(){
-                this.notificacion('Agregando categoria','warning')
+                this.busqueda = true;
                 axios.post(`categorias/negocio/${this.negocio.negocio_id}/nuevo`,this.itemCategoria)
                 .then(response=>{
                   this.categorias.push(response.data.data);
                   this.producto['categoria'] = response.data.data;
-                  this.notificacion('Categoria agregada correctamente','success')
+                  this.busqueda = false;
+                  this.notificacion('Categoria agregada.','success')
                 })
             },
             agregarMarca() {
-              this.notificacion('Agregando marca','warning')
+              this.busqueda = true;
                 axios.post(`marcas/negocio/${this.negocio.negocio_id}/nuevo`,this.itemMarca)
                     .then(response => {
                         this.marcas.push(response.data.data);
                         this.producto['marca'] = response.data.data;
-                        this.notificacion('Marca agregada correctamente', 'success')
+                        this.busqueda = false;
+                        this.notificacion('Marca agregada.', 'success')
                     })
                     .catch(error => {
                         this.notificacion('Ha ocurrido al agregar la marca','error')

@@ -45,7 +45,7 @@
         </v-data-table>
         <v-row id="actions-productos">
             <v-col cols="12" sm="12" md="12" align="end">
-                <v-btn outlined v-if="categorias.length > 0" color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`productos/negocio/${negocio.negocio_id}/exportar`,'listado_productos.xlsx')">EXPORTAR XLS
+                <v-btn outlined v-if="productos.length > 0" color="#385F73" dark class="mb-2 mr-md-2" @click="exportar(`productos/negocio/${negocio.negocio_id}/exportar`,'listado_productos.xlsx')">EXPORTAR XLS
                 </v-btn>
                 <v-btn v-if="seleccionados.length > 0" @click="eliminarSeleccionados" outlined color="#385F73" dark class="mb-2 mr-md-2">ELIMINAR SELECCIONADOS
                 </v-btn>
@@ -161,7 +161,7 @@ export default {
                 axios.post(`productos/negocio/${this.negocio.negocio_id}/nuevo`, item)
                     .then(response => {
                         this.productos.push(response.data.data);
-                        this.notificacion('Producto agregado correctamente', "success");
+                        this.notificacion('Producto agregado.', "success");
                         this.close();
                     })
                     .catch(error => {
@@ -180,7 +180,7 @@ export default {
                         axios.put(`productos/editar/${item.producto_id}`, item)
                             .then(response => {
                                 Object.assign(this.productos[this.indexEditable], response.data.data)
-                                this.notificacion('Producto modificado correctamente', 'success');
+                                this.notificacion('Producto modificado.', 'success');
                                 this.close();
                             })
                             .catch(error => {
@@ -201,7 +201,7 @@ export default {
                             .then(response => {
                                 const index = this.productos.indexOf(item)
                                 this.productos.splice(index, 1)
-                                this.notificacion('Eliminado correctamente', 'success')
+                                this.notificacion('Producto eliminado.', 'success')
                             })
                             .catch(error => {
                                 this.notificacion('Ha ocurrido un error al eliminar el producto','error')
@@ -221,7 +221,7 @@ export default {
                             })
                             .then(response => {
                                 this.seleccionados.forEach(element => this.productos.splice(this.productos.indexOf(element), 1))
-                                this.notificacion('Eliminados correctamente', 'success')
+                                this.notificacion('Productos eliminados.', 'success')
                             })
                             .catch(error => {
                                 this.notificacion('Ha ocurrido un error', 'error')

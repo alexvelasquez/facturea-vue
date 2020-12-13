@@ -6,7 +6,7 @@ provincia<template>
     </v-row>
     <v-card>
         <v-container>
-            <p class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Empresa</p>
+            <p class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Negocio</p>
             <v-form ref="form">
                 <v-row>
                 <v-col cols="12" md="8">
@@ -25,7 +25,7 @@ provincia<template>
                             </v-autocomplete>
                         </v-col>
                         <v-col cols="12" md="6">
-                            <v-autocomplete v-model="localidad" :items="localidades" :rules="reglasValidacion.campoRequerido" label="Localidad(*)" item-value="localidad_id" item-text="descripcion" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73" :disabled="provincia == null">
+                            <v-autocomplete v-model="localidad" :items="localidades" :rules="reglasValidacion.campoRequerido" label="Localidad(*)" item-value="localidad_id" autocomplete="new-password" item-text="descripcion" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73" :disabled="provincia == null">
                             </v-autocomplete>
                         </v-col>
                     </v-row>
@@ -40,18 +40,21 @@ provincia<template>
                           <v-text-field v-model="cuitCuil" :rules="reglasValidacion.campoRequerido" label="CUIT/CUIL(*)" outlined placeholder="Ingrese CUIT/CUIL" dense></v-text-field>
                       </v-col>
                     </v-row>
-                    <p v-if="facturaElectronicaRegistrada" class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Facturación</p>
-                    <v-row v-if="facturaElectronicaRegistrada" style="margin-bottom:-30px">
+                    <p v-if="facturaElectronicaHabilitada" class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2">Datos Facturación</p>
+                    <v-row v-if="facturaElectronicaHabilitada" style="margin-bottom:-30px">
+                        <v-col cols="12" md="6">
+                          <v-text-field v-model="nombreFantasia" :rules="reglasValidacion.campoRequerido" label="Nombre de fantasia(*)" outlined placeholder="Ingrese un nombre" dense></v-text-field>
+                        </v-col>
                         <v-col cols="12" md="6">
                           <v-select v-model="condicionIva" :items="condicionesIva" item-value="condicion_iva_id" item-text="descripcion" :rules="reglasValidacion.campoRequerido" label="Condición ante al IVA(*)" placeholder="Seleccione una opción" outlined persistent-hint dense color="#385F73"></v-select>
                         </v-col>
                     </v-row>
-                    <v-row v-if="facturaElectronicaRegistrada" style="margin-bottom:-30px">
+                    <v-row v-if="facturaElectronicaHabilitada" style="margin-bottom:-30px">
                       <v-col cols="12" md="4">
                           <v-text-field v-model="iibb" :rules="reglasValidacion.campoRequerido" label="IIBB(*)" outlined placeholder="0" dense></v-text-field>
                       </v-col>
                       <v-col cols="12" md="4">
-                          <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date" transition="scale-transition" offset-y min-width="290px">
+                          <!-- <v-menu ref="menu" v-model="menu" :close-on-content-click="false" :return-value.sync="date" transition="scale-transition" offset-y min-width="290px">
                               <template v-slot:activator="{ on, attrs }">
                                   <v-text-field v-model="inicioActividad" :rules="reglasValidacion.campoRequerido" label="Inic. Actividades(*)" placeholder="YYYY-MM-DD"  prepend-icon="event" readonly v-bind="attrs" v-on="on" dense outlined clearable></v-text-field>
                               </template>
@@ -60,6 +63,12 @@ provincia<template>
                                   <v-btn text color="primary" @click="menu = false">Cancelar</v-btn>
                                   <v-btn text color="primary" @click="$refs.menu.save(date)">Aceptar</v-btn>
                               </v-date-picker>
+                          </v-menu> -->
+                          <v-menu v-model="menu" :close-on-content-click="false" transition="scale-transition">
+                              <template v-slot:activator="{ on, attrs }">
+                                  <v-text-field v-model="formatInicioActividad" :rules="reglasValidacion.campoRequerido" label="Inic. Actividades(*)" placeholder="YYYY-MM-DD"  persistent-hint prepend-icon="mdi-calendar" readonly v-bind="attrs" v-on="on" dense outlined clearable></v-text-field>
+                              </template>
+                              <v-date-picker v-model="inicioActividad" no-title @input="menu = false"></v-date-picker>
                           </v-menu>
                       </v-col>
                       <v-col cols="12" md="4">
@@ -240,6 +249,14 @@ export default {
                   this.$store.commit('setNegocioRazonSocial',value)
                 }
             },
+            nombreFantasia:{
+                get(){
+                  return this.$store.getters.getNegocioNombreFantasia
+                },
+                set(value){
+                  this.$store.commit('setNegocioNombreFantasia',value)
+                }
+            },
             email:{
               get(){
                 return this.$store.getters.getNegocioEmail
@@ -322,12 +339,16 @@ export default {
             },
             inicioActividad:{
               get(){
-                return this.$store.getters.getNegocioInicioActividad
+                return moment(this.$store.getters.getNegocioInicioActividad).format('YYYY-MM-DD')
               },
               set(value){
                 this.$store.commit('setNegocioInicioActividad',value)
               }
             },
+
+            formatInicioActividad(){
+              return moment(this.inicioActividad).format('DD/MM/YYYY');
+            }
 
         }
 }

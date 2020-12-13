@@ -110,6 +110,22 @@ const routes = [
       }
     },
     {
+      path: '/usuarios',
+      name: 'Usuarios',
+      component: () => import('../views/Usuarios.vue'),
+      meta: {
+        requiresAdmin: true
+      }
+    },
+    // {
+    //   path: '/notificaciones',
+    //   name: 'Notificacion',
+    //   component: () => import('../views/Login.vue'),
+    //   meta: {
+    //     requiresAdmin: true
+    //   }
+    // },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('../views/Login.vue'),
@@ -120,10 +136,7 @@ const routes = [
     {
       path: '/logout',
       name: 'Logout',
-      component: () => import('../components/auth/Logout.vue'),
-      meta: {
-        requiresAuth: true
-      }
+      component: () => import('../components/auth/Logout.vue')
     }
 ]
 
@@ -142,21 +155,50 @@ router.beforeEach((to, from, next) => {
               name: 'Login'
           })
       }
+      if (store.getters.getUserRol == 'ROLE_ADMIN') {
+          next({
+              name: 'Usuarios'
+          })
+      }
       else{
         next()
       }
-  } else if (to.matched.some(record => record.meta.requiresVisitor)) {
+  }  else if (to.matched.some(record => record.meta.requiresAdmin)) {
+        // this route requires auth, check if logged in
+        // if not, redirect to login page.
+        if (!store.getters.loggedIn) {
+            next({
+                name: 'Login'
+            })
+        }
+        else{
+          console.log()
+          next()
+        }
+    }
+   else if (to.matched.some(record => record.meta.requiresVisitor)) {
       if (store.getters.loggedIn) {
+          next({
+              name: (store.getters.getUserRol == 'ROLE_USER') ? 'Home' : 'Usuarios'
+          })
+      }
+      if (store.getters.getUserRol == 'ROLE_USER') {
           next({
               name: 'Home'
           })
-      } else {
+      }
+      else {
           next()
       }
   } else {
-      next({
-          name: 'Home'
-      })
+      if(to.name == 'Logout'){
+        next()
+      }
+      else{
+        next({
+          name: (store.getters.getUserRol == 'ROLE_USER') ? 'Home' : 'Usuarios'
+        })
+      }
   }
 })
 export default router

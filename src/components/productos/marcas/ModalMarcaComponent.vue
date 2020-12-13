@@ -46,6 +46,7 @@
 
 export default {
     props: {
+      busqueda:false,
         marca: {
             type: Object,
             default: {},

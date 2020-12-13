@@ -10,7 +10,7 @@
 <template>
 
 <div>
-    <v-row v-if="!facturaElectronicaRegistrada">
+    <v-row v-if="!facturaElectronicaHabilitada">
         <v-col cols="12">
             <v-alert type="warning" colored-border elevation="2" prominent border="left" dismissible>
                 <v-row align="center">
@@ -32,7 +32,7 @@
             <v-row>
                 <v-col cols="12" sm="12" md="12">
                     <v-row>
-                        <v-col cols="12" sm="6" md="6">
+                        <v-col cols="12" sm="6" md="8">
                             <v-card class="mx-auto" outlined>
                                 <v-list-item four-line>
                                     <v-list-item-content class="text-left">
@@ -44,6 +44,11 @@
                                     </v-list-item-content>
                                 </v-list-item>
                             </v-card>
+                        </v-col>
+                        <v-col cols="12" sm="6" md="4">
+                          <v-row justify="end" align="end" class="mt-10">
+                            <v-switch v-model="tipoFactura" label="Factura Electrónica"></v-switch>
+                          </v-row>
                         </v-col>
                     </v-row>
                     <v-form ref="formFactura">
@@ -88,7 +93,7 @@
                                     <v-col cols="12" sm="12" md="12">
                                         <v-select :rules="reglasValidacion.campoRequerido" hint="campo obligatorio(*)" persistent-hint v-model="facturacion.concepto" :items="tiposConceptos" item-value="afip_id" item-text="descripcion" label="Conceptos" placeholder="Seleccione un concepto" outlined
                                         persistent-hint dense color="#385F73">
-                                      </v-select>
+                                        </v-select>
                                     </v-col>
                                     <v-col cols="12" sm="4" md="4" v-show="facturacion.concepto && !conceptoProduto">
                                         <v-menu ref="fDesde" v-model="menuDate.fechaDesde" :close-on-content-click="false" :return-value.sync="facturacion.fecha_desde" transition="scale-transition" offset-y min-width="290px">
@@ -328,18 +333,18 @@ export default {
         }],
         productos: [],
         pedido: null,
-        tipo: 'RECIBO',
+        tipoFactura: false,
     }),
     mounted() {
         this.adapterHeader();
-        this.consultarPorTipo();
+        this.cargarDatosComprobante()
         /** pregunto si el usuario quiere descargar un comprobante o un reciob **/
 
         // this.cargarDatosFacturacion();
     },
     methods: {
         cargarDatosComprobante() {
-                let tipoComprobante = (this.tipo == 'FACTURA' ? this.negocio.condicion_iva.afip_id : null);
+                let tipoComprobante = (this.tipoFactura ? this.negocio.condicion_iva.afip_id : null);
                 axios.all([axios.get(`clientes/negocio/${this.negocio.negocio_id}`),
                         axios.get(`productos/negocio/${this.negocio.negocio_id}`),
                         axios.get(`afip/tiposAliCuotas`),
@@ -366,30 +371,6 @@ export default {
                     /** si se factura un pedido **/
                 if (this.pedidoId) {
                     this.cargarPedido();
-                }
-            },
-            consultarPorTipo() {
-                /** */
-                if (this.facturaElectronicaRegistrada) {
-                    this.$swal({
-                        icon: 'question',
-                        iconHtml: '؟',
-                        title: "¿Que deseas generar?",
-                        confirmButtonText: 'Factura',
-                        cancelButtonColor: '#385F73',
-                        cancelButtonText: 'Recibo',
-                        allowOutsideClick: false,
-                        showCancelButton: true,
-                    }).then((result) => {
-                        if (result.value) {
-                            this.tipo = 'FACTURA';
-                            this.cargarDatosComprobante()
-                        } else {
-                            this.cargarDatosComprobante()
-                        }
-                    })
-                } else {
-                    this.cargarDatosComprobante()
                 }
             },
             adapterHeader() {
@@ -461,13 +442,11 @@ export default {
             },
             /** descargo el comprobante **/
             descargarComprobante() {
-                let dataComprobante = Object.assign({}, this.facturacion);
-                dataComprobante.cliente =dataComprobante.cliente.cliente_id;
-                axios.post(`comprobantes/generar`, dataComprobante)
+                axios.post('afip/generarComprobante', this.facturacion)
                     .then((response) => {
                         const link = document.createElement('a');
                         link.href = response.data.data.file;
-                        link.setAttribute('download', 'factura.pdf');
+                        link.setAttribute('download', `comprobante-${moment().format('dd-mm-yyyy hh:mm:ss')}.pdf`);
                         document.body.appendChild(link);
                         link.click();
                     })
@@ -540,7 +519,6 @@ export default {
 
     },
     watch: {
-
         conceptoFactura() {
             if (!this.conceptoProduto) {
                 this.facturacion.fecha_desde = new Date().toISOString().substr(0, 10);
@@ -551,12 +529,15 @@ export default {
                 this.facturacion.fecha_hasta = null;
                 this.facturacion.fecha_vto = null;
             }
+        },
+        tipoFactura() {
+          this.cargarDatosComprobante();
         }
 
 
     },
     computed: {
-            conceptoFactura() {
+        conceptoFactura() {
                 return this.facturacion.concepto;
             },
             conceptoProduto() {

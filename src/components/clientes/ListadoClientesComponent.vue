@@ -1,3 +1,5 @@
+
+
 <template>
 <div>
     <v-row no-gutters>
@@ -34,30 +36,30 @@
                 <span>{{item.monto_debido|formatPrecio }}</span>
             </template>
             <template v-slot:[`item.actions`]="{item}">
-              <v-tooltip top>
-                  <template v-slot:activator="{ on, attrs }">
-                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
-                          mdi-pencil
-                      </v-icon>
-                  </template>
-                  <span>Editar</span>
-              </v-tooltip>
-              <v-tooltip top >
-                  <template v-slot:activator="{ on, attrs }">
-                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarProducto(item)">
-                          mdi-close
-                      </v-icon>
-                  </template>
-                  <span>Eliminar</span>
-              </v-tooltip>
-              <v-tooltip top v-if="item.monto_debido > 0">
-                  <template v-slot:activator="{ on, attrs }">
-                      <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)">
-                          style
-                      </v-icon>
-                  </template>
-                  <span>Cuenta Corriente</span>
-              </v-tooltip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="modalProducto(item)">
+                            mdi-pencil
+                        </v-icon>
+                    </template>
+                    <span>Editar</span>
+                </v-tooltip>
+                <v-tooltip top>
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="eliminarProducto(item)">
+                            mdi-close
+                        </v-icon>
+                    </template>
+                    <span>Eliminar</span>
+                </v-tooltip>
+                <v-tooltip top v-if="item.monto_debido > 0">
+                    <template v-slot:activator="{ on, attrs }">
+                        <v-icon medium color="#385F73" class="mr-2" v-bind="attrs" v-on="on" @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)">
+                            style
+                        </v-icon>
+                    </template>
+                    <span>Cuenta Corriente</span>
+                </v-tooltip>
             </template>
         </v-data-table>
         <v-row id="actions-clientes">
@@ -101,19 +103,17 @@ export default {
         }, {
             text: 'Teléfono',
             value: 'telefono',
-              align: 'center',
+            align: 'center',
             sortable: true
         }, {
             text: 'Condición IVA',
             value: 'condicion_iva.descripcion',
             sortable: true
-        },
-        {
+        }, {
             text: 'Deuda',
             value: 'monto_debido',
             sortable: true
-        },
-        {
+        }, {
             text: 'Acciones',
             value: 'actions',
             align: 'center',
@@ -143,18 +143,18 @@ export default {
             },
         },
         defaultCliente: {
-          condicion_iva: {
-              condicion_iva_id: null
-          },
-          tipo_documento: {
-              tipo_documento_id: null
-          },
-          localidad: {
-              localidad_id: null,
-              provincia: {
-                  provincia_id: null
-              }
-          },
+            condicion_iva: {
+                condicion_iva_id: null
+            },
+            tipo_documento: {
+                tipo_documento_id: null
+            },
+            localidad: {
+                localidad_id: null,
+                provincia: {
+                    provincia_id: null
+                }
+            },
         },
     }),
 
@@ -177,8 +177,8 @@ export default {
                         this.condicionesIva = condicionesIva.data.data;
                     }))
                     .catch(error => {
-                        if(this.$store.getters.token){
-                          this.notificacion('Ha ocurrido al recuperar los datos','error')
+                        if (this.$store.getters.token) {
+                            this.notificacion('Ha ocurrido al recuperar los datos', 'error')
                         }
                     })
             },
@@ -199,7 +199,7 @@ export default {
 
             editarProducto(item) {
                 this.$swal({
-                    icon:"warning",
+                    icon: "warning",
                     title: "¿Estas seguro que deseas modificar este cliente?",
                     showCancelButton: true,
                 }).then((result) => {
@@ -242,13 +242,12 @@ export default {
                                 clientes: JSON.stringify(this.seleccionados)
                             })
                             .then(response => {
-                              if(response.data.code == 200) {
-                                this.seleccionados.forEach(element => this.clientes.splice(this.clientes.indexOf(element), 1))
-                                this.notificacion('Eliminados correctamente', 'success')
-                              }
-                              else{
-                                this.notificacion('Ha ocurrido un error', 'error')
-                              }
+                                if (response.data.code == 200) {
+                                    this.seleccionados.forEach(element => this.clientes.splice(this.clientes.indexOf(element), 1))
+                                    this.notificacion('Eliminados correctamente', 'success')
+                                } else {
+                                    this.notificacion('Ha ocurrido un error', 'error')
+                                }
                             })
                             .catch(error => {
                                 this.notificacion('Ha ocurrido un error', 'error')
@@ -269,11 +268,14 @@ export default {
 
     computed: {
         editable() {
-            return this.indexEditable > -1 ? true : false;
-        },
-        clienteCondicionIva(){
-          return this.itemCliente;
-        }
+
+                return
+                this.indexEditable > -1 ? true :
+                    false;
+            },
+            clienteCondicionIva() {
+                return this.itemCliente;
+            }
     }
 }
 

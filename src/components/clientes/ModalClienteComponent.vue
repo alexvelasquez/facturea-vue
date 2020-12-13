@@ -28,11 +28,11 @@
                                         <v-text-field v-model="cliente.email" label="Email" placeholder="email" autocomplete="new-password"  outlined dense>
                                         </v-text-field>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="4">
-                                        <v-select v-model="cliente.condicion_iva.condicion_iva_id" @change="verificar()" item-value="condicion_iva_id" :items="condicionesIva" label='Condición IVA' placeholder=" " item-text="descripcion" hint="campo obligatorio(*)" :rules="obligatorio" outlined dense persistent-hint >
+                                    <v-col cols="12" sm="6" md="5">
+                                        <v-select v-model="cliente.condicion_iva.condicion_iva_id" @change="verificar()" item-value="condicion_iva_id" :items="condicionesIva" label='Condición IVA' placeholder="Seleccione una opción" item-text="descripcion" hint="campo obligatorio(*)" :rules="obligatorio" outlined dense persistent-hint >
                                             ></v-select>
                                     </v-col>
-                                    <v-col cols="12" sm="6" md="4">
+                                    <v-col cols="12" sm="6" md="3">
                                         <v-select v-model="cliente.tipo_documento.tipo_documento_id" item-value="tipo_documento_id" :items="tiposDocumentos" label='Tipo Documento' placeholder=" " item-text="descripcion" hint="campo obligatorio(*)" :rules="obligatorio" outlined dense persistent-hint :disabled="disabled">
                                             ></v-select>
                                     </v-col>
@@ -53,11 +53,11 @@
                                         </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="cliente.direccion" label="Direccion" placeholder=" " autocomplete="new-password" outlined dense>
+                                        <v-text-field v-model="cliente.direccion" label="Direccion" placeholder="Ingrese una dirección" autocomplete="new-password" outlined dense>
                                         </v-text-field>
                                     </v-col>
                                     <v-col cols="12" sm="6" md="6">
-                                        <v-text-field v-model="cliente.telefono" label="Teléfono" placeholder=" "  autocomplete="new-password" outlined dense>
+                                        <v-text-field v-model="cliente.telefono" label="Teléfono" placeholder="Ingrese un teléfono"  autocomplete="new-password" outlined dense>
                                         </v-text-field>
                                     </v-col>
                                 </v-row>
@@ -106,6 +106,12 @@
             </v-tab-item> -->
         </v-tabs-items>
     </v-card>
+    <v-overlay :absolute="true" :value="busqueda">
+      <v-progress-circular
+        indeterminate
+        size="64"
+      ></v-progress-circular>
+    </v-overlay>
 </v-dialog>
 
 </template>
@@ -146,6 +152,7 @@ export default {
         return {
             /** NUEVO PRODUCTO */
             files: [],
+            busqueda:false,
             localidades: [],
             disabled:false,
             model: null,
@@ -177,12 +184,13 @@ export default {
                 if(this.cliente.condicion_iva.condicion_iva_id == this.consumidorFinal){
                     this.cliente.tipo_documento.tipo_documento_id = this.otroDocumento;
                     this.cliente.documento = 0;
-                    this.disabled = true
+                    this.disabled=true
                 }
               }
             },
             cerrarDialog() {
-                !this.editable ? this.dialogCliente = false : this.$emit('cerrar-dialog');
+                this.dialogCliente = false ;
+                this.$emit('cerrar-dialog');
             }
     },
     watch: {
@@ -196,9 +204,11 @@ export default {
             },
             provinciaCliente() {
                 if (this.provinciaCliente) {
+                    this.busqueda = true;
                     axios.get(`datosGeograficos/localidades/${this.provinciaCliente}`)
                         .then(response => {
                             this.localidades = response.data.data;
+                            this.busqueda = false;
                         })
                 }
             }

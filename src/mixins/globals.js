@@ -24,17 +24,26 @@ export default {
     otroDocumento(){
       return 6
     },
+    rolAdmin(){
+      return 'ROLE_ADMIN'
+    },
+    rolUser(){
+      return 'ROLE_USER'
+    },
     loggedIn(){
       return store.getters.loggedIn
     },
-    facturaElectronicaRegistrada(){
-      return store.getters.facturaElectronicaRegistrada ?? null
+    pedidoProductosHabilitado(){
+      return store.getters.pedidoProductosHabilitado ?? null;
+    },
+    facturaElectronicaHabilitada(){
+      return store.getters.facturaElectronicaHabilitada ?? null
     },
     esResponsableInscripto(){
       return store.getters.responsableInscripto ?? null;
     },
     negocio() {
-            return this.$store.getters.negocio
+      return this.$store.getters.negocio
     },
   },
   methods: {
@@ -74,7 +83,8 @@ export default {
       return data.sort((a,b) => (a.descripcion > b.descripcion) ? 1 : ((b.descripcion > a.descripcion) ? -1 : 0));
     },
     urlImage(ruta){
-      return `http://localhost/api-facturea/public/uploads/${ruta}`
+      console.log(`${process.env.VUE_APP_PUBLIC}/uploads/${ruta}`);
+      return `${process.env.VUE_APP_PUBLIC}/uploads/${ruta}`
     },
     calcularPrecioNeto(producto){
       return (parseFloat(producto.precio_compra) + (parseFloat(producto.precio_compra) * (parseFloat(producto.aumento)/100))).toFixed(2)

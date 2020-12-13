@@ -9,7 +9,7 @@
         </v-col>
     </v-row>
     <div>
-        <v-row>
+        <v-row justify="center">
             <v-col cols="12">
                 <v-row no-gutters>
                     <v-col cols="12">
@@ -76,7 +76,7 @@
                     </v-list-item>
                 </v-card>
             </v-col>
-            <v-col cols="12" md="4">
+            <v-col cols="12" md="4" v-if="pedidoProductosHabilitado">
                 <v-card outlined color="#385F73" dark>
                     <v-list-item three-line>
                         <v-list-item-content class="align-center">
@@ -121,7 +121,7 @@
 
 import LineChart from '@/components/grafics/LineChartComponent.vue'
 import MensajesComponent from '@/components/MensajesComponent.vue'
-import DateRangoFecha from '@/components/DateRangoFecha.vue'
+import DateRangoFecha from '@/components/home/DateRangoFecha.vue'
 import axios from 'axios'
 export default {
     name: 'Home',

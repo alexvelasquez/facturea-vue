@@ -70,7 +70,7 @@ export default {
             text: 'Código',
             align: 'center',
             sortable: true,
-            value: 'marca_id'
+            value: 'codigo'
         }, {
             text: 'Descripción',
             value: 'descripcion'

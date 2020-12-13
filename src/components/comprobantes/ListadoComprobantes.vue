@@ -47,7 +47,8 @@
                             <v-btn block outlined color="#385F73" @click="cargarComprobantes">
                                 <v-icon left>
                                     search
-                                </v-icon>buscar</v-btn>
+                                </v-icon>buscar
+                            </v-btn>
                         </v-col>
                     </v-row>
                 </v-col>
@@ -61,7 +62,7 @@
             <template v-slot:[`item.numero`]="{ item }">
                 <span>{{zfill(item.numero,8)}}</span>
             </template>
-            <template v-slot:[`item.punto_venta`]="{ item }" >
+            <template v-slot:[`item.punto_venta`]="{ item }">
                 <span v-if="item.punto_venta">{{zfill(item.punto_venta,5)}}</span>
             </template>
             <template v-slot:expanded-item="{ headers, item }">
@@ -87,73 +88,73 @@
 export default {
 
     data() {
-        return {
-            date: moment().format('YYYY-MM-DD'),
-            menuDate: {
-                fechaHasta: false,
-                fechaDesde: false,
-            },
-            fechaHasta:  moment().format('YYYY-MM-DD'),
-            fechaDesde: moment().subtract(30,'d').format('YYYY-MM-DD'),
-            menu: false,
-            modal: false,
-            menu2: false,
-            expanded: [],
-            singleExpand: false,
-            dialog: false,
-            search: '',
-            files: [],
-            headers: [{
-                text: 'Fecha de Emision',
-                align: 'start',
-                sortable: false,
-                value: 'fecha',
-            }, {
-                text: 'Cliente',
-                value: 'cliente',
-                align: 'center',
-            }, {
-              text: 'Condición de venta',
-              value: 'condicion_vta',
-                align: 'center',
-            }, {
-                text: 'Número de Comprobante',
-                value: 'numero',
-                align: 'center',
-            }, {
-              text: 'Tipo de Comprobante',
-              value: 'tipo_comprobante',
-            }, {
-                text: 'Punto de venta',
-                value: 'punto_venta',
-                align: 'center',
-            },{
-                text: '',
-                value: 'data-table-expand'
-            }, ],
-            model: null,
-            allow: false,
-            tab: null,
-            comprobantes: [],
-        }
-    },
-    mounted() {
-        this.cargarComprobantes()
-    },
-    methods: {
-        cargarComprobantes() {
-                axios.get(`comprobantes/negocio/${this.negocio.negocio_id}`, {
-                        params: {
-                            fechaDesde: this.fechaDesde,
-                            fechaHasta: this.fechaHasta
-                        }
-                    })
-                    .then((response) => {
-                        this.comprobantes = response.data.data;
-                    })
-            },
+            return {
+                date: moment().format('YYYY-MM-DD'),
+                menuDate: {
+                    fechaHasta: false,
+                    fechaDesde: false,
+                },
+                fechaHasta: moment().format('YYYY-MM-DD'),
+                fechaDesde: moment().subtract(30, 'd').format('YYYY-MM-DD'),
+                menu: false,
+                modal: false,
+                menu2: false,
+                expanded: [],
+                singleExpand: false,
+                dialog: false,
+                search: '',
+                files: [],
+                headers: [{
+                    text: 'Fecha de Emision',
+                    align: 'start',
+                    sortable: false,
+                    value: 'fecha',
+                }, {
+                    text: 'Cliente',
+                    value: 'cliente',
+                    align: 'center',
+                }, {
+                    text: 'Condición de venta',
+                    value: 'condicion_vta',
+                    align: 'center',
+                }, {
+                    text: 'Número de Comprobante',
+                    value: 'numero',
+                    align: 'center',
+                }, {
+                    text: 'Tipo de Comprobante',
+                    value: 'tipo_comprobante',
+                }, {
+                    text: 'Punto de venta',
+                    value: 'punto_venta',
+                    align: 'center',
+                }, {
+                    text: '',
+                    value: 'data-table-expand'
+                }, ],
+                model: null,
+                allow: false,
+                tab: null,
+                comprobantes: [],
+            }
+        },
+        mounted() {
+            this.cargarComprobantes()
+        },
+        methods: {
+            cargarComprobantes() {
+                    axios.get(`comprobantes/negocio/${this.negocio.negocio_id}`, {
+                            params: {
+                                fechaDesde: this.fechaDesde,
+                                fechaHasta: this.fechaHasta
+                            }
+                        })
+                        .then((response) => {
+                            this.comprobantes = response.data.data;
+                        })
+                },
 
-    },
+        },
 
 }
 

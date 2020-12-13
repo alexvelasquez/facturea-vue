@@ -63,8 +63,29 @@ export default{
         getNegocioIibb(state){
           return state.negocio.iibb;
         },
-        facturaElectronicaRegistrada(state){
-          return state.user.factura_electronica == 'S';
+        getNegocioNombreFantasia(state){
+          return state.negocio.nombre_fantasia;
+        },
+        getUserNombre(state){
+          return state.user.name;
+        },
+        getUserApellido(state){
+          return state.user.lastname;
+        },
+        getUserUsername(state){
+          return state.user.username;
+        },
+        getUserEmail(state){
+          return state.user.email;
+        },
+        getUserRol(state){
+          return state.user.roles ? state.user.roles[0] : null;
+        },
+        facturaElectronicaHabilitada(state){
+          return state.negocio.factura_electronica == 'S';
+        },
+        pedidoProductosHabilitado(state){
+          return state.negocio.pedido_producto == 'S';
         },
 
     },
@@ -101,7 +122,7 @@ export default{
           state.negocio.cuit_cuil=value;
         },
         setNegocioCondicionIva(state,value){
-          state.negocio.condicionIva = value;
+          state.negocio.condicion_iva.condicion_iva_id = value;
         },
         setNegocioInicioActividad(state,value){
           state.negocio.inicio_actividad=value;
@@ -109,16 +130,31 @@ export default{
         setNegocioLogo(state,value){
           state.negocio.logo=value;
         },
-        setNegocioIbb(state,value){
+        setNegocioIibb(state,value){
           state.negocio.iibb=value;
+        },
+        setNegocioNombreFantasia(state,value){
+          state.negocio.nombre_fantasia=value;
         },
         setNegocioPuntoVenta(state,value){
           state.negocio.punto_vta=value;
         },
+        setUserNombre(state,value){
+          state.user.name = value;
+        },
+        setUserApellido(state,value){
+          state.user.lastname = value;
+        },
+        setUserUsername(state,value){
+          state.user.username = value;
+        },
+        setUserEmail(state,value){
+          state.user.email = value;
+        },
     },
     actions: {
         changeUserNegocio:({commit},negocio)=>{
-            commit('setnegocio',negocio);
+            commit('setNegocio',negocio);
         },
         logout:({commit})=>{
             return new Promise((resolve,reject) => {
