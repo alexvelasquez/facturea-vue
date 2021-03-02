@@ -16,8 +16,23 @@ import Notificacion from '@/components/Notificacion'
 
 export default {
   name: 'App',
-  components:{BaseComponent,Loader,Notificacion}
+  components:{BaseComponent,Loader,Notificacion},
+  data:function(){
+    return {
+      connection: null
+    }
+  },
 
+  created:function(){
+    console.log("Starting connection to WebSocket Server")
+   
+    this.connection = new WebSocket(`wss://localhost:8000/api/doc`);
+
+    this.connection.onopen = function(event) {
+      console.log(event)
+      console.log("Successfully connected to the echo websocket server...")
+    }
+  }
 };
 </script>
 <style media="screen">

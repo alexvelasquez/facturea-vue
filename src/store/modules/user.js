@@ -85,7 +85,7 @@ export default{
           return state.negocio.factura_electronica == 'S';
         },
         pedidoProductosHabilitado(state){
-          return state.negocio.pedido_producto == 'S';
+          return state.negocio.pedido == 'S';
         },
 
     },

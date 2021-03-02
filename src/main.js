@@ -25,7 +25,6 @@ Vue.use(VueSweetalert2,options);
 Vue.use(VModal)
 axios.defaults.baseURL = process.env.VUE_APP_API;
 
-
 /** capture los request error */
 var value = 0
 

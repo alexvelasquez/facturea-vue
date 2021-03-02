@@ -3,27 +3,6 @@ import store from '../store';
 import router from '../router';
 export default {
   computed:{
-    estadoPendiente(){
-      return 1
-    },
-    estadoRealizado(){
-      return 2
-    },
-    estadoCancelado(){
-      return 4
-    },
-    estadoPagado(){
-      return 3
-    },
-    estadoPendientePago(){
-      return 5
-    },
-    consumidorFinal(){
-      return 3
-    },
-    otroDocumento(){
-      return 6
-    },
     rolAdmin(){
       return 'ROLE_ADMIN'
     },
@@ -42,6 +21,9 @@ export default {
     esResponsableInscripto(){
       return store.getters.responsableInscripto ?? null;
     },
+    condicionIva() {
+      return this.$store.getters.getNegocioCondicionIva
+    },
     negocio() {
       return this.$store.getters.negocio
     },
@@ -59,7 +41,7 @@ export default {
     //   store.dispatch('loading',value)
     // },
     /** descargo el comprobante **/
-    exportar(url,nombre) {
+    descargar(url,nombre) {
         axios.get(url)
             .then((response) => {
                 const link = document.createElement('a');
@@ -122,13 +104,20 @@ export default {
          *
          * @param {Number} un numero
          */
-        precioNeto: (value) => (parseFloat(value.precio_compra) + (parseFloat(value.precio_compra) * (parseFloat(value.aumento)/100))).toFixed(2) ,
+        precioNeto: (value) => '$ '+(parseFloat(value.precio_compra) + (parseFloat(value.precio_compra) * (parseFloat(value.aumento)/100))).toFixed(2).replace('.',',') ,
         /**
          * Formatea el precio con la máscara $ #,## , por ej 5 --> $ 5,00
          *
          * @param {Number} un numero
          */
         formatPrecio: (value) => value ? '$ '+value.toFixed(2).replace('.', ',') : '$ 0',
+
+        /**
+         * Formatea el precio con la máscara $ #,## , por ej 5 --> $ 5,00
+         *
+         * @param {Number} un numero
+         */
+        descripMovimiento: (value) => (value === 'AUMENTO') ? 'Compra del cliente' : 'Pago del cliente',
 
         /**
          * Formatea el number con la máscara  #,## , por ej 5 --> 5,00
