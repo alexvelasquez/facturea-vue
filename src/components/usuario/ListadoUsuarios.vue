@@ -19,10 +19,10 @@
         </v-card-title>
         <v-data-table v-model="seleccionados" :headers="cabeceras" item-key="id" :items="usuarios" :search="search" show-select>
             <template v-slot:[`item.apyn`]="{ item }">
-                <span>{{item.lastname | upper}}  {{item.name| capitalize}}</span>
+                <span>{{item.lastname | upper}}  {{item.name| upper}}</span>
             </template>
-            <template v-slot:[`item.created_at`]="{ item }">
-                <span>{{item.created_at |formatDateTime}}</span>
+            <template v-slot:[`item.createdAt`]="{ item }">
+                <span>{{item.createdAt |formatDateTime}}</span>
             </template>
             <template v-slot:[`item.actions`]="{item}">
                 <v-btn small :color="!tieneFactura(item) ? 'primary' : 'error'" class="mr-3" dark  @click="accionFactura(item)" rounded>
@@ -76,16 +76,16 @@ export default {
             value: 'email'
         }, {
             text: 'Fecha de alta',
-            value: 'created_at',
+            value: 'createdAt',
             sortable: true
         }, {
             text: 'Factura Electronica',
-            value: 'negocio.factura_electronica',
+            value: 'negocio.facturaElectronica',
             align: 'center',
             sortable: true
         }, {
             text: 'Pedidos',
-            value: 'negocio.pedido_producto',
+            value: 'negocio.pedido',
             align: 'center',
             sortable: true
         }, {
@@ -105,7 +105,7 @@ export default {
     },
     methods:{
       listadoUsuarios(){
-        axios.get('usuario/listado')
+        axios.get('usuario')
             .then(response => {
                 this.usuarios = response.data.data;
             })
@@ -137,10 +137,10 @@ export default {
         })
       },
       tieneFactura(item){
-        return item.negocio.factura_electronica == 'S'
+        return item.negocio.facturaElectronica == 'S'
       },
       tienePedido(item){
-        return item.negocio.pedido_producto == 'S'
+        return item.negocio.pedido == 'S'
       }
     }
 

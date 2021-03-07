@@ -7,14 +7,17 @@
 
 <template>
   <div>
-    <v-row no-gutters>
-      <v-col cols="12">
+    <v-row no-gutters justify="space-between">
+      <v-col cols="6">
         <p class="text-lg-h6 font-weight-bold blue-grey--text text--lighten-2">
           Cuenta Corriente
         </p>
       </v-col>
+      <v-col cols="4" align="end">
+        <v-btn color="#385F73" text @click="$router.push('/clientes')">Volver</v-btn>
+      </v-col>
     </v-row>
-    <v-row>
+    <v-row v-if="cuentaCorriente">
       <v-col cols="12" md="7" lg="7">
         <v-card class="mt-15" style="border-left: 5px solid #385f73">
           <v-card-title class="overline justify-left">{{cuentaCorriente.cliente.razon_social}} <br> 
@@ -29,23 +32,23 @@
           </v-card-text>
           <v-card-actions class="justify-end">
             <!-- <v-btn text>Abonar</v-btn> -->
-            <modal-pago></modal-pago>
+            <modal-pago @abonar="abonar($event)"></modal-pago>
           </v-card-actions>
         </v-card>
       </v-col>
       <v-col cols="12" md="5" lg="5">
-        <v-card height="100%">
+        <v-card class="overflow-y-auto" max-height="400">
           <v-card-title dark class="overline justify-center">
             <span></span>Últimos Movimientos
           </v-card-title>
 
           <v-card-text>
             <v-timeline dense clipped v-if="cuentaCorriente.movimientos.length">
-              <v-timeline-item  v-for="m in cuentaCorriente.movimientos" :key="m.cuenta_corriente_id" class="mb-4" color="grey" small>
-                <v-row justify="space-between">
+              <v-timeline-item  v-for="(m, index) in cuentaCorriente.movimientos" :key="m.cuenta_corriente_id" class="mb-4" color="grey" small v-if="index < cantMovimientos">
+                <v-row justify="space-between" >
                   <v-col cols="7">{{m.tipo_movimiento.codigo | descripMovimiento}}</v-col>
                   <v-col class="text-center" cols="5"
-                    ><span>{{m.tipo_movimiento.codigo === 'AUMENTO' ? '+' : '-'}} {{m.valor | formatPrecio}}</span> <br /><span> {{m.f_creacion | formatDateTime}}</span></v-col
+                    ><span>{{m.tipo_movimiento.codigo === 'AUMENTO' ? '+' : '-'}} {{ parseFloat(m.valor) | formatPrecio}}</span> <br /><span> {{m.f_creacion | formatDateTime}}</span></v-col
                   >
                 </v-row>
               </v-timeline-item>
@@ -56,7 +59,7 @@
           </v-card-text>
 
           <v-card-actions class="justify-center" v-if="cuentaCorriente.movimientos.length">
-            <v-btn text class="overline"> Ver mas </v-btn>
+            <v-btn text class="overline" @click="cantMovimientos = cantMovimientos + 10"> Ver mas </v-btn>
           </v-card-actions>
         </v-card>
       </v-col>
@@ -75,7 +78,7 @@ export default {
     },
   },
   data: () => ({
-    cuentaCorriente:{},
+    cuentaCorriente:null,
     cantMovimientos:10
   }),
 
@@ -89,11 +92,18 @@ export default {
           this.cuentaCorriente = result.data.data;
         })
       },
+
       abonar(movimiento){
-        movimiento.cuentaCorriente = this.cuentaCorriente.cuenta_corriente_id;
-        axios.get(`movimientos/agregar`,movimiento)
+        movimiento.cuenta_corriente = this.cuentaCorriente.cuenta_corriente_id;
+        axios.post(`movimientos/agregar`,movimiento)
         .then(result=>{
-          this.notificacion("Abonado Correctamente", "success");
+          if(result.data.code == 200){
+            console.log(Object.assign({}, result.data.data));
+            this.$nextTick(() => {
+              this.cuentaCorriente = Object.assign({}, result.data.data);
+            });
+            this.notificacion("Abonado Correctamente", "success");
+          }
         })
         .catch(()=>{
           this.notificacion("Ha ocurrido un error", "error");

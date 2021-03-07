@@ -72,7 +72,7 @@
                   </v-list-item>
                 </v-card>
               </v-col>
-              <v-col cols="12" sm="6" md="4">
+              <v-col cols="12" sm="6" md="4" v-if="facturaElectronicaHabilitada">
                 <v-row justify="end" align="end" class="mt-10">
                   <v-switch v-model="tipoFactura" label="Factura Electrónica"></v-switch>
                 </v-row>
@@ -154,7 +154,7 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-divider></v-divider>
+              <v-divider class="my-5"></v-divider>
               <v-row v-if="facturacion.cliente.cliente_id">
                 <v-col cols="12" sm="6" md="6">
                   <v-card class="mx-auto" outlined>
@@ -365,7 +365,7 @@
                             </v-col> -->
               </v-row>
             </v-form>
-            <v-divider></v-divider>
+            <v-divider class="my-5"></v-divider>
             <v-form
               ref="formProducto"
               v-if="!editable && !pedidoId && facturacion.cliente.cliente_id"
@@ -515,7 +515,7 @@
                 </v-row>
               </v-col>
             </v-row>
-            <v-divider></v-divider>
+            <v-divider class="my-5"></v-divider>
             <v-row v-if="facturacion.cliente.cliente_id">
               <v-col cols="12" md="4" offset-md="8">
                 <v-col cols="6"> </v-col>
@@ -659,7 +659,7 @@ export default {
           axios.get(`afip/tiposAliCuotas`),
           axios.get(`afip/tiposComprobantesIVA`, {
             params: {
-              afip_id: this.tipoFactura ? this.condicionIva : null,
+              afip_id: this.tipoFactura ? this.negocio.condicion_iva.afip_id : null,
             },
           }),
           axios.get(`afip/tiposConceptos`),

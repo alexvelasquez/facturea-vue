@@ -406,7 +406,7 @@ export default {
     cargarDatosPedido() {
       axios
         .all([
-          axios.get(`clientes/negocio/${this.negocio.negocio_id}`),
+          axios.get(`clientes`),
           axios.get(`productos/negocio/${this.negocio.negocio_id}`),
           axios.get(`afip/tiposAliCuotas`),
         ])

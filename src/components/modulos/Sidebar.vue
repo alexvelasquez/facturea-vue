@@ -48,10 +48,6 @@ export default {
                 title: 'USUARIOS',
                 link: '/comprobantes',
                 icon: 'groups'
-            }, {
-                title: 'NOTIFICACIONES',
-                link: '/notificaciones',
-                icon: 'add_alert'
             }]
       }
       else{

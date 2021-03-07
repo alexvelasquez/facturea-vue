@@ -28,7 +28,7 @@
                       <v-text-field
                         label="Monto a abonar"
                         :rules="requerido"
-                        v-model="movimiento.monto"
+                        v-model="movimiento.valor"
                         placeholder="0"
                         type="number"
                         hint="Este campo es obligatorio"
@@ -56,7 +56,7 @@
             <v-card-actions class="pt-md-0">
               <v-spacer></v-spacer>
               <v-btn color="#385F73" text @click="dialog = false">Cancelar</v-btn>
-              <v-btn color="#385F73" text @click="abonar">Abonar</v-btn>
+              <v-btn color="#385F73" text @click="abonar()">Abonar</v-btn>
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -72,7 +72,7 @@ export default {
       tab: null,
       dialog: false,
       movimiento: {
-        monto: null,
+        valor: null,
         observacion: null,
       },
       requerido: [(v) => !!v || "Este campo es requerido"],
