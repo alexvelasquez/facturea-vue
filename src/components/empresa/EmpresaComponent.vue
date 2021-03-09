@@ -12,7 +12,7 @@ provincia<template>
                 <v-col cols="12" md="8">
                     <v-row style="margin-bottom:-30px">
                         <v-col cols="12" md="6">
-                            <v-text-field v-model="razonSocial" :rules="reglasValidacion.campoRequerido" label="Razón social(*)" outlined placeholder="Ingrese una razon social" dense></v-text-field>
+                            <v-text-field v-model="razonSocial" :rules="reglasValidacion.campoRequerido" label="Nombre(*)" outlined placeholder="Ingrese un nombre" dense></v-text-field>
                         </v-col>
                         <v-col cols="12" md="6">
                             <v-text-field v-model="email" :rules="reglasValidacion.campoRequerido" label="Email(*)" outlined placeholder="Ingrese un email" dense></v-text-field>

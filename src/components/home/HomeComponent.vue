@@ -147,7 +147,7 @@ export default {
         this.active = true;
       }
     });
-    this.graficos();
+    // this.graficos();
   },
   methods: {
     graficos() {

@@ -20,7 +20,7 @@
           <v-btn
             color="primary"
             text
-            @click="irMensaje(mensaje.url)"
+            @click="irMensaje(mensaje.redireccion)"
           >
             Aceptar
           </v-btn>

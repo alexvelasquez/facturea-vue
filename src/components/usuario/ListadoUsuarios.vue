@@ -112,7 +112,7 @@ export default {
       },
       accionPedido(item){
         let valor = (item.negocio.pedido_producto == 'S') ? 'N' : 'S';
-        axios.put(`/usuario/pedido/${item.id}`,{valor:valor})
+        axios.put(`/usuario/gestionPedido/${item.id}`,{valor:valor})
         .then(response=>{
           if(response.data.code == 200){
             this.notificacion('Accion realizada correctamente.','success');
@@ -125,7 +125,7 @@ export default {
       },
       accionFactura(item){
         let valor = (item.negocio.factura_electronica == 'S') ? 'N' : 'S';
-        axios.put(`/usuario/factura/${item.id}`,{valor:valor})
+        axios.put(`/usuario/gestionFacturaElectronica/${item.id}`,{valor:valor})
         .then(response=>{
           if(response.data.code == 200){
             this.notificacion('Acción realizada correctamente.','success');
