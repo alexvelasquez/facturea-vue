@@ -2,7 +2,7 @@
 node_modules
 # local env files
 .env.local
-.env.*.local
+.e
 dist
 # Log files
 npm-debug.log*
