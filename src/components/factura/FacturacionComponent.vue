@@ -154,7 +154,7 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-divider class="my-5"></v-divider>
+              <v-divider v-if="facturacion.cliente.cliente_id" class="my-5"></v-divider>
               <v-row v-if="facturacion.cliente.cliente_id">
                 <v-col cols="12" sm="6" md="6">
                   <v-card class="mx-auto" outlined>
@@ -364,8 +364,8 @@
                                 <v-text-field color="#385F73" label="Nro Remito" outlined placeholder="0" type="number" dense></v-text-field>
                             </v-col> -->
               </v-row>
-            </v-form>
             <v-divider class="my-5"></v-divider>
+            </v-form>
             <v-form
               ref="formProducto"
               v-if="!editable && !pedidoId && facturacion.cliente.cliente_id"
@@ -514,8 +514,8 @@
                   </v-col>
                 </v-row>
               </v-col>
-            </v-row>
             <v-divider class="my-5"></v-divider>
+            </v-row>
             <v-row v-if="facturacion.cliente.cliente_id">
               <v-col cols="12" md="4" offset-md="8">
                 <v-col cols="6"> </v-col>

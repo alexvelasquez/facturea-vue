@@ -32,9 +32,13 @@
       >
         <template v-slot:[`item.direccion`]="{ item }">
           <span>
-            {{ item.direccion | capitalize }} / {{ item.localidad.descripcion | upper }} -
-            {{ item.localidad.provincia.descripcion | upper }}</span
+            {{ item.direccion}}</span
           >
+        </template>
+        <template v-slot:[`item.localidad`]="{ item }">
+          <span>
+            {{ item.localidad.provincia.descripcion | upper }} / {{ item.localidad.descripcion | upper }}
+          </span>
         </template>
         <template v-slot:[`item.precio_compra`]="{ item }">
           <span>{{ item | precioNeto }}</span>
@@ -49,7 +53,9 @@
           <span>{{ item.f_modificacion | formatDate }}</span>
         </template>
         <template v-slot:[`item.monto_debido`]="{ item }">
-          <span>{{ item.cuenta_corriente.monto | formatPrecio }}</span>
+          <span v-if="item.cuenta_corriente">
+            {{ item.cuenta_corriente.monto | formatPrecio}}
+          </span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
           <v-tooltip top>
@@ -157,6 +163,12 @@ export default {
         sortable: true,
       },
       {
+        text: "Provincia/Localidad",
+        value: "localidad",
+        align: "center",
+        sortable: true,
+      },
+      {
         text: "Teléfono",
         value: "telefono",
         align: "center",
@@ -254,7 +266,7 @@ export default {
     agregarCliente(item) {
       axios.post(`clientes/nuevo`, item).then((response) => {
         this.clientes.push(response.data.data);
-        this.notificacion("Producto agregado correctamente", "success");
+        this.notificacion("Cliente agregado correctamente", "success");
         this.close();
       });
     },
@@ -330,8 +342,7 @@ export default {
 
   computed: {
     editable() {
-      return;
-      this.indexEditable > -1 ? true : false;
+      return this.indexEditable > -1 ? true : false;
     },
     clienteCondicionIva() {
       return this.itemCliente;
