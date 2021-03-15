@@ -26,7 +26,6 @@
         item-key="marca_id"
         :items="marcas"
         :search="search"
-        show-select
       >
         <template v-slot:[`item.actions`]="{ item }">
           <v-tooltip top>
@@ -56,15 +55,6 @@
       </v-data-table>
       <v-row id="actions-productos">
         <v-col cols="12" sm="12" md="12" align="end">
-          <v-btn
-            outlined
-            v-if="seleccionados.length > 0"
-            @click="eliminarSeleccionados"
-            color="#385F73"
-            dark
-            class="mb-2 mr-md-2"
-            >ELIMINAR SELECCIONADOS
-          </v-btn>
           <modal-aumento :marcas="marcas"></modal-aumento>
 
           <v-btn
@@ -91,7 +81,7 @@
             dark
             class="mb-2 mr-md-2"
             @click="
-              exportar(`marcas/exportar/${negocio.negocio_id}`, 'listado_marcas.pdf')
+              descargar(`marcas/exportar/${negocio.negocio_id}`, 'listado_marcas.pdf')
             "
             >EXPORTAR</v-btn
           >

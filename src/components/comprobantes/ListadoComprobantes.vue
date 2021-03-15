@@ -16,8 +16,8 @@
     </v-row>
     <v-card>
         <v-card-title class="text-center periodo">
-            <v-row>
-                <v-col cols="12" md="7" offset-md="4">
+            <v-row justify="end" class="mt-4">
+                <v-col cols="12" md="5">
                     <v-row>
                         <v-col cols="12" md="4">
                             <v-menu ref="fDesde" v-model="menuDate.fechaDesde" :close-on-content-click="false" :return-value.sync="fechaDesde" transition="scale-transition" offset-y min-width="290px">
@@ -53,29 +53,16 @@
                     </v-row>
                 </v-col>
             </v-row>
-            <v-spacer></v-spacer>
         </v-card-title>
-        <v-data-table :headers="headers" :items="comprobantes" :search="search" :single-expand="singleExpand" :expanded.sync="expanded" item-key="preventa_id" show-expand>
-            <template v-slot:[`item.fecha`]="{ item }">
-                <span>{{item.fecha|formatDate}}</span>
+        <v-data-table :headers="headers" :items="comprobantes" :search="search"  item-key="preventa_id">
+            <template v-slot:[`item.fEmision`]="{ item }">
+                <span>{{item.fEmision | formatDate}}</span>
             </template>
             <template v-slot:[`item.numero`]="{ item }">
                 <span>{{zfill(item.numero,8)}}</span>
             </template>
-            <template v-slot:[`item.punto_venta`]="{ item }">
-                <span v-if="item.punto_venta">{{zfill(item.punto_venta,5)}}</span>
-            </template>
-            <template v-slot:expanded-item="{ headers, item }">
-                <td :colspan="headers.length">
-                    <v-row>
-                        <v-col cols="12">
-                            <v-btn class="ma-2" outlined color="#385F73">DESCARGAR</v-btn>
-                            <v-btn class="ma-2" outlined color="#385F73">CREAR RECIBO</v-btn>
-                            <v-btn class="ma-2" outlined color="#385F73">CREAR NOTA DEBITO A</v-btn>
-                            <v-btn class="ma-2" outlined color="#385F73">CREAR NOTA CREDITO A</v-btn>
-                        </v-col>
-                    </v-row>
-                </td>
+            <template v-slot:[`item.puntoVenta`]="{ item }">
+                <span v-if="item.puntoVenta">{{zfill(item.puntoVenta,5)}}</span>
             </template>
         </v-data-table>
     </v-card>
@@ -95,7 +82,7 @@ export default {
                     fechaDesde: false,
                 },
                 fechaHasta: moment().format('YYYY-MM-DD'),
-                fechaDesde: moment().subtract(30, 'd').format('YYYY-MM-DD'),
+                fechaDesde: moment().subtract(7, 'd').format('YYYY-MM-DD'),
                 menu: false,
                 modal: false,
                 menu2: false,
@@ -108,14 +95,14 @@ export default {
                     text: 'Fecha de Emision',
                     align: 'start',
                     sortable: false,
-                    value: 'fecha',
+                    value: 'fEmision',
                 }, {
                     text: 'Cliente',
-                    value: 'cliente',
+                    value: 'venta.cliente.razonSocial',
                     align: 'center',
                 }, {
                     text: 'Condición de venta',
-                    value: 'condicion_vta',
+                    value: 'condicionVenta.descripcion',
                     align: 'center',
                 }, {
                     text: 'Número de Comprobante',
@@ -123,10 +110,10 @@ export default {
                     align: 'center',
                 }, {
                     text: 'Tipo de Comprobante',
-                    value: 'tipo_comprobante',
+                    value: 'tipoComprobante.descripcion',
                 }, {
                     text: 'Punto de venta',
-                    value: 'punto_venta',
+                    value: 'puntoVenta',
                     align: 'center',
                 }, {
                     text: '',
@@ -138,21 +125,18 @@ export default {
                 comprobantes: [],
             }
         },
-        mounted() {
-            this.cargarComprobantes()
+        async beforeMount() {
+            this.comprobantes = (await this.cargarComprobantes()).data.data;
         },
         methods: {
             cargarComprobantes() {
-                    axios.get(`comprobantes/negocio/${this.negocio.negocio_id}`, {
+                return axios.get(`comprobantes`, {
                             params: {
                                 fechaDesde: this.fechaDesde,
                                 fechaHasta: this.fechaHasta
                             }
                         })
-                        .then((response) => {
-                            this.comprobantes = response.data.data;
-                        })
-                },
+            },
 
         },
 

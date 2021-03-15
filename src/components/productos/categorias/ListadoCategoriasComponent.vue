@@ -28,7 +28,6 @@
         item-key="categoria_id"
         :items="categorias"
         :search="search"
-        show-select
       >
         <template v-slot:[`item.actions`]="{ item }">
           <v-tooltip top>
@@ -58,14 +57,6 @@
       </v-data-table>
       <v-row id="actions-productos">
         <v-col cols="12" sm="12" md="12" align="end">
-          <v-btn
-            v-if="seleccionados.length > 0"
-            outlined
-            color="#385F73"
-            dark
-            class="mb-2 mr-md-2"
-            >ELIMINAR SELECCIONADOS
-          </v-btn>
           <modal-aumento :categorias="categorias"></modal-aumento>
           <v-btn
             outlined
@@ -90,7 +81,7 @@
             dark
             class="mb-2 mr-md-2"
             @click="
-              exportar(
+              descargar(
                 `categorias/exportar/${negocio.negocio_id}`,
                 'listado_categorias.pdf'
               )

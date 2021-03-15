@@ -337,10 +337,13 @@ export default {
           this.notificacion("Ha ocurrido un error al cargar el archivo", "error");
         });
     },
-    exportarXlsx(link, name) {
-      this.notificacion("Descargando..", "warning");
-      this.exportar(link, name);
-      this.notificacion("Decargado", "success");
+    async exportarXlsx(link, name) {
+      
+      this.busqueda = true;
+      await setTimeout(()=>{ 
+      this.descargar(link, name);
+      this.busqueda = false;},3000);
+
     },
   },
   watch: {

@@ -69,7 +69,11 @@ export default {
             obligatorio: [
                 v => !!v || 'Este campo es requerido'
             ],
+            itemMarca:{}
         }
+    },
+    mounted(){
+        this.itemMarca.descripcion = this.marca.descripcion;
     },
     methods: {
         agregarMarca() {
@@ -87,14 +91,10 @@ export default {
     },
     watch: {
         marca() {
+            this.itemMarca = this.marca;
             if (this.$refs.form && !this.editable) {
                 this.$refs.form.reset()
             };
-        },
-    },
-    computed: {
-        itemMarca() {
-            return this.marca;
         },
     },
 }

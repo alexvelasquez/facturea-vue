@@ -68,7 +68,11 @@ export default {
             obligatorio: [
                 v => !!v || 'Este campo es requerido'
             ],
+            itemCategoria:{}
         }
+    },
+    mounted(){
+        this.itemCategoria.descripcion = this.categoria.descripcion;
     },
     methods: {
         agregarCategoria() {
@@ -86,14 +90,10 @@ export default {
     },
     watch: {
         categoria() {
+        this.itemCategoria = this.categoria;
           if (this.$refs.form && !this.editable) {
               this.$refs.form.reset()
           };
-        },
-    },
-    computed: {
-        itemCategoria() {
-            return this.categoria;
         },
     },
 }
