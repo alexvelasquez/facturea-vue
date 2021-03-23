@@ -27,6 +27,15 @@ export default {
     negocio() {
       return this.$store.getters.negocio
     },
+    colores() {
+      return {
+        pendiente: "primary",
+        realizado: "finish",
+        cancelado: "cancel",
+        pendientepago: "primary",
+        pendientecomprobante:"finish"
+      }
+    },
   },
   methods: {
     notificacion(texto,tipo){
@@ -99,18 +108,34 @@ export default {
     }
   },
   filters: {
-        /**
-         * Formatea el numero con la máscara #.## %, por ej 5 --> 5.00 %
-         *
-         * @param {Number} un numero
-         */
-        precioNeto: (value) => '$ '+(parseFloat(value.precio_compra) + (parseFloat(value.precio_compra) * (parseFloat(value.aumento)/100))).toFixed(2).replace('.',',') ,
+
         /**
          * Formatea el precio con la máscara $ #,## , por ej 5 --> $ 5,00
          *
          * @param {Number} un numero
          */
-        formatPrecio: (value) => value ? '$ '+value.toFixed(2).replace('.', ',') : '$ 0',
+         precioNeto(value){
+          const options = { style: 'currency', currency: 'USD' };
+          value = (typeof value.precio_compra === 'string') ? parseFloat(value.precio_compra) : value.precio_compra;
+          value = value ? `${(new Intl.NumberFormat('es-US',options)).format(value)}` : `$ 0`;
+          var numero = value.split('.')
+          return `${numero[0].replace(',','.')},${numero[1]}`;
+        },
+        
+        
+        /**
+         * Formatea el precio con la máscara $ #,## , por ej 5 --> $ 5,00
+         *
+         * @param {Number} un numero
+         */
+        formatPrecio(value){
+          if(!value) return `$ 0`;
+          const options = { style: 'currency', currency: 'USD' };
+          value = (typeof value === 'string') ? parseFloat(value) : value;
+          value = `${(new Intl.NumberFormat('es-US',options)).format(value)}`;
+          var numero = value.split('.')
+          return `${numero[0].replace(',','.')},${numero[1]}`;
+        },
 
         /**
          * Formatea el precio con la máscara $ #,## , por ej 5 --> $ 5,00

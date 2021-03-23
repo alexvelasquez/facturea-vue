@@ -285,7 +285,7 @@
           <v-row>
             <v-col cols="12" justify="end" align="center">
               <v-col cols="12" sm="12" md="3" offset-md="9">
-                <v-btn outlined color="#385F73" dark block>Eliminar Seleccionados</v-btn>
+                <v-btn outlined color="#385F73" @click="eliminarProductos()" dark block>Eliminar Seleccionados</v-btn>
               </v-col>
             </v-col>
             <modal-pedido
@@ -353,6 +353,7 @@ export default {
       cliente: {},
       fecha: new Date().toISOString().substr(0, 10),
       productos: [],
+      eliminados:[],
       total: 0,
     },
     pedidoDefault: {
@@ -360,6 +361,7 @@ export default {
       productos: [],
     },
     selected: [],
+    selectedEliminadosAlmacenados:[],
     clientes: [],
     productos: [],
     alicuotas: [],
@@ -500,27 +502,29 @@ export default {
       }).then((result) => {
         if (result.value) {
           /** verifico si es un producto que ya se encuentra cargado de la bbdd **/
-          if (item.producto_preventa_id) {
-            axios
-              .delete(`productoPreventa/eliminar/${item.producto_preventa_id}`)
-              .then((response) => {
-                const index = this.listado.indexOf(item);
-                this.actualizarStock(item, "eliminar");
-                this.listado.splice(index, 1);
-                this.sumarImportesTotales();
-                this.notificacion("Eliminado correctamente", "success");
-              });
-          } else {
-            const index = this.listado.indexOf(item);
-            this.actualizarStock(item, "eliminar");
-            this.listado.splice(index, 1);
-            this.sumarImportesTotales();
-            this.reestablecer();
-            this.notificacion("Eliminado correctamente", "success");
-          }
+          if (item.producto_venta_id) this.pedido.eliminados.push(item);
+          const index = this.listado.indexOf(item);
+          this.actualizarStock(item, "eliminar");
+          this.listado.splice(index, 1);
+          this.sumarImportesTotales();
+          this.reestablecer();
+          this.notificacion("Eliminado correctamente", "success");
+          
         }
       });
     },
+    eliminarProductos(){
+      this.selected.map(producto=> {
+          this.actualizarStock(producto,'eliminar');
+          const index = this.pedido.productos.indexOf(producto);
+          this.pedido.productos.splice(index, 1);
+          if(producto.producto_venta_id) this.pedido.eliminados.push(producto)
+      });
+      this.selected = [];
+      this.sumarImportesTotales();
+      this.reestablecer();
+    },
+
     cerrarDialog() {
       this.dialog = false;
       this.panel = [0];
@@ -576,6 +580,7 @@ export default {
         }
       });
     },
+
     /** modificar pedido **/
     modificarPedido() {
       this.$swal({
@@ -584,7 +589,7 @@ export default {
       }).then((result) => {
         if (result.value) {
           axios
-            .put(`preventas/preventa/${this.pedidoId}/editar`, this.pedido)
+            .put(`ventas/pedido/editar/${this.pedidoId}`, this.pedido)
             .then((response) => {
               if (response.data.code === 200) {
                 this.notificacion("Modificado correctamente", "success");

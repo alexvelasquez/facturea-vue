@@ -72,12 +72,12 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
-                @click="cambiarEstado(item, 'CANCELADO')"
+               @click="eliminarPedido(item)"
               >
-                auto_delete
+                delete
               </v-icon>
             </template>
-            <span>Cancelar</span>
+            <span>Eliminar</span>
           </v-tooltip>
           <v-tooltip top v-if="item.estado == 'PENDIENTE'">
             <template v-slot:activator="{ on, attrs }">
@@ -175,11 +175,6 @@ export default {
     ModalDetalle,
   },
   data: () => ({
-    colores: {
-      pendiente: "primary",
-      realizado: "finish",
-      cancelado: "cancel",
-    },
     totales: [],
     headers: [
       {

@@ -424,7 +424,7 @@
                 <v-col cols="12" sm="2" md="2" v-if="esResponsableInscripto">
                   <v-autocomplete
                     :rules="reglasValidacion.objectoVacio"
-                    v-model="nuevoProducto.alicuota"
+                    v-model="nuevoProducto.tipo_alicuota"
                     :items="tiposAliCuotas"
                     return-object
                     item-text="descripcion"
@@ -651,8 +651,8 @@ export default {
     // this.cargarDatosFacturacion();
   },
   methods: {
-    cargarDatosComprobante() {
-      axios
+    async cargarDatosComprobante() {
+      await axios
         .all([
           axios.get(`clientes`),
           axios.get(`productos/negocio/${this.negocio.negocio_id}`),
@@ -700,7 +700,7 @@ export default {
           {
             text: "IVA Aplicado",
             sortable: false,
-            value: "alicuota.descripcion",
+            value: "tipo_alicuota.descripcion",
           },
           {
             text: "Importe IVA",
@@ -725,11 +725,11 @@ export default {
       );
     },
     cargarPedido() {
-      axios.get(`preventas/${this.pedidoId}`).then((response) => {
-        console.log(this.clientes);
-        this.facturacion.cliente = response.data.data.preventa.cliente;
-        this.facturacion.preventa = response.data.data.preventa.preventa_id;
-        this.facturacion.productos = response.data.data.productos;
+      axios.get(`ventas/pedido/${this.pedidoId}`).then((response) => {
+        console.log(response);
+        this.facturacion.cliente = response.data.data.cliente;
+        this.facturacion.venta = response.data.data.venta_id;
+        this.facturacion.productos = response.data.data.productos_venta;
         this.sumarImportesTotales();
       });
     },
@@ -799,13 +799,13 @@ export default {
     sumarImportesTotales() {
       this.resetMontosTotales();
       this.facturacion.productos.forEach((producto) => {
-        if (Object.keys(producto.alicuota).length != 0) {
+        if (producto.tipo_alicuota && producto.tipo_alicuota.length) {
           /** si es exento o no gravado*/
-          if (producto.alicuota.afip_id == 1 || producto.alicuota.afip_id == 2) {
+          if (producto.tipo_alicuota.afip_id == 1 || producto.tipo_alicuota.afip_id == 2) {
             this.facturacion.importes[
-              this.importes[producto.alicuota.afip_id]
+              this.importes[producto.tipo_alicuota.afip_id]
             ] = this.parseFloatMonto(
-              this.facturacion.importes[this.importes[producto.alicuota.afip_id]] +
+              this.facturacion.importes[this.importes[producto.tipo_alicuota.afip_id]] +
                 producto.subtotal_sin_iva
             );
           } else {

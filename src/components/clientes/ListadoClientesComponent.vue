@@ -66,6 +66,21 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
+                @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)"
+              >
+                style
+              </v-icon>
+            </template>
+            <span>Cuenta Corriente</span>
+          </v-tooltip>
+          <v-tooltip top>
+            <template v-slot:activator="{ on, attrs }">
+              <v-icon
+                medium
+                color="#385F73"
+                class="mr-2"
+                v-bind="attrs"
+                v-on="on"
                 @click="modalProducto(item)"
               >
                 mdi-pencil
@@ -87,21 +102,6 @@
               </v-icon>
             </template>
             <span>Eliminar</span>
-          </v-tooltip>
-          <v-tooltip top>
-            <template v-slot:activator="{ on, attrs }">
-              <v-icon
-                medium
-                color="#385F73"
-                class="mr-2"
-                v-bind="attrs"
-                v-on="on"
-                @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)"
-              >
-                style
-              </v-icon>
-            </template>
-            <span>Cuenta Corriente</span>
           </v-tooltip>
         </template>
       </v-data-table>

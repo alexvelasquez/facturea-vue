@@ -91,10 +91,10 @@ export default {
         },
         nuevoProductoIva:{
           get(){
-            return this.nuevoProducto.alicuota ?? {};
+            return this.nuevoProducto.tipo_alicuota ?? {};
           },
           set(value){
-            this.nuevoProducto.alicuota = value;
+            this.nuevoProducto.tipo_alicuota = value;
           }
         },
         nuevoProductoSubtotal:{

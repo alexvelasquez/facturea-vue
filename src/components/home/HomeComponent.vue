@@ -12,22 +12,22 @@
             <v-list-item three-line>
               <v-list-item-content class="align-center">
                 <div align="center" style="font-size: 14px" class="text mb-2">
-                  RECAUDACIÓN
+                  COMPRAS TOTALES
                 </div>
-                <v-list-item-title align="center" class="headline mb-2">
-                  {{ totales.recaudacion.total | formatPrecio }}
+                <v-list-item-title align="center" class="headline mb-2 pb-2">
+                  {{ (parseFloat(totales.cobrado) + parseFloat(totales.aCobrar)) | formatPrecio }}
                 </v-list-item-title>
-                <v-row>
+                <v-row >
                   <v-col align="center" cols="6" style="border-top: 2px solid" class>
                     <p class="text" style="font-size: 14px">COBRADO</p>
                     <v-list-item-title align="center">
-                      {{ totales.recaudacion.pagado | formatPrecio }}
+                      {{ totales.cobrado | formatPrecio }}
                     </v-list-item-title>
                   </v-col>
                   <v-col align="center" cols="6" style="border-top: 2px solid">
                     <p class="text" style="font-size: 14px">A COBRAR</p>
                     <v-list-item-title align="center">
-                      {{ totales.recaudacion.pendientePago | formatPrecio }}
+                      {{ totales.aCobrar | formatPrecio }}
                     </v-list-item-title>
                   </v-col>
                 </v-row>
@@ -42,20 +42,20 @@
                 <div align="center" style="font-size: 14px" class="text mb-2">
                   COMPROBANTES EMITIDOS
                 </div>
-                <v-list-item-title align="center" class="headline mb-2">
-                  {{ totales.comprobantes.total | number }}
+                <v-list-item-title align="center" class="headline mb-2 pb-2">
+                  {{ (parseInt(totales.facturas)+parseInt(totales.recibos)) | number }}
                 </v-list-item-title>
                 <v-row>
                   <v-col align="center" cols="6" style="border-top: 2px solid">
                     <p class="text" style="font-size: 14px">FACTURAS</p>
                     <v-list-item-title align="center">
-                      {{ totales.comprobantes.factura | number }}
+                      {{ totales.facturas | number }}
                     </v-list-item-title>
                   </v-col>
                   <v-col align="center" cols="6" style="border-top: 2px solid">
                     <p class="text" style="font-size: 14px">RECIBOS</p>
                     <v-list-item-title align="center">
-                      {{ totales.comprobantes.recibo | number }}
+                      {{ totales.recibos| number }}
                     </v-list-item-title>
                   </v-col>
                 </v-row>
@@ -70,20 +70,20 @@
                 <div align="center" style="font-size: 14px" class="text mb-2">
                   PEDIDOS
                 </div>
-                <v-list-item-title align="center" class="headline mb-2">
-                  {{ totales.pedidos.total | number }}
+                <v-list-item-title align="center" class="headline mb-2 pb-2">
+                  {{ (parseInt(totales.pendientes)+parseInt(totales.realizados)) | number }}
                 </v-list-item-title>
                 <v-row>
                   <v-col align="center" cols="6" style="border-top: 2px solid">
                     <p class="text" style="font-size: 14px">PENDIENTES</p>
                     <v-list-item-title align="center">
-                      {{ totales.pedidos.pendiente | number }}
+                      {{ totales.pendientes | number }}
                     </v-list-item-title>
                   </v-col>
                   <v-col align="center" cols="6" style="border-top: 2px solid">
                     <p class="text" style="font-size: 14px">REALIZADOS</p>
                     <v-list-item-title align="center">
-                      {{ totales.pedidos.realizado | formatNumber }}
+                      {{ totales.realizados | number }}
                     </v-list-item-title>
                   </v-col>
                 </v-row>
@@ -104,13 +104,9 @@
         </v-col>
       </v-row>
     </div>
-    <div>
+    <div v-if="totales.graficos">
       <mensajes-component :active="active" :mensaje="mensaje"></mensajes-component>
-      <line-chart
-        v-if="dataGraficos.datasets"
-        :labels="dataGraficos.labels"
-        :datasets="dataGraficos.datasets"
-      ></line-chart>
+      <line-chart :labels="totales.graficos.labels" :datasets="totales.graficos.values"></line-chart>
     </div>
   </div>
 </template>
@@ -131,43 +127,43 @@ export default {
     return {
       active: false,
       mensaje: {},
-      ventas: {},
-      dataGraficos: {},
       periodo: {
         fechaHasta: moment().format("YYYY-MM-DD"),
         fechaDesde: moment().subtract(30, "d").format("YYYY-MM-DD"),
       },
-      totales: { recaudacion: {}, comprobantes: {}, pedidos: {} },
+      totales:{},
     };
   },
-  mounted() {
-    axios.get(`notificaciones`).then((response) => {
+  async mounted() {
+    await axios.get(`notificaciones`).then((response) => {
       if (response.data.data != null) {
         this.mensaje = response.data.data;
         this.active = true;
       }
     });
-    // this.graficos();
+    await this.valoresGenerales();
   },
   methods: {
-    graficos() {
+    valoresGenerales() {
       axios
-        .get(`comprobantePreventa/negocio/${this.negocio.negocio_id}/ventas`, {
+        .get(`inicio`, {
           params: this.periodo,
         })
         .then((response) => {
-          this.dataGraficos = {};
-          if (response.data.data.graficos) {
-            this.dataGraficos = response.data.data.graficos ?? null;
-          }
-          this.totales = response.data.data.totales;
+          console.log(response)
+          this.totales = response.data.data;
+          // this.dataGraficos = {};
+          // if (response.data.data.graficos) {
+          //   this.dataGraficos = response.data.data.graficos ?? null;
+          // }
         })
         .catch((error) => {});
     },
   },
   watch: {
     periodo() {
-      this.graficos();
+      this.totales.graficos = null;
+      this.valoresGenerales();
     },
   },
 };

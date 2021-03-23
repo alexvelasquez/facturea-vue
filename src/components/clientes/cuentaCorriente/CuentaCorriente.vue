@@ -28,11 +28,19 @@
           </v-card-subtitle
           >
           <v-card-text class="text-center text-h5">
-            <span class="caption">$</span> {{cuentaCorriente.monto ? cuentaCorriente.monto : 0 }}</v-card-subtitle>
+            <span class="caption"></span> {{cuentaCorriente.monto | formatPrecio }}</v-card-subtitle>
           </v-card-text>
           <v-card-actions class="justify-end">
             <!-- <v-btn text>Abonar</v-btn> -->
             <modal-pago @abonar="abonar($event)"></modal-pago>
+              <v-btn
+                outlined
+                color="#385F73"
+                dark
+                class="mb-2 mr-md-2"
+                @click="$router.push(`/clientes/compras/${clienteId}`)"
+                >COMPRAS</v-btn
+              >
           </v-card-actions>
         </v-card>
       </v-col>

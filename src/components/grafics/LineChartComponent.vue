@@ -14,10 +14,6 @@ export default {
           type:Array,
           default:[]
         },
-        titulo:{
-          type:String,
-          default:null
-        },
     },
     extends: Line,
 
@@ -27,7 +23,7 @@ export default {
           labels : this.labels,
             datasets: [{
                 label: 'Monto Cobrado ',
-                data: this.datasets,
+                data:this.datasets,
                 backgroundColor: "transparent",
                 borderColor: "rgba(1, 116, 188, 0.50)",
                 pointBackgroundColor: "rgba(171, 71, 188, 1)"

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <cuenta-corriente :clienteId="cliente"></cuenta-corriente>
+    <cuenta-corriente :clienteId="cliente" @changeCompras="isCuentaCorriente=false"></cuenta-corriente>
   </div>
 </template>
 <script>

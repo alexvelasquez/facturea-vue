@@ -70,6 +70,14 @@ const routes = [
       }
     },
     {
+      path: '/clientes/compras/:cliente',
+      name: 'ComprasCliente',
+      component: () => import('../views/ComprasCliente.vue'),
+      meta: {
+        requiresAuth: true
+      }
+    },
+    {
       path: '/pedidos',
       name: 'Pedidos',
       component: () => import('../views/Pedidos.vue'),
