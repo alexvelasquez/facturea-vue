@@ -1,7 +1,13 @@
 <template>
   <v-dialog v-model="dialogCliente" max-width="780px" persistent>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" v-bind="attrs" v-on="on"
+      <v-btn
+        outlined
+        color="#385F73"
+        dark
+        class="mb-2 mr-md-2"
+        v-bind="attrs"
+        v-on="on"
         >Nuevo Cliente</v-btn
       >
     </template>
@@ -156,10 +162,16 @@
             <v-card-actions class="pt-md-0">
               <v-spacer></v-spacer>
               <v-btn color="#385F73" text @click="cerrarDialog">Cancelar</v-btn>
-              <v-btn v-if="!editable" color="#385F73" text @click="agregarCliente"
+              <v-btn
+                v-if="!editable"
+                color="#385F73"
+                text
+                @click="agregarCliente"
                 >AGREGAR</v-btn
               >
-              <v-btn v-else color="#385F73" text @click="editarCliente">MODIFICAR</v-btn>
+              <v-btn v-else color="#385F73" text @click="editarCliente"
+                >MODIFICAR</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -172,6 +184,8 @@
 </template>
 
 <script>
+import { nuevoCliente, editarCliente } from "@/services/clientes";
+import { getLocalidades } from "@/services/datosGeograficos";
 export default {
   props: {
     cliente: {
@@ -182,24 +196,11 @@ export default {
         },
       },
     },
-    provincias: {
-      type: Array,
-      default: [],
-    },
-    tiposDocumentos: {
-      type: Array,
-      default: [],
-    },
-    condicionesIva: {
-      type: Array,
-      default: [],
-    },
-    dialog: {
-      type: Boolean,
-    },
-    editable: {
-      type: Boolean,
-    },
+    provincias: { type: Array },
+    condicionesIva: { type: Array },
+    tiposDocumentos: { type: Array },
+    dialog: { type: Boolean },
+    editable: { type: Boolean },
   },
 
   data() {
@@ -218,21 +219,49 @@ export default {
     };
   },
   methods: {
-    agregarCliente() {
+    async agregarCliente() {
       if (this.$refs.form.validate()) {
-        this.dialogCliente = false;
-        this.$emit("agregar-cliente", this.cliente);
+        this.busqueda = true;
+        const response = (await nuevoCliente(this.cliente));
+        if(response.status === 201){
+          this.busqueda = false;
+          this.dialogCliente = false;
+          this.$emit("agregar-cliente",response.data.data);
+        }
+        else{
+          this.busqueda = false;
+          this.notificacionError();
+        }
       }
     },
-    editarCliente() {
+    async editarCliente() {
       if (this.$refs.form.validate()) {
-        this.$emit("editar-cliente", this.cliente);
+        try {
+          let response = await this.sweetalert(
+            `warning`,
+            `¿Estas seguro que deseas modificar este cliente?`
+          );
+          if (response.value) {
+            this.busqueda = true;
+            response = ( await editarCliente(this.cliente.cliente_id, this.cliente));
+            if(response.status === 200){
+              this.busqueda = false;
+              this.dialogCliente = false;
+              this.$emit("editar-cliente", response.data.data);
+            }
+          }
+        } catch {
+          this.busqueda = false;
+          this.notificacionError();
+        }
       }
     },
     verificar() {
       if (this.cliente.condicion_iva.condicion_iva_id) {
         this.disabled = false;
-        if (this.cliente.condicion_iva.condicion_iva_id == this.consumidorFinal) {
+        if (
+          this.cliente.condicion_iva.condicion_iva_id == this.consumidorFinal
+        ) {
           this.cliente.tipo_documento.tipo_documento_id = this.otroDocumento;
           this.cliente.documento = 0;
           this.disabled = true;
@@ -253,21 +282,30 @@ export default {
         this.$refs.form.resetValidation();
       }
     },
-    provinciaCliente() {
+    async provinciaCliente() {
       if (this.provinciaCliente) {
-        this.busqueda = true;
-        axios
-          .get(`datosGeograficos/localidades/${this.provinciaCliente}`)
-          .then((response) => {
-            this.localidades = response.data.data;
-            this.busqueda = false;
-          });
+        try{
+          this.busqueda = true;
+          this.localidades=(await getLocalidades(this.provinciaCliente)).data.data;
+          this.busqueda = false;
+        }
+        catch(e){
+          this.busqueda = false;
+          this.notificacionError();
+        }
       }
     },
   },
   computed: {
-    provinciaCliente() {
-      return this.cliente.localidad.provincia.provincia_id;
+    provinciaCliente: {
+      get(){return this.cliente.localidad.provincia.provincia_id},
+      set(value){ this.cliente.localidad.provincia = value}
+    },
+    consumidorFinal() {
+      return 11;
+    },
+    otroDocumento() {
+      return 18;
     },
   },
 };

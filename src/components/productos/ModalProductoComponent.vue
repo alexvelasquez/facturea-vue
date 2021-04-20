@@ -1,7 +1,13 @@
 <template>
   <v-dialog v-model="dialogProducto" max-width="700px" persistent>
     <template v-slot:activator="{ on, attrs }">
-      <v-btn outlined color="#385F73" dark class="mb-2 mr-md-2" v-bind="attrs" v-on="on"
+      <v-btn
+        outlined
+        color="#385F73"
+        dark
+        class="mb-2 mr-md-2"
+        v-bind="attrs"
+        v-on="on"
         >Nuevo Producto</v-btn
       >
     </template>
@@ -24,7 +30,7 @@
                         item-value="categoria_id"
                         :items="categorias"
                         :label="'Categoria'"
-                        placeholder="seleccione una categoria"
+                        placeholder="Busque o ingrese uno nuevo"
                         item-text="descripcion"
                         :search-input.sync="itemCategoria.descripcion"
                         persistent-hint
@@ -38,10 +44,14 @@
                             <v-list-item-group color="primary">
                               <v-list-item>
                                 <v-list-item-content>
-                                  <v-btn text color="primary" @click="agregarCategoria">
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="agregarCategoria"
+                                  >
                                     <v-list-item-title
-                                      >"{{ itemCategoria.descripcion }}" AGREGAR A
-                                      CATEGORIAS
+                                      >"{{ itemCategoria.descripcion }}" AGREGAR
+                                      A CATEGORIAS
                                     </v-list-item-title>
                                   </v-btn>
                                 </v-list-item-content>
@@ -71,9 +81,14 @@
                             <v-list-item-group color="primary">
                               <v-list-item>
                                 <v-list-item-content>
-                                  <v-btn text color="primary" @click="agregarMarca">
+                                  <v-btn
+                                    text
+                                    color="primary"
+                                    @click="agregarMarca"
+                                  >
                                     <v-list-item-title
-                                      >"{{ itemMarca.descripcion }}" AGREGAR A MARCAS
+                                      >"{{ itemMarca.descripcion }}" AGREGAR A
+                                      MARCAS
                                     </v-list-item-title>
                                   </v-btn>
                                 </v-list-item-content>
@@ -157,10 +172,16 @@
             <v-card-actions class="pt-md-0">
               <v-spacer></v-spacer>
               <v-btn color="#385F73" text @click="cerrarDialog">Cancelar</v-btn>
-              <v-btn v-if="!editable" color="#385F73" text @click="agregarProducto"
+              <v-btn
+                v-if="!editable"
+                color="#385F73"
+                text
+                @click="agregarProducto"
                 >AGREGAR</v-btn
               >
-              <v-btn v-else color="#385F73" text @click="editarProducto">MODIFICAR</v-btn>
+              <v-btn v-else color="#385F73" text @click="editarProducto"
+                >MODIFICAR</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -194,7 +215,12 @@
                         outlined
                         color="#385F73"
                         class="mr-md-3"
-                        @click="exportarXlsx(`productos/exportar_modelo`, 'modelo.xlsx')"
+                        @click="
+                          exportarXlsx(
+                            `productos/exportar_modelo`,
+                            'modelo.xlsx'
+                          )
+                        "
                         dark
                         >Descargar modelo XSL</v-btn
                       >
@@ -206,7 +232,10 @@
                         color="#385F73"
                         dark
                         @click="
-                          exportarXlsx(`productos/exportar_ejemplo`, 'ejemplo.xlsx')
+                          exportarXlsx(
+                            `productos/exportar_ejemplo`,
+                            'ejemplo.xlsx'
+                          )
                         "
                         >Descargar ejemplo</v-btn
                       >
@@ -231,6 +260,9 @@
 </template>
 
 <script>
+import {nuevoProducto,editarProducto, importarProductos} from "@/services/producto"
+import {nuevaMarca} from "@/services/marcas"
+import {nuevaCategoria} from "@/services/categorias"
 export default {
   props: {
     producto: {
@@ -277,73 +309,93 @@ export default {
     };
   },
   methods: {
-    agregarProducto() {
+    async agregarProducto() {
       if (this.$refs.form.validate()) {
-        this.dialogProducto = false;
-        this.$emit("agregar-producto", this.producto);
+        this.busqueda = true;
+        const response = (await nuevoProducto(this.producto))
+        if(response.status === 201){
+          this.busqueda = false;
+          this.dialogProducto = false;
+          this.$emit("agregar-producto", response.data.data);
+        }
+        else{
+          this.busqueda = false;
+          this.notificacionError();
+        }
       }
     },
-    editarProducto() {
+    async editarProducto() {
       if (this.$refs.form.validate()) {
-        this.$emit("editar-producto", this.producto);
+          this.busqueda = true;
+          let response = await this.sweetalert(
+            `warning`,
+            `¿Estas seguro que deseas modificar este producto?`
+          );
+          if (response.value) {
+            response = await editarProducto(this.producto.producto_id,this.producto);
+            if (response.status === 200) {
+              this.busqueda = false;
+              this.dialogProducto = false;
+              this.$emit("editar-producto", response.data.data);
+            }
+            else{
+              this.busqueda = false;
+              this.notificacionError();
+            }
+          }
       }
     },
-    agregarCategoria() {
+    async agregarCategoria() {
       this.busqueda = true;
-      axios.post(`categorias/nuevo`, this.itemCategoria).then((response) => {
+      const response = await nuevaCategoria(this.itemCategoria);
+      if(response.status === 201){
         this.categorias.push(response.data.data);
         this.producto["categoria"] = response.data.data;
         this.busqueda = false;
         this.notificacion("Categoria agregada.", "success");
-      });
+      }
+      else{
+        this.notificacionError();
+      }
     },
-    agregarMarca() {
+    async agregarMarca() {
       this.busqueda = true;
-      axios
-        .post(`marcas/nuevo`, this.itemMarca)
-        .then((response) => {
+      const response = await nuevaMarca(this.itemMarca);
+      if(response.status === 201){
           this.marcas.push(response.data.data);
           this.producto["marca"] = response.data.data;
           this.busqueda = false;
           this.notificacion("Marca agregada.", "success");
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido al agregar la marca", "error");
-        });
+      }
+      else{
+        this.notificacionError();
+      }
     },
     cerrarDialog() {
       this.dialogProducto = false;
       this.$emit("cerrar-dialog");
     },
-    cargarArchivo() {
+    async cargarArchivo() {
       let formData = new FormData();
       formData.append("file", this.files[0]);
       this.dialogProducto = false;
-      axios
-        .post(`productos/negocio/${this.negocio.negocio_id}/importar_excel`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        })
-        .then((response) => {
-          if (response.response) {
-            this.notificacion(response.response.data.message, "error");
-          } else {
-            this.notificacion("Archivo subido correctamente", "success");
-            this.$emit("reload");
-          }
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido un error al cargar el archivo", "error");
-        });
+      const response = await importarProductos(formData);
+      if(response.status === 201){
+        this.notificacion("Archivo subido correctamente", "success");
+        this.$emit("reload");
+      }
+      else{
+        try{
+          this.notificacion(response.response.data.message, "error");
+        }
+        catch(e){
+          this.notificacionError();
+        }
+      }
     },
-    async exportarXlsx(link, name) {
-      
-      this.busqueda = true;
-      await setTimeout(()=>{ 
-      this.descargar(link, name);
-      this.busqueda = false;},3000);
 
+    async exportarXlsx(link, name) {
+      await this.descargar(link, name);
     },
   },
   watch: {

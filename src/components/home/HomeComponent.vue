@@ -63,7 +63,7 @@
             </v-list-item>
           </v-card>
         </v-col>
-        <v-col cols="12" md="4" v-if="pedidoProductosHabilitado">
+        <v-col cols="12" md="4" v-if="negocio.pedido === 'S'">
           <v-card outlined color="#385F73" dark>
             <v-list-item three-line>
               <v-list-item-content class="align-center">
@@ -115,6 +115,9 @@
 import LineChart from "@/components/grafics/LineChartComponent.vue";
 import MensajesComponent from "@/components/MensajesComponent.vue";
 import DateRangoFecha from "@/components/home/DateRangoFecha.vue";
+import { getNotificaciones } from "@/services/notificaciones.js";
+import { negocio } from "@/services/negocio";
+import { informe } from "@/services/home";
 import axios from "axios";
 export default {
   name: "Home",
@@ -127,6 +130,7 @@ export default {
     return {
       active: false,
       mensaje: {},
+      negocio:{},
       periodo: {
         fechaHasta: moment().format("YYYY-MM-DD"),
         fechaDesde: moment().subtract(30, "d").format("YYYY-MM-DD"),
@@ -135,36 +139,20 @@ export default {
     };
   },
   async mounted() {
-    await axios.get(`notificaciones`).then((response) => {
-      if (response.data.data != null) {
-        this.mensaje = response.data.data;
-        this.active = true;
-      }
-    });
-    await this.valoresGenerales();
-  },
-  methods: {
-    valoresGenerales() {
-      axios
-        .get(`inicio`, {
-          params: this.periodo,
-        })
-        .then((response) => {
-          console.log(response)
-          this.totales = response.data.data;
-          // this.dataGraficos = {};
-          // if (response.data.data.graficos) {
-          //   this.dataGraficos = response.data.data.graficos ?? null;
-          // }
-        })
-        .catch((error) => {});
-    },
+    const response = (await getNotificaciones())
+    if(response.status === 200 && response.data.data){
+      this.mensaje = response.data.data;
+      this.active = true;
+    }
+    this.negocio = (await negocio()).data.data;
+    this.totales = (await informe(this.periodo)).data.data;
   },
   watch: {
-    periodo() {
+    async periodo(){
       this.totales.graficos = null;
-      this.valoresGenerales();
+      this.totales = (await informe(this.periodo)).data.data;
     },
   },
+  
 };
 </script>

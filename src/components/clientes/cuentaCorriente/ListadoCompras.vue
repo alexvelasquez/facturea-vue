@@ -92,6 +92,8 @@
 
 <script>
 import DetalleCompra from "@/components/clientes/cuentaCorriente/DetalleCompra.vue";
+import { compras } from "@/services/clientes";
+import { getDetalleVenta } from "@/services/ventas";
 export default {
   components:{DetalleCompra},
   props: {
@@ -105,6 +107,7 @@ export default {
     compras:[],
     itemCompra:null,
     itemsProductos:[],
+    
     cabeceras: [
       {
         text: "Fecha de Compra",
@@ -133,22 +136,12 @@ export default {
 
   }),
 
-  mounted() {
-    this.cargarComprasClientes();
+  async mounted() {
+    this.compras = (await compras(this.clienteId)).data.data;
   },
   methods: {
-    cargarComprasClientes() {
-        axios.get(`clientes/compras/${this.clienteId}`)
-        .then(response=>{
-            this.compras = response.data.data;
-        })
-    },
-    verDetalle(item) {
-      console.log(item)
-      axios.get(`ventas/pedido/productos/${item.venta.ventaId}`).then((response) => {
-        this.itemsProductos = response.data.data;
-        this.dialog = true;
-      });
+    async verDetalle(item) {
+      this.itemsProductos = (await getDetalleVenta()).data.data;
     },
   }
 

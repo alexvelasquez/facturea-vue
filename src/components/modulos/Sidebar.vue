@@ -15,7 +15,7 @@
                     <v-list-item-title> {{ item.title }}</v-list-item-title>
                 </v-list-item-content>
             </v-list-item>
-            <v-list-group :value="false" prepend-icon="vpn_lock" sub-group class="organizacion" v-if="rol=='ROLE_USER'">
+            <v-list-group :value="false" prepend-icon="vpn_lock" sub-group class="organizacion" v-if="role=='ROLE_USER'">
                 <template v-slot:activator>
                     <v-list-item-title class="organizacion-text">MI ORGANIZACIÓN</v-list-item-title>
                 </template>
@@ -32,18 +32,21 @@
 
 <script>
 import logo from '@/assets/images/logo.png'
+import { negocio } from "@/services/negocio";
 export default {
   data(){
     return {
       drawerSidebar:null,
       logo: logo,
+      negocio: null,
       options:[],
       optionsUserColapse:[]
 
     }
   },
-  mounted() {
-      if(this.rol === 'ROLE_ADMIN'){
+  async mounted() {
+      this.negocio = (await negocio()).data.data;
+      if(this.role === 'ROLE_ADMIN'){
         this.options = [{
                 title: 'USUARIOS',
                 link: '/comprobantes',
@@ -56,11 +59,11 @@ export default {
                 link: '/',
                 icon: 'home'
             }, {
-                title: 'COMPROBANTES',
+                title: 'FACTURAS EMITIDAS',
                 link: '/comprobantes',
                 icon: 'wysiwyg'
             }, {
-                title: 'GENERAR COMPROBANTE',
+                title: 'NUEVO COMPROBANTE',
                 link: '/facturacion',
                 icon: 'book_online'
             },
@@ -74,7 +77,7 @@ export default {
             link: '/productos',
             icon: 'fastfood'
         }]
-        if (this.pedidoProductosHabilitado) {
+        if (this.negocio.pedido === 'S') {
             this.optionsUserColapse.push({
                 title: 'PEDIDOS',
                 link: '/pedidos',
@@ -88,11 +91,6 @@ export default {
         })
       }
   },
-  computed:{
-    rol(){
-      return this.$store.getters.getUserRol
-    }
-  }
 
 }
 </script>

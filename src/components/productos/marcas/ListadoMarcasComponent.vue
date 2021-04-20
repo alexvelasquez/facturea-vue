@@ -94,6 +94,7 @@
 <script>
 import ModalMarca from "@/components/productos/marcas/ModalMarcaComponent";
 import ModalAumento from "@/components/productos/ModalAumento";
+import { marcas,nuevaMarca,editarMarca } from "@/services/marcas"
 export default {
   components: {
     ModalMarca,
@@ -140,96 +141,39 @@ export default {
     ],
   }),
 
-  mounted() {
-    this.cargarMarcas();
+  async mounted() {
+    this.marcas = (await marcas()).data.data;
   },
   methods: {
-    cargarMarcas() {
-      axios
-        .get(`marcas/negocio/${this.negocio.negocio_id}`)
-        .then((response) => {
-          this.marcas = response.data.data;
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido al recuperar las marcas", "error");
-        });
-    },
-
-    agregarMarca(item) {
-      axios
-        .post(`marcas/nuevo`, item)
-        .then((response) => {
+    async agregarMarca(item) {
+      const response = (await nuevaMarca(item));
+      if(result.status === 201){
           this.marcas.push(response.data.data);
-          this.notificacion("Marca agregada correctamente", "success");
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido al agregar la marca", "error");
-        });
+          this.notificacion("Marca agregada correctamente", "success");        
+      }
+      else{
+        this.notificacionError();
+      }
     },
 
-    editarMarca(item) {
-      this.$swal({
-        title: "¿Estas seguro que deseas modificarla?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.dialog = false;
-          axios
-            .put(`marcas/editar/${item.marca_id}`, item)
-            .then((response) => {
-              Object.assign(this.marcas[this.indexEditable], response.data.data);
-              this.notificacion("Marca modificada correctamente", "success");
-              this.close();
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido al modificar la marca", "error");
-            });
+    async editarMarca(item) {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estas seguro que deseas modificar esta marca?`
+      );
+      if (response.value) {
+        response = await editarMarca(item.marca_id, item);
+        if (response.status === 200) {
+          Object.assign(this.marcas[this.indexEditable], response.data.data);
+          this.notificacion("Marca modificada correctamente", "success");
+          this.close();
         }
-      });
-    },
-    eliminarMarca(item) {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar esta marca?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`marcas/eliminar/${item.marca_id}`)
-            .then((response) => {
-              const index = this.marcas.indexOf(item);
-              this.marcas.splice(index, 1);
-              this.notificacion("Eliminado correctamente", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error al eliminar la marca", "error");
-            });
+        else{
+          this.notificacionError();
         }
-      });
+      }
     },
-    eliminarSeleccionados() {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar las marcas seleccionadas?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`marcas/eliminarMarcas`, {
-              marcas: JSON.stringify(this.seleccionados),
-            })
-            .then((response) => {
-              this.seleccionados.forEach((element) =>
-                this.marcas.splice(this.marcas.indexOf(element), 1)
-              );
-              this.notificacion("Eliminados correctamente", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error", "error");
-            });
-        }
-      });
-    },
+
     modalMarca(item) {
       this.indexEditable = this.marcas.indexOf(item);
       this.itemMarca = Object.assign({}, item);

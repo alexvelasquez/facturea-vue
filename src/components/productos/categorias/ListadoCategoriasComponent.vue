@@ -98,6 +98,8 @@
 <script>
 import ModalCategoria from "@/components/productos/categorias/ModalCategoriaComponent";
 import ModalAumento from "@/components/productos/ModalAumento";
+import { categorias} from "@/services/categorias"
+import { negocio} from "@/services/negocio"
 export default {
   components: {
     ModalCategoria,
@@ -130,6 +132,7 @@ export default {
     seleccionados: [],
     itemCategoria: {},
     defaultCategoria: {},
+    negocio:{},
     options: [
       {
         text: "Productos Y Servicios",
@@ -144,87 +147,24 @@ export default {
     ],
   }),
 
-  mounted() {
-    this.cargarCategorias();
+  async mounted() {
+    this.negocio = (await negocio()).data.data;
+    this.categorias = (await categorias()).data.data;
   },
   methods: {
-    cargarCategorias() {
-      axios
-        .get(`categorias/negocio/${this.negocio.negocio_id}`)
-        .then((response) => {
-          this.categorias = response.data.data;
-        })
-        .catch((error) => {
-          console.log(error);
-        });
-    },
 
     agregarCategoria(item) {
-      axios.post(`categorias/nuevo`, item).then((response) => {
-        this.categorias.push(response.data.data);
-        this.notificacion("Categoria agregada correctamente", "success");
-      });
+      this.categorias.push(item);
+      this.notificacion("Categoria agregada correctamente", "success");   
     },
 
     editarCategoria(item) {
-      this.$swal({
-        title: "¿Estas seguro que deseas modificarla?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.dialog = false;
-          axios.put(`categorias/editar/${item.categoria_id}`, item).then((response) => {
-            Object.assign(this.categorias[this.indexEditable], response.data.data);
-            this.notificacion("Categoria modificado correctamente", "success");
-            this.close();
-          });
-        }
-      });
+      this.dialog = false;
+      Object.assign(this.categorias[this.indexEditable], item);
+      this.notificacion("Categoria modificada correctamente", "success");
+      this.close()
     },
-    eliminarCategoria(item) {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar esta categoria?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`categorias/eliminar/${item.categoria_id}`)
-            .then((response) => {
-              const index = this.categorias.indexOf(item);
-              this.categorias.splice(index, 1);
-              this.notificacion("Eliminado correctamente", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error al eliminar la categoria", "error");
-            });
-        }
-      });
-    },
-    eliminarSeleccionados() {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar las categorias seleccionadas?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`categorias/eliminarCategorias`, {
-              marcas: JSON.stringify(this.seleccionados),
-            })
-            .then((response) => {
-              this.seleccionados.forEach((element) =>
-                this.categorias.splice(this.categorias.indexOf(element), 1)
-              );
-              this.notificacion("Eliminadas correctamente", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error", "error");
-            });
-        }
-      });
-    },
-
+  
     modalCategoria(item) {
       this.indexEditable = this.categorias.indexOf(item);
       this.itemCategoria = Object.assign({}, item);

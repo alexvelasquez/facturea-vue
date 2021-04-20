@@ -7,7 +7,7 @@ export default {
             precio_unitario: 0,
             bonificacion: 0,
             monto_bonif: 0,
-            alicuota: {},
+            tipo_alicuota: {},
             monto_iva: 0,
             subtotal_sin_iva: 0,
             subtotal: 0
@@ -18,7 +18,7 @@ export default {
             precio_unitario: 0,
             bonificacion: 0,
             monto_bonif: 0,
-            alicuota: {},
+            tipo_alicuota: {},
             monto_iva: 0,
             subtotal_sin_iva: 0,
             subtotal: 0,

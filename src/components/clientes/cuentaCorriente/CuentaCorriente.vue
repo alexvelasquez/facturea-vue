@@ -77,6 +77,8 @@
 
 <script>
 import ModalPago from "@/components/clientes/cuentaCorriente/ModalPago";
+import { cuentaCorriente } from "@/services/clientes";
+import { agregarMovimiento } from "@/services/movimiento";
 
 export default {
   components:{ModalPago},
@@ -90,32 +92,23 @@ export default {
     cantMovimientos:10
   }),
 
-  mounted() {
-    this.loadCuentaCorriente();
+  async mounted() {
+    this.cuentaCorriente = (await cuentaCorriente(this.clienteId)).data.data;
   },
   methods: {
-      loadCuentaCorriente(){
-        axios.get(`clientes/cuentaCorriente/${this.clienteId}`)
-        .then(result=>{
-          this.cuentaCorriente = result.data.data;
-        })
-      },
-
-      abonar(movimiento){
+      async abonar(movimiento){
         movimiento.cuenta_corriente = this.cuentaCorriente.cuenta_corriente_id;
-        axios.post(`movimientos/agregar`,movimiento)
-        .then(result=>{
-          if(result.data.code == 200){
+        let response = (await agregarMovimiento(movimiento))
+        if(response.status === 200){
             console.log(Object.assign({}, result.data.data));
             this.$nextTick(() => {
               this.cuentaCorriente = Object.assign({}, result.data.data);
             });
             this.notificacion("Abonado Correctamente", "success");
-          }
-        })
-        .catch(()=>{
-          this.notificacion("Ha ocurrido un error", "error");
-        })
+        }
+        else{
+          this.notificacionError();
+        }
       }
   },
 };

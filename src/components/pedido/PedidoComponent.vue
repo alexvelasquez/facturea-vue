@@ -68,7 +68,11 @@
                             persistent-hint
                           ></v-text-field>
                         </template>
-                        <v-date-picker v-model="pedido.fecha" no-title scrollable>
+                        <v-date-picker
+                          v-model="pedido.fecha"
+                          no-title
+                          scrollable
+                        >
                           <v-spacer></v-spacer>
                           <v-btn
                             text
@@ -85,7 +89,12 @@
                         </v-date-picker>
                       </v-menu>
                     </v-col>
-                    <v-col cols="12" sm="12" md="12" v-if="pedido.cliente.cliente_id">
+                    <v-col
+                      cols="12"
+                      sm="12"
+                      md="12"
+                      v-if="pedido.cliente.cliente_id"
+                    >
                       <v-card class="mx-auto" tile>
                         <v-list-item two-line>
                           <v-list-item-content>
@@ -107,9 +116,12 @@
 
                         <v-list-item class="pb-4" two-line>
                           <v-list-item-content>
-                            <v-list-item-title>TELÉFONO Y DIRECCIÓN</v-list-item-title>
+                            <v-list-item-title
+                              >TELÉFONO Y DIRECCIÓN</v-list-item-title
+                            >
                             <v-list-item-subtitle>
-                              {{ pedido.cliente.telefono }} - Calle 167 e/ 525 y 526
+                              {{ pedido.cliente.telefono }} - Calle 167 e/ 525 y
+                              526
                             </v-list-item-subtitle>
                           </v-list-item-content>
                         </v-list-item>
@@ -148,7 +160,7 @@
                                   v-html="data.item.descripcion"
                                 ></v-list-item-title>
                                 <v-list-item-subtitle
-                                  v-html="'Código: ' + data.item.codigo"
+                                  v-html="`Código: ${data.item.codigo} | Disponible: ${data.item.stock}`"
                                 ></v-list-item-subtitle>
                               </v-list-item-content>
                             </template>
@@ -160,9 +172,14 @@
                         :disabled="!nuevoProductoProducto.producto_id"
                       >
                         <v-list-item-content>
-                          <v-list-item-subtitle>DATOS ADICIONALES</v-list-item-subtitle>
+                          <v-list-item-subtitle
+                            >DATOS ADICIONALES</v-list-item-subtitle
+                          >
                           <v-row>
-                            <v-col cols="12" :md="esResponsableInscripto ? '3' : '4'">
+                            <v-col
+                              cols="12"
+                              :md="esResponsableInscripto ? '3' : '4'"
+                            >
                               <v-text-field
                                 v-model="nuevoProductoCantidad"
                                 :rules="reglasValidacion.cantidad"
@@ -174,7 +191,10 @@
                                 dense
                               ></v-text-field>
                             </v-col>
-                            <v-col cols="12" :md="esResponsableInscripto ? '3' : '4'">
+                            <v-col
+                              cols="12"
+                              :md="esResponsableInscripto ? '3' : '4'"
+                            >
                               <v-text-field
                                 v-model="nuevoProductoBonificacion"
                                 color="#385F73"
@@ -204,7 +224,10 @@
                                 outlined
                               ></v-select>
                             </v-col>
-                            <v-col cols="12" :md="esResponsableInscripto ? '3' : '4'">
+                            <v-col
+                              cols="12"
+                              :md="esResponsableInscripto ? '3' : '4'"
+                            >
                               <v-text-field
                                 v-model="nuevoProductoSubtotal"
                                 color="#385F73"
@@ -220,9 +243,16 @@
                         </v-list-item-content>
                       </v-list-item>
                     </v-form>
-                    <v-list-item two-line :disabled="!nuevoProductoProducto.producto_id">
+                    <v-list-item
+                      two-line
+                      :disabled="!nuevoProductoProducto.producto_id"
+                    >
                       <v-list-item-content>
-                        <v-btn block color="#385F73" dark @click="agregarPedido()"
+                        <v-btn
+                          block
+                          color="#385F73"
+                          dark
+                          @click="agregarPedido()"
                           >Agregar</v-btn
                         >
                       </v-list-item-content>
@@ -255,13 +285,22 @@
             <template v-slot:[`item.monto_bonif`]="{ item }">
               <span>{{ item.monto_bonif | formatPrecio }}</span>
             </template>
-            <template v-if="esResponsableInscripto" v-slot:[`item.monto_iva`]="{ item }">
+            <template
+              v-if="esResponsableInscripto"
+              v-slot:[`item.tipo_alicuota`]="{ item }"
+            >
+              <span>{{ item.tipo_alicuota.descripcion }}</span>
+            </template>
+            <template
+              v-if="esResponsableInscripto"
+              v-slot:[`item.monto_iva`]="{ item }"
+            >
               <span>{{ item.monto_iva | formatPrecio }}</span>
             </template>
             <template v-slot:[`item.subtotal`]="{ item }">
               <span>{{ item.subtotal | formatPrecio }}</span>
             </template>
-            <template v-slot:item.actions="{ item }">
+            <template v-slot:[`item.actions`]="{ item }">
               <v-icon
                 medium
                 color="#385F73"
@@ -285,7 +324,14 @@
           <v-row>
             <v-col cols="12" justify="end" align="center">
               <v-col cols="12" sm="12" md="3" offset-md="9">
-                <v-btn outlined color="#385F73" @click="eliminarProductos()" dark block>Eliminar Seleccionados</v-btn>
+                <v-btn
+                  outlined
+                  color="#385F73"
+                  @click="eliminarProductos()"
+                  dark
+                  block
+                  >Eliminar Seleccionados</v-btn
+                >
               </v-col>
             </v-col>
             <modal-pedido
@@ -294,6 +340,7 @@
               :hint="hint"
               :productos="productos"
               :reglas="reglasValidacion"
+              :es-responsable-inscripto="esResponsableInscripto"
               :tipos-ali-cuotas="alicuotas"
               @cerrar-dialog="cerrarDialog"
               @editar-producto="editarProducto($event)"
@@ -333,6 +380,11 @@
 
 <script>
 import ModalPedido from "@/components/pedido/ModalPedido";
+import {venta,getDetalleVenta,editarVenta,nuevaVenta} from "@/services/ventas"
+import {negocio} from "@/services/negocio"
+import {clientes} from "@/services/clientes"
+import {productos} from "@/services/producto"
+import {getTiposAlicuotas} from "@/services/afip"
 import Montos from "@/mixins/montos";
 export default {
   components: {
@@ -347,6 +399,7 @@ export default {
   },
   data: () => ({
     panel: [0],
+    negocio:{},
     dialog: false,
     indexEditable: -1,
     pedido: {
@@ -399,41 +452,20 @@ export default {
     ],
     cantidadPrevia: -1,
   }),
-  mounted() {
+  async mounted() {
+    this.negocio = (await negocio()).data.data;
     this.adapterHeader();
-    this.cargarDatosPedido();
+    this.clientes = (await clientes()).data.data;
+    this.productos = (await productos()).data.data;
+    this.alicuotas = (await getTiposAlicuotas()).data.data;
+    if (this.pedidoId) {
+      this.pedido.cliente = (await venta(this.pedidoId)).data.data.cliente;
+      this.pedido.productos = (await getDetalleVenta(this.pedidoId)).data.data;
+      this.sumarImportesTotales();
+    }
   },
 
   methods: {
-    cargarDatosPedido() {
-      axios
-        .all([
-          axios.get(`clientes`),
-          axios.get(`productos/negocio/${this.negocio.negocio_id}`),
-          axios.get(`afip/tiposAliCuotas`),
-        ])
-        .then(
-          axios.spread((clientes, productos, alicuotas) => {
-            this.clientes = clientes.data.data;
-            this.productos = productos.data.data;
-            this.alicuotas = alicuotas.data.data;
-          })
-        );
-      if (this.pedidoId) {
-        axios
-          .all([
-            axios.get(`ventas/pedido/${this.pedidoId}`),
-            axios.get(`ventas/pedido/productos/${this.pedidoId}`),
-          ])
-          .then(
-            axios.spread((pedido, producto) => {
-              this.pedido.cliente = pedido.data.data.cliente;
-              this.pedido.productos = producto.data.data;
-              this.sumarImportesTotales();
-            })
-          );
-      }
-    },
     adapterHeader() {
       /** cambio el header del datatable, dependiendo la condicion_iva del usuario */
       if (this.esResponsableInscripto) {
@@ -441,7 +473,7 @@ export default {
           {
             text: "IVA Aplicado",
             sortable: false,
-            value: "alicuota.descripcion",
+            value: "tipo_alicuota",
           },
           {
             text: "Importe IVA",
@@ -488,8 +520,10 @@ export default {
       }
     },
     editarProducto(item) {
+      console.log(item)
       item.cantidad_previa = this.cantidadPrevia;
       this.actualizarStock(item, "editar");
+      console.log(item);
       Object.assign(this.listado[this.indexEditable], item);
       this.sumarImportesTotales();
       this.cerrarDialog();
@@ -509,7 +543,7 @@ export default {
           this.sumarImportesTotales();
           this.reestablecer();
           this.notificacion("Eliminado correctamente", "success");
-          
+
         }
       });
     },
@@ -562,44 +596,41 @@ export default {
           break;
       }
     },
-    cargarPedido() {
-      this.$swal({
-        title: "¿Estás seguro que deseas cargar este pedido?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios.post(`ventas/pedido/nuevo`, this.pedido).then((response) => {
-            if (response.data.code === 201) {
+    async cargarPedido() {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estás seguro que deseas cargar este pedido?`
+      );
+      if (response.value) {
+        response = await nuevaVenta(this.pedido);
+        console.log(response);
+        if (response.status === 201) {
               this.pedido = Object.assign({}, this.pedidoDefault);
               this.notificacion("Cargado correctamente", "success");
               this.$router.push("/pedidos");
-            } else {
-              this.notificacion("Ha ocurrido un error", "error");
-            }
-          });
         }
-      });
+        else{
+          this.notificacionError();
+        }
+      }
     },
 
     /** modificar pedido **/
-    modificarPedido() {
-      this.$swal({
-        title: "¿Estás seguro que deseas modificar este pedido?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`ventas/pedido/editar/${this.pedidoId}`, this.pedido)
-            .then((response) => {
-              if (response.data.code === 200) {
-                this.notificacion("Modificado correctamente", "success");
-                this.$router.push("/pedidos");
-              } else {
-                this.notificacion("Ha ocurrido un error", "error");
-              }
-            });
+    async modificarPedido() {
+      const response = await this.sweetalert(
+        `warning`,
+        `¿Estás seguro que deseas modificar este pedido?`
+      );
+      if (response.value) {
+        response = await editarVenta(this.pedidoId,this.pedido);
+        if (response.status === 200) {
+          this.notificacion("Modificado correctamente", "success");
+          this.$router.push("/pedidos");
         }
-      });
+        else{
+          this.notificacionError();
+        }
+      }
     },
 
     sumarImportesTotales() {
@@ -627,6 +658,9 @@ export default {
       set(value) {
         this.pedido.productos = value;
       },
+    },
+    esResponsableInscripto(){
+      return this.negocio.condicion_iva ? this.negocio.condicion_iva.afip_id == 1 : null;
     },
     options() {
       return [

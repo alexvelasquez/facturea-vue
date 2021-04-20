@@ -28,12 +28,15 @@
         <template v-slot:[`item.fecha`]="{ item }">
           <span>{{ item.fecha | formatDate }}</span>
         </template>
-        <template v-slot:item.estado="{ item }">
-          <v-chip class="ma-2 white--text" :color="colores[item.estado.toLowerCase()]">
+        <template v-slot:[`item.estado`]="{ item }">
+          <v-chip
+            class="ma-2 white--text"
+            :color="colores[item.estado.toLowerCase()]"
+          >
             {{ item.estado | capitalize }}
           </v-chip>
         </template>
-        <template v-slot:item.actions="{ item }">
+        <template v-slot:[`item.actions`]="{ item }">
           <v-tooltip top>
             <template v-slot:activator="{ on, attrs }">
               <v-icon
@@ -72,7 +75,7 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
-               @click="eliminarPedido(item)"
+                @click="eliminarPedido(item)"
               >
                 delete
               </v-icon>
@@ -170,6 +173,13 @@
 
 <script>
 import ModalDetalle from "@/components/pedido/ModalDetalle.vue";
+import {
+  getEstados,
+  getVentasPorEstado,
+  editarEstadoVenta,
+  eliminarVenta,
+  getDetalleVenta
+} from "@/services/ventas";
 export default {
   components: {
     ModalDetalle,
@@ -226,71 +236,48 @@ export default {
     itemPedido: null,
     pedidos: [],
   }),
-  mounted() {
-    this.cargarDatos();
+  async mounted() {
+      this.estados = (await getEstados()).data.data;
+      this.pedidos = (await getVentasPorEstado(this.estado)).data.data;
   },
   methods: {
-    listadoEstados() {
-      return axios.get(`ventas/estados`).then((response) => {
-        return response.data.data;
-      });
-    },
-    listadoPedidos() {
-      return axios.get(`ventas/pedidos/${this.estado}`).then((response) => {
-        return response.data.data;
-      });
-    },
-    async cargarDatos() {
-      this.estados = await this.listadoEstados();
-      this.pedidos = await this.listadoPedidos();
+    async cambiarEstado(item, estado) {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estás seguro que deseas cambiar el estado de este pedido?`
+      );
+      if (response.value) {
+        response = await editarEstadoVenta(item.venta,estado);
+        if (response.status === 200) {
+          this.estado = estado;
+          this.notificacion(`El pedido cambio a ${estado}.`, "success");
+        }
+        else{
+          this.notificacionError();
+        }
+      }
     },
 
-    cambiarEstado(item, estado) {
-      this.$swal({
-        icon: "warning",
-        title: "¿Estás seguro que deseas cambiar el estado de este pedido?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          /** estado 4, es el estado cancelado o eliminado*/
-          axios
-            .put(`ventas/pedido/estado/${item.venta}`, {
-              codigo: estado,
-            })
-            .then((response) => {
-              if (response.data.code == 200) {
-                this.estado = estado;
-                this.notificacion(`El pedido cambio a ${estado}.`, "success");
-              }
-            });
+    async eliminarPedido(item) {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estás seguro que deseas eliminar este pedido?`
+      );
+      if (response.value) {
+        response = await eliminarVenta(item.venta);
+        if (response.status === 200) {
+          const index = this.pedidos.indexOf(item);
+          this.pedidos.splice(index, 1);
+          this.notificacion(`Pedido eliminado correctamente.`, "success");
         }
-      });
-    },
-
-    eliminarPedido(item) {
-      this.$swal({
-        icon: "warning",
-        title: "¿Estás seguro que deseas eliminar este pedido?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          /** estado 4, es el estado cancelado o eliminado*/
-          axios.put(`ventas/pedido/eliminar/${item.venta}`).then((response) => {
-            if (response.data.code == 200) {
-              const index = this.pedidos.indexOf(item);
-              this.pedidos.splice(index, 1);
-              this.notificacion(`Pedido eliminado correctamente.`, "success");
-            }
-          });
+        else{
+          this.notificacionError();
         }
-      });
+      }
     },
-    verDetalle(item) {
+    async verDetalle(item) {
       this.itemPedido = item;
-      axios.get(`ventas/pedido/productos/${item.venta}`).then((response) => {
-        this.pedidoProductos = response.data.data;
-        this.dialog = true;
-      });
+      this.pedidoProductos = (await getDetalleVenta(item.venta)).data.data;
     },
     cerrarDetalle() {
       this.dialog = false;
@@ -304,7 +291,7 @@ export default {
   },
   watch: {
     async estado() {
-      this.pedidos = await this.listadoPedidos();
+      this.pedidos = (await getVentasPorEstado(this.estado)).data.data;
     },
   },
 };

@@ -13,6 +13,7 @@ window.axios = axios;
 window.moment = moment;
 import 'sweetalert2/dist/sweetalert2.min.css';
 import './assets/css/custom.css'
+import { mapFields } from 'vuex-map-fields';
 const options = {
   confirmButtonColor: '#385F73',
   cancelButtonColor: '#fffff',
@@ -30,26 +31,23 @@ var value = 0
 
 /** intercepto el response para setear el authorization token */
 axios.interceptors.request.use(config => {
-
-  config.headers.Authorization = "Bearer "+store.getters.token
-  store.dispatch('loading',true)
+  store.dispatch('config/loading',true)
+  config.headers.Authorization = "Bearer "+store.getters['user/getField']('token');
   return config
 });
 
 /** intercepto el request y verifico si expiro el token */
 axios.interceptors.response.use(response => {
-  store.dispatch('loading',false)
+  store.dispatch('config/loading',false)
   return response;
 },error => {
-      store.dispatch('loading',false)
+      store.dispatch('config/loading',false)
+      /** si vencio el token */
       if(error.response.status == 401 && (error.response.data.message === "Expired JWT Token" || error.response.data.message === "Invalid JWT Token"))
       {
-          store.dispatch('logout')
-          .then(response=>{
-            router.push('/logout')
-          })
+        router.push('/logout')
       }
-      return error;
+      return error.response;
   }
 
 );

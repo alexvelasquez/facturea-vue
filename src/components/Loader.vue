@@ -1,18 +1,17 @@
 <template>
   <div class="text-center">
-    <v-overlay :value="overlay">
+    <v-overlay :value="loading">
       <v-progress-circular indeterminate size="64"></v-progress-circular>
     </v-overlay>
   </div>
 </template>
 
 <script>
+import { mapFields } from 'vuex-map-fields'
+import { mapActions } from 'vuex'
 export default {
-
-    computed:{
-        overlay(){
-            return this.$store.getters.loading
-        }
-    }
+  computed: {
+    ...mapFields('config',['loading']),
+  },
 }
 </script>

@@ -31,13 +31,12 @@
         show-select
       >
         <template v-slot:[`item.direccion`]="{ item }">
-          <span>
-            {{ item.direccion}}</span
-          >
+          <span> {{ item.direccion }}</span>
         </template>
         <template v-slot:[`item.localidad`]="{ item }">
           <span>
-            {{ item.localidad.provincia.descripcion | upper }} / {{ item.localidad.descripcion | upper }}
+            {{ item.localidad.provincia.descripcion | upper }} /
+            {{ item.localidad.descripcion | upper }}
           </span>
         </template>
         <template v-slot:[`item.precio_compra`]="{ item }">
@@ -53,8 +52,8 @@
           <span>{{ item.f_modificacion | formatDate }}</span>
         </template>
         <template v-slot:[`item.monto_debido`]="{ item }">
-          <span v-if="item.cuenta_corriente">
-            {{ item.cuenta_corriente.monto | formatPrecio}}
+          <span>
+            {{ (item.cuenta_corriente ? item.cuenta_corriente.monto : 0) | formatPrecio }}
           </span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
@@ -66,7 +65,9 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
-                @click="redirect(`/clientes/cuentacorriente/${item.cliente_id}`)"
+                @click="
+                  redirect(`/clientes/cuentacorriente/${item.cliente_id}`)
+                "
               >
                 style
               </v-icon>
@@ -119,11 +120,11 @@
             >ELIMINAR SELECCIONADOS
           </v-btn>
           <modal-cliente
-            :provincias="provincias"
-            :tiposDocumentos="tiposDocumentos"
-            :condicionesIva="condicionesIva"
             :editable="editable"
             :dialog="dialog"
+            :provincias="provincias"
+            :condicionesIva="condicionesIva"
+            :tiposDocumentos="tiposDocumentos"
             :cliente="itemCliente"
             @cerrar-dialog="close"
             @agregar-cliente="agregarCliente($event)"
@@ -138,6 +139,13 @@
 
 <script>
 import ModalCliente from "@/components/clientes/ModalClienteComponent";
+import {
+  clientes,
+  eliminarCliente,
+  eliminarClientes,
+} from "@/services/clientes";
+import { getTiposDocumentos, getCondicionesIva } from "@/services/afip.js";
+import { getProvincias } from "@/services/datosGeograficos.js";
 export default {
   components: {
     ModalCliente,
@@ -191,14 +199,12 @@ export default {
         sortable: false,
       },
     ],
+    provincias: [],
+    condicionesIva: [],
+    tiposDocumentos: [],
     search: "",
     seleccionados: [],
-
     clientes: [],
-    provincias: [],
-    tiposDocumentos: [],
-    condicionesIva: [],
-
     indexEditable: -1,
     itemCliente: {
       condicion_iva: {
@@ -230,105 +236,70 @@ export default {
     },
   }),
 
-  mounted() {
-    this.headerTabla = this.headersProductos;
-    this.cargarDatosClientes();
+  async mounted() {
+    try {
+      this.clientes = (await clientes()).data.data;
+      this.provincias = (await getProvincias()).data.data;
+      this.condicionesIva = (await getCondicionesIva()).data.data;
+      this.tiposDocumentos = (await getTiposDocumentos()).data.data;
+    } catch (e) {
+      this.notificacionError();
+    }
   },
   methods: {
-    cargarDatosClientes() {
-      axios
-        .all([
-          axios.get(`clientes`),
-          axios.get(`datosGeograficos/provincias`),
-          axios.get(`afip/tiposDocumentos`),
-          axios.get(`afip/condicionesIva`),
-        ])
-        .then(
-          axios.spread((clientes, provincias, tiposDocumentos, condicionesIva) => {
-            this.clientes = clientes.data.data;
-            this.provincias = provincias.data.data;
-            this.tiposDocumentos = tiposDocumentos.data.data;
-            this.condicionesIva = condicionesIva.data.data;
-          })
-        )
-        .catch((error) => {
-          if (this.$store.getters.token) {
-            this.notificacion("Ha ocurrido al recuperar los datos", "error");
-          }
-        });
-    },
-
     modalProducto(item) {
       this.indexEditable = this.clientes.indexOf(item);
       this.itemCliente = Object.assign({}, item);
       this.dialog = true;
     },
-    agregarCliente(item) {
-      axios.post(`clientes/nuevo`, item).then((response) => {
-        this.clientes.push(response.data.data);
-        this.notificacion("Cliente agregado correctamente", "success");
-        this.close();
-      });
+
+    async agregarCliente(item) {
+      this.clientes.push(item);
+      this.notificacion("Cliente agregado correctamente", "success");
+      this.close();
     },
 
     editarCliente(item) {
-      this.$swal({
-        icon: "warning",
-        title: "¿Estas seguro que deseas modificar este cliente?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.dialog = false;
-          axios.put(`clientes/editar/${item.cliente_id}`, item).then((response) => {
-            Object.assign(this.clientes[this.indexEditable], response.data.data);
-            this.notificacion("Cliente modificado correctamente", "success");
-            this.close();
-          });
-        }
-      });
+      Object.assign(this.clientes[this.indexEditable], item); //actualizo cliente
+      this.notificacion("Cliente modificado correctamente", "success");
+      this.close();
     },
 
-    eliminarCliente(item) {
-      this.$swal({
-        icon: "warning",
-        title: "¿Estas seguro que deseas eliminar este cliente?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios.put(`clientes/eliminar/${item.cliente_id}`).then((response) => {
-            const index = this.clientes.indexOf(item);
-            this.clientes.splice(index, 1);
-            this.notificacion("Eliminado correctamente", "success");
-          });
+    async eliminarCliente(item) {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estas seguro que deseas eliminar este cliente?`
+      );
+      if (response.value) {
+        response = await eliminarCliente(item.cliente_id, item);
+        if (response.status === 200) {
+          const index = this.clientes.indexOf(item);
+          this.clientes.splice(index, 1);
+          this.notificacion("Eliminado correctamente", "success");
+          this.close();
         }
-      });
+        else{
+          this.notificacionError();
+        }
+      }
     },
-    eliminarSeleccionados() {
-      this.$swal({
-        icon: "warning",
-        title: "¿Estas seguro que deseas eliminar los clientes seleccionados?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`clientes/eliminarClientes`, {
-              clientes: JSON.stringify(this.seleccionados),
-            })
-            .then((response) => {
-              if (response.data.code == 200) {
-                this.seleccionados.forEach((element) =>
-                  this.clientes.splice(this.clientes.indexOf(element), 1)
-                );
-                this.notificacion("Eliminados correctamente", "success");
-              } else {
-                this.notificacion("Ha ocurrido un error", "error");
-              }
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error", "error");
-            });
+
+    async eliminarSeleccionados() {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estas seguro que deseas eliminar los clientes seleccionados?`
+      );
+      if (response.value) {
+        response = await eliminarClientes(this.seleccionados);
+        if (response.status === 200) {
+          this.seleccionados.forEach((element) =>
+            this.clientes.splice(this.clientes.indexOf(element), 1)
+          );
+          this.notificacion("Eliminados correctamente", "success");
+        } else {
+          this.notificacionError();
         }
-      });
+      }
     },
 
     close() {

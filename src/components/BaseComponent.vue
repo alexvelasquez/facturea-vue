@@ -18,7 +18,7 @@
 
 <div>
     <!-- user login  -->
-    <div v-if="logginIn">
+    <div v-if="loggedIn">
         <!-- sidebar -->
         <v-navigation-drawer color="#385F73" v-model="drawer" fixed temporary dark>
           <sidebar></sidebar>
@@ -28,7 +28,7 @@
         <v-app-bar app color="#385F73">
             <v-app-bar-nav-icon color="white" @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
             <v-spacer></v-spacer>
-            <div class="text-caption white--text">{{userName.toUpperCase() }}</div>
+            <div class="text-caption white--text">{{userName | upper}}</div>
             <v-menu transition="slide-x-reverse-transition">
                 <template v-slot:activator="{ on, attrs }">
                     <v-btn v-bind="attrs" v-on="on" icon>
@@ -106,14 +106,6 @@ export default {
                 dialogContraseña: false,
             }
         },
-        computed: {
-            logginIn() {
-                    return this.$store.getters.loggedIn
-                },
-                userName() {
-                    return this.$store.getters.user.name + ' ' + this.$store.getters.user.lastname;
-                }
-        }
 }
 
 </script>

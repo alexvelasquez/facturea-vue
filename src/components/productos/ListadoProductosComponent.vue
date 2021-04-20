@@ -29,7 +29,11 @@
         :items="productos"
         :search="search"
         show-select
+
       >
+        <template v-slot:[`item.descripcion`]="{ item }">
+          <span>{{ item.descripcion | upper }}</span>
+        </template>
         <template v-slot:[`item.precio_compra`]="{ item }">
           <span>{{ item | precioNeto }}</span>
         </template>
@@ -78,10 +82,7 @@
             dark
             class="mb-2 mr-md-2"
             @click="
-              exportar(
-                `productos/negocio/${negocio.negocio_id}/exportar`,
-                'listado_productos.xlsx'
-              )
+              descargar(`productos/negocio/exportar`, 'listado_productos.xlsx')
             "
             >EXPORTAR XLS
           </v-btn>
@@ -111,7 +112,6 @@
             >IR A CATEGORIAS
           </v-btn>
           <modal-producto
-            @reload="cargarProductosYCategorias"
             :categorias="categorias"
             :marcas="marcas"
             :editable="editable"
@@ -132,6 +132,9 @@
 
 <script>
 import ModalProducto from "@/components/productos/ModalProductoComponent";
+import {productos,eliminarProducto,eliminarProductos} from "@/services/producto"
+import {marcas} from "@/services/marcas"
+import {categorias } from "@/services/categorias"
 export default {
   components: {
     ModalProducto,
@@ -205,113 +208,64 @@ export default {
     },
   }),
 
-  mounted() {
-    this.headerTabla = this.headersProductos;
-    this.cargarProductosYCategorias();
+  async mounted() {
+    this.productos = (await productos()).data.data;
+    this.categorias = (await categorias()).data.data;
+    this.marcas = (await marcas()).data.data;
+    // this.cargarProductosYCategorias();
   },
   methods: {
-    cargarProductosYCategorias() {
-      axios
-        .all([
-          axios.get(`productos/negocio/${this.negocio.negocio_id}`),
-          axios.get(`categorias/negocio/${this.negocio.negocio_id}`),
-          axios.get(`marcas/negocio/${this.negocio.negocio_id}`),
-        ])
-        .then(
-          axios.spread((productos, categorias, marcas) => {
-            this.productos = productos.data.data;
-            this.categorias = categorias.data.data;
-            this.marcas = marcas.data.data;
-          })
-        )
-        .catch((error) => {
-          if (this.$store.getters.token) {
-            this.notificacion("Ha ocurrido al recuperar los datos", "error");
-          }
-        });
-    },
-
     modalProducto(item) {
       this.indexEditable = this.productos.indexOf(item);
       this.itemProducto = Object.assign({}, item);
       this.dialog = true;
     },
     agregarProducto(item) {
-      axios
-        .post(`productos/nuevo`, item)
-        .then((response) => {
-          this.productos.push(response.data.data);
-          this.notificacion("Producto agregado.", "success");
-          this.close();
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido al agregar el producto", "error");
-        });
+        this.productos.push(item);
+        this.notificacion("Producto agregado.", "success");
+        this.close();
     },
 
     editarProducto(item) {
-      this.$swal({
-        title: "¿Estas seguro que deseas modificar este producto?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          this.dialog = false;
-          axios
-            .put(`productos/editar/${item.producto_id}`, item)
-            .then((response) => {
-              Object.assign(this.productos[this.indexEditable], response.data.data);
-              this.notificacion("Producto modificado.", "success");
-              this.close();
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido al modificar el producto", "error");
-            });
-        }
-      });
+      Object.assign(this.productos[this.indexEditable], item);
+      this.notificacion("Producto modificado.", "success");
+      this.close();
     },
 
-    eliminarProducto(item) {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar este producto?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`productos/eliminar/${item.producto_id}`)
-            .then((response) => {
+    async eliminarProducto(item) {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estás seguro que deseas eliminar este producto?`
+      );
+      if (response.value) {
+        response = await eliminarProducto(item.propducto_id, item);
+        if (response.status === 200) {
               const index = this.productos.indexOf(item);
               this.productos.splice(index, 1);
               this.notificacion("Producto eliminado.", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error al eliminar el producto", "error");
-            });
         }
-      });
+        else{
+          this.notificacionError();
+        }
+      }
     },
-    eliminarSeleccionados() {
-      this.$swal({
-        icon: "question",
-        title: "¿Estas seguro que deseas eliminar los productos seleccionados?",
-        showCancelButton: true,
-      }).then((result) => {
-        if (result.value) {
-          axios
-            .put(`productos/eliminarProductos`, {
-              productos: JSON.stringify(this.seleccionados),
-            })
-            .then((response) => {
+    async eliminarSeleccionados() {
+      let response = await this.sweetalert(
+        `warning`,
+        `¿Estas seguro que deseas eliminar los productos seleccionados?`
+      );
+      if (response.value) {
+        response = await eliminarProductos(this.seleccionados);
+        if (response.status === 200) {
               this.seleccionados.forEach((element) =>
                 this.productos.splice(this.productos.indexOf(element), 1)
               );
               this.notificacion("Productos eliminados.", "success");
-            })
-            .catch((error) => {
-              this.notificacion("Ha ocurrido un error", "error");
-            });
         }
-      });
+        else{
+          this.notificacionError();
+        }
+      }
     },
 
     close() {

@@ -30,7 +30,7 @@
                                         <v-text-field v-model="nuevoProducto.bonificacion" color="#385F73" label="Bon.(%)" outlined placeholder="0" type="number" dense></v-text-field>
                                     </v-col>
                                     <v-col cols="12" md="3" v-if="esResponsableInscripto">
-                                      <v-autocomplete  v-model="nuevoProducto.iva" :items="tiposAliCuotas" return-object item-text="descripcion" label="IVA(%)" placeholder="Seleccionar" outlined persistent-hint dense color="#385F73">
+                                      <v-autocomplete  v-model="nuevoProducto.tipo_alicuota" :items="tiposAliCuotas" return-object item-text="descripcion" label="IVA(%)" placeholder="Seleccionar" outlined persistent-hint dense color="#385F73">
                                       </v-autocomplete>
                                     </v-col>
                                     <v-col cols="12" md="3">
@@ -73,6 +73,10 @@ export default {
         tiposAliCuotas:{
             type: Array,
             default:[]
+        },
+        esResponsableInscripto:{
+            type: Boolean,
+            default:false
         }
 
 

@@ -7,7 +7,7 @@
 
 <template>
   <div>
-    <v-row v-if="!facturaElectronicaHabilitada">
+    <v-row v-if="!this.negocio.factura_electronica === 'S'">
       <v-col cols="12">
         <v-alert
           type="warning"
@@ -19,8 +19,8 @@
         >
           <v-row align="center">
             <v-col class="grow"
-              >Para poder utilizar el servicio de facturación electrónica descargue el
-              instructivo y siga los pasos</v-col
+              >Para poder utilizar el servicio de facturación electrónica
+              descargue el instructivo y siga los pasos</v-col
             >
             <v-col class="shrink">
               <v-btn color="warning" @click="descargarInstructivo()"
@@ -47,34 +47,48 @@
                 <v-card class="mx-auto" outlined>
                   <v-list-item four-line>
                     <v-list-item-content class="text-left">
-                      <v-list-item-title class="text-md-subtitle-1 font-weight-bold">{{
-                        negocio.razon_social
-                      }}</v-list-item-title>
+                      <v-list-item-title
+                        class="text-md-subtitle-1 font-weight-bold"
+                        >{{ negocio.razon_social }}</v-list-item-title
+                      >
                       <v-list-item-subtitle
-                        >CUIT:
-                        {{ negocio.cuit_cuil | formatCuitCuil }}</v-list-item-subtitle
+                        >CUIT: {{ negocio.cuit_cuil }}</v-list-item-subtitle
                       >
                       <v-list-item-subtitle class="pt-2"
                         >Fecha de Inicio de Actividades:
-                        {{ negocio.inicio_actividad | formatDate }}</v-list-item-subtitle
+                        {{
+                          negocio.inicio_actividad | formatDate
+                        }}</v-list-item-subtitle
                       >
                       <v-list-item-subtitle
                         >IIBB:
-                        {{ negocio.iibb ? negocio.iibb : "-" }}</v-list-item-subtitle
+                        {{
+                          negocio.iibb ? negocio.iibb : "-"
+                        }}</v-list-item-subtitle
                       >
                       <v-list-item-subtitle
                         >IVA:
                         {{
-                          negocio.condicion_iva ? negocio.condicion_iva.descripcion : "-"
+                          negocio.condicion_iva
+                            ? negocio.condicion_iva.descripcion
+                            : "-"
                         }}</v-list-item-subtitle
                       >
                     </v-list-item-content>
                   </v-list-item>
                 </v-card>
               </v-col>
-              <v-col cols="12" sm="6" md="4" v-if="facturaElectronicaHabilitada">
+              <v-col
+                cols="12"
+                sm="6"
+                md="4"
+                v-if="this.negocio.factura_electronica === 'S'"
+              >
                 <v-row justify="end" align="end" class="mt-10">
-                  <v-switch v-model="tipoFactura" label="Factura Electrónica"></v-switch>
+                  <v-switch
+                    v-model="tipoFactura"
+                    label="Factura Electrónica"
+                  ></v-switch>
                 </v-row>
               </v-col>
             </v-row>
@@ -141,7 +155,10 @@
                       scrollable
                     >
                       <v-spacer></v-spacer>
-                      <v-btn text color="primary" @click="menuDate.fechaEmision = false"
+                      <v-btn
+                        text
+                        color="primary"
+                        @click="menuDate.fechaEmision = false"
                         >Cancelar</v-btn
                       >
                       <v-btn
@@ -154,7 +171,10 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-divider v-if="facturacion.cliente.cliente_id" class="my-5"></v-divider>
+              <v-divider
+                v-if="facturacion.cliente.cliente_id"
+                class="my-5"
+              ></v-divider>
               <v-row v-if="facturacion.cliente.cliente_id">
                 <v-col cols="12" sm="6" md="6">
                   <v-card class="mx-auto" outlined>
@@ -162,18 +182,25 @@
                       <v-list-item-content class="text-left">
                         <v-list-item-subtitle
                           >Razón Social:
-                          {{ facturacion.cliente.razon_social }}</v-list-item-subtitle
+                          {{
+                            facturacion.cliente.razon_social
+                          }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >Documento:
-                          {{ facturacion.cliente.documento }}</v-list-item-subtitle
+                          {{
+                            facturacion.cliente.documento
+                          }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
-                          >Email: {{ facturacion.cliente.email }}</v-list-item-subtitle
+                          >Email:
+                          {{ facturacion.cliente.email }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >Domicilio:
-                          {{ facturacion.cliente.direccion }}</v-list-item-subtitle
+                          {{
+                            facturacion.cliente.direccion
+                          }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >IVA:
@@ -238,7 +265,10 @@
                           scrollable
                         >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menuDate.fechaDesde = false"
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="menuDate.fechaDesde = false"
                             >Cancel</v-btn
                           >
                           <v-btn
@@ -283,7 +313,10 @@
                           scrollable
                         >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menuDate.fechaHasta = false"
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="menuDate.fechaHasta = false"
                             >Cancel</v-btn
                           >
                           <v-btn
@@ -328,7 +361,10 @@
                           scrollable
                         >
                           <v-spacer></v-spacer>
-                          <v-btn text color="primary" @click="menuDate.fechaVto = false"
+                          <v-btn
+                            text
+                            color="primary"
+                            @click="menuDate.fechaVto = false"
                             >Cancel</v-btn
                           >
                           <v-btn
@@ -348,10 +384,10 @@
                 <v-col cols="12" sm="6" md="4">
                   <v-select
                     v-model="facturacion.condicion_vta"
-                    :rules="reglasValidacion.campoRequerido"
+                    :rules="reglasValidacion.condicionVta"
                     hint="campo obligatorio(*)"
                     persistent-hint
-                    :items="condicionesVta"
+                    :items="condicionesVenta"
                     item-value="condicion_venta_id"
                     item-text="descripcion"
                     placeholder="Seleccione una opción"
@@ -364,7 +400,7 @@
                                 <v-text-field color="#385F73" label="Nro Remito" outlined placeholder="0" type="number" dense></v-text-field>
                             </v-col> -->
               </v-row>
-            <v-divider class="my-5"></v-divider>
+              <v-divider class="my-5"></v-divider>
             </v-form>
             <v-form
               ref="formProducto"
@@ -390,12 +426,23 @@
                     return-object
                     item-text="descripcion"
                     label="Descripción"
-                    placeholder="Buscar por descripción o código"
+                    placeholder="Buscar Producto"
                     outlined
+                    hide-selected
                     persistent-hint
                     dense
                     color="#385F73"
                   >
+                   <template v-slot:item="data">
+                              <v-list-item-content>
+                                <v-list-item-title
+                                  v-html="data.item.descripcion"
+                                ></v-list-item-title>
+                                <v-list-item-subtitle
+                                  v-html="`Código: ${data.item.codigo} | Disponible: ${data.item.stock}`"
+                                ></v-list-item-subtitle>
+                              </v-list-item-content>
+                  </template>
                   </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="2" md="2">
@@ -425,7 +472,7 @@
                   <v-autocomplete
                     :rules="reglasValidacion.objectoVacio"
                     v-model="nuevoProducto.tipo_alicuota"
-                    :items="tiposAliCuotas"
+                    :items="tiposAlicuotas"
                     return-object
                     item-text="descripcion"
                     label="IVA(%)"
@@ -450,7 +497,12 @@
                   ></v-text-field>
                 </v-col>
                 <v-col cols="12" sm="1" md="1">
-                  <v-btn outlined color="#385F73" dark @click="agregarNuevoProducto" block
+                  <v-btn
+                    outlined
+                    color="#385F73"
+                    dark
+                    @click="agregarNuevoProducto"
+                    block
                     >Agregar</v-btn
                   >
                 </v-col>
@@ -484,7 +536,7 @@
                       class="mr-2"
                       @click="modalItemProducto(item)"
                       v-bind="item"
-                      :disabled="pedidoId"
+                      :disabled="facturaCargada"
                     >
                       mdi-pencil
                     </v-icon>
@@ -494,7 +546,7 @@
                       class="mr-2"
                       @click="eliminarProducto(item)"
                       v-bind="item"
-                      :disabled="pedidoId"
+                      :disabled="facturaCargada"
                     >
                       mdi-close
                     </v-icon>
@@ -506,7 +558,8 @@
                       :dialog="dialog"
                       :nuevo-producto="nuevoProducto"
                       :productos="productos"
-                      :tipos-ali-cuotas="tiposAliCuotas"
+                      :tipos-ali-cuotas="tiposAlicuotas"
+                      :es-responsable-inscripto="esResponsableInscripto"
                       @cerrar-dialog="cerrarDialog"
                       @editar-producto="editarProducto($event)"
                     >
@@ -514,7 +567,7 @@
                   </v-col>
                 </v-row>
               </v-col>
-            <v-divider class="my-5"></v-divider>
+              <v-divider class="my-5"></v-divider>
             </v-row>
             <v-row v-if="facturacion.cliente.cliente_id">
               <v-col cols="12" md="4" offset-md="8">
@@ -524,9 +577,13 @@
                     <v-list-item>
                       <v-list-item-content>
                         <div class="mb-4 grey--text">Total</div>
-                        <v-list-item-title align="center" class="headline mb-1">{{
-                          facturacion.importes.total | formatPrecio
-                        }}</v-list-item-title>
+                        <v-list-item-title
+                          align="center"
+                          class="headline mb-1"
+                          >{{
+                            facturacion.importes.total | formatPrecio
+                          }}</v-list-item-title
+                        >
                       </v-list-item-content>
                     </v-list-item>
                   </v-card>
@@ -537,7 +594,12 @@
             <v-row v-if="facturacion.cliente.cliente_id">
               <v-col cols="12" align="center">
                 <v-col cols="12" sm="12" md="3">
-                  <v-btn outlined color="#385F73" dark block @click="descargarComprobante"
+                  <v-btn
+                    outlined
+                    color="#385F73"
+                    dark
+                    block
+                    @click="descargarComprobante"
                     >Emitir Comprobante</v-btn
                   >
                 </v-col>
@@ -545,17 +607,28 @@
             </v-row>
           </v-col>
         </v-row>
+        <mensajes-component
+          :active="active"
+          :mensaje="mensaje"
+        ></mensajes-component>
       </v-container>
     </v-card>
   </div>
 </template>
 
 <script>
+import MensajesComponent from "@/components/MensajesComponent";
+import { negocio } from "@/services/negocio";
+import { venta } from "@/services/ventas";
+import { clientes } from "@/services/clientes";
+import { productos } from "@/services/producto";
+import {generarComprobante,getInstructivo,getTiposConceptos, getCondicionesVenta,getTiposAlicuotas,getTipoComprobante} from "@/services/afip.js";
 import ModalFactura from "@/components/factura/ModalFacturaComponent";
 import Montos from "@/mixins/montos";
 export default {
   components: {
     ModalFactura,
+    MensajesComponent
   },
   mixins: [Montos],
   props: {
@@ -565,7 +638,13 @@ export default {
     },
   },
   data: () => ({
+    active:false,
+    mensaje:{},
+    tiposConceptos:[],
+    condicionesVenta:[],
+    tiposAlicuotas:[],
     date: new Date().toISOString().substr(0, 10),
+    negocio:{},
     facturacion: {
       cliente: {},
       concepto: 1,
@@ -595,13 +674,11 @@ export default {
         (v) => !!v || "Este campo es requerido",
         (v) => v > 0 || "Debe ser mayor a 0",
       ],
+      condicionVta:[(v)=> !!v != -1 || "Este campo es requerido"],
       objectoVacio: [(v) => Object.keys(v).length > 0 || "Este campo es requerido"],
       campoRequerido: [(v) => !!v || "Este campo es requerido"],
     },
     tiposComprobantes: [],
-    tiposAliCuotas: [],
-    tiposConceptos: [],
-    condicionesVta: [],
     menuDate: {
       fechaEmision: false,
       fechaHasta: false,
@@ -643,96 +720,45 @@ export default {
     pedido: null,
     tipoFactura: false,
   }),
-  mounted() {
-    this.adapterHeader();
-    this.cargarDatosComprobante();
-    /** pregunto si el usuario quiere descargar un comprobante o un reciob **/
+  async mounted() {
+    try {
+      this.negocio =(await negocio()).data.data;
+      if(this.negocio.configuracion === 'N') {
+        this.mensaje.titulo = 'Información incompleta';
+        this.mensaje.mensaje = 'Debe completar los datos de configuración para poder utilizar este apartado.'
+        this.mensaje.redireccion = '/configuracion'
+        this.active = true;
+      }
+      else{
+        this.clientes = (await clientes()).data.data;
+        this.productos = (await productos()).data.data;
+        this.tiposConceptos = (await getTiposConceptos()).data.data;
+        this.condicionesVenta = (await getCondicionesVenta()).data.data;
+        this.tiposAlicuotas = (await getTiposAlicuotas()).data.data;
+        this.tiposComprobantes = (await getTipoComprobante(null)).data.data;
 
-    // this.cargarDatosFacturacion();
+        this.facturacion.comprobante = this.tiposComprobantes[0].afipId;
+        /** si se factura un pedido **/
+       if(this.pedidoId) {
+          const response = (await venta(this.pedidoId));
+          if(response.status === 200) {
+            this.facturacion.cliente = response.data.data.cliente;
+            this.facturacion.venta = response.data.data.venta_id;
+            this.facturacion.productos = response.data.data.productos_venta;
+            this.facturacion.venta = this.pedidoId;
+            this.sumarImportesTotales();
+          }
+          else{
+            this.notificacionError();
+          }
+        }
+      }
+    }
+    catch{
+      this.notificacion('Ha ocurrido un error, intente nuevamente','error');
+    }
   },
   methods: {
-    async cargarDatosComprobante() {
-      await axios
-        .all([
-          axios.get(`clientes`),
-          axios.get(`productos/negocio/${this.negocio.negocio_id}`),
-          axios.get(`afip/tiposAliCuotas`),
-          axios.get(`afip/tiposComprobantesIVA`, {
-            params: {
-              afip_id: this.tipoFactura ? this.negocio.condicion_iva.afip_id : null,
-            },
-          }),
-          axios.get(`afip/tiposConceptos`),
-          axios.get(`afip/condicionesVenta`),
-        ])
-        .then(
-          axios.spread(
-            (
-              clientes,
-              productos,
-              tiposAliCuotas,
-              tiposComprobantes,
-              tiposConceptos,
-              condicionesVta
-            ) => {
-              this.productos = productos.data.data;
-              this.clientes = clientes.data.data;
-              this.tiposAliCuotas = tiposAliCuotas.data.data;
-              this.tiposComprobantes = tiposComprobantes.data.data;
-              this.tiposConceptos = tiposConceptos.data.data;
-              this.condicionesVta = condicionesVta.data.data;
-              this.facturacion.comprobante = this.tiposComprobantes[0].afipId;
-            }
-          )
-        )
-        .catch((error) => {
-          this.notificacion("Ha ocurrido un error, intente nuevamente", "error");
-        });
-      /** si se factura un pedido **/
-      if (this.pedidoId) {
-        this.cargarPedido();
-      }
-    },
-    adapterHeader() {
-      /** cambio el header del datatable, dependiendo la condicion_iva del usuario */
-      if (this.esResponsableInscripto) {
-        this.headers.push(
-          {
-            text: "IVA Aplicado",
-            sortable: false,
-            value: "tipo_alicuota.descripcion",
-          },
-          {
-            text: "Importe IVA",
-            sortable: false,
-            value: "monto_iva",
-          }
-        );
-      }
-      this.headers.push(
-        {
-          text: "Subtotal",
-          value: "subtotal",
-          align: "center",
-          sortable: false,
-        },
-        {
-          text: "Acciones",
-          value: "actions",
-          align: "center",
-          sortable: false,
-        }
-      );
-    },
-    cargarPedido() {
-      axios.get(`ventas/pedido/${this.pedidoId}`).then((response) => {
-        console.log(response);
-        this.facturacion.cliente = response.data.data.cliente;
-        this.facturacion.venta = response.data.data.venta_id;
-        this.facturacion.productos = response.data.data.productos_venta;
-        this.sumarImportesTotales();
-      });
-    },
     /** agrego un nuevo producto al listado de productos a facturar */
     agregarNuevoProducto() {
       if (this.$refs.formProducto.validate()) {
@@ -764,10 +790,9 @@ export default {
       this.$refs.formProducto.resetValidation();
     },
     /** descargo el comprobante **/
-    descargarComprobante() {
-      axios
-        .post("afip/generarComprobante", this.facturacion)
-        .then((response) => {
+    async descargarComprobante() {
+      const response = (await generarComprobante(this.facturacion));
+      if(response.status === 200){
           const link = document.createElement("a");
           link.href = response.data.data.file;
           link.setAttribute(
@@ -776,25 +801,24 @@ export default {
           );
           document.body.appendChild(link);
           link.click();
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido un error", "error");
-        });
+      }
+      else{
+        this.notificacionError();
+      }
     },
     /** descargo el comprobante **/
-    descargarInstructivo() {
-      axios
-        .get(`afip/instructivo`)
-        .then((response) => {
+    async descargarInstructivo() {
+      const response = (await getInstructivo());
+      if(response.status === 200){
           const link = document.createElement("a");
           link.href = response.data.data.file;
           link.setAttribute("download", "instructivo_facturacion_electronica.pdf");
           document.body.appendChild(link);
-          link.click();
-        })
-        .catch((error) => {
-          this.notificacion("Ha ocurrido un error", "error");
-        });
+          link.click();        
+      }
+      else{
+          this.notificacionError();
+      }
     },
     sumarImportesTotales() {
       this.resetMontosTotales();
@@ -828,12 +852,6 @@ export default {
       });
     },
 
-    actualizarMontos() {
-      this.nuevoProducto.monto_bonif = this.calculoMontoBonif;
-      this.nuevoProducto.subtotal_sin_iva = this.calculoSubtotalSinIva;
-      this.nuevoProducto.monto_iva = this.calculoMontoIva;
-      this.nuevoProducto.subtotal = this.calculoSubtotal;
-    },
     modalItemProducto(item) {
       this.indexEditable = this.facturaProductos.indexOf(item);
       this.nuevoProducto = Object.assign({}, item);
@@ -869,11 +887,48 @@ export default {
         this.facturacion.fecha_vto = null;
       }
     },
-    tipoFactura() {
-      this.cargarDatosComprobante();
+    async tipoFactura() {
+      const tipo = this.tipoFactura ? this.negocio.condicion_iva.afip_id : null;
+      this.tiposComprobantes = (await getTipoComprobante(tipo)).data.data;
+      this.facturacion.comprobante = this.tiposComprobantes[0].afipId;
     },
+    negocio(){
+      if(this.negocio.condicion_iva){
+        if(this.negocio.condicion_iva.afip_id == 1){
+          this.headers.push(
+            {
+              text: "IVA Aplicado",
+              sortable: false,
+              value: "tipo_alicuota.descripcion",
+            },
+            {
+              text: "Importe IVA",
+              sortable: false,
+              value: "monto_iva",
+            }
+          );
+        }
+      }
+      this.headers.push(
+        {
+          text: "Subtotal",
+          value: "subtotal",
+          align: "center",
+          sortable: false,
+        },
+        {
+          text: "Acciones",
+          value: "actions",
+          align: "center",
+          sortable: false,
+        }
+      );
+    }
   },
   computed: {
+    esResponsableInscripto(){
+      return this.negocio.condicion_iva ? this.negocio.condicion_iva.afip_id === 1 : false;
+    },
     conceptoFactura() {
       return this.facturacion.concepto;
     },
@@ -895,6 +950,9 @@ export default {
     editable() {
       return this.indexEditable != -1;
     },
+    facturaCargada(){
+      return typeof this.pedidoId === 'string';
+    }
   },
 };
 </script>

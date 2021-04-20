@@ -24,15 +24,15 @@
                                     </v-col>
                                     <v-col cols="12" md="8">
                                       <v-col cols="12" md="12">
-                                          <v-text-field label="Nombre de usuario" v-model="usuario.nombreUsuario" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
+                                          <v-text-field label="Nombre de usuario" v-model="usuario.username" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
                                           </v-text-field>
                                       </v-col>
                                       <v-col cols="12" md="12" style="margin-top: -30px;">
-                                          <v-text-field label="Nombre" v-model="usuario.nombre" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
+                                          <v-text-field label="Nombre" v-model="usuario.name" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
                                           </v-text-field>
                                       </v-col>
                                       <v-col cols="12" md="12" style="margin-top: -30px;">
-                                          <v-text-field label="Apellido" v-model="usuario.apellido" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
+                                          <v-text-field label="Apellido" v-model="usuario.lastname" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
                                           </v-text-field>
                                       </v-col>
                                       <v-col cols="12" md="12" style="margin-top: -30px;">
@@ -58,7 +58,7 @@
 </template>
 
 <script>
-
+import { mapFields } from 'vuex-map-fields'
 export default {
     props: {
         dialog: {
@@ -70,49 +70,47 @@ export default {
         return {
             /** NUEVO PRODUCTO */
             tab: null,
-            usuario:{
-              nombre:this.$store.getters.getUserNombre,
-              apellido:this.$store.getters.getUserApellido,
-              nombreUsuario:this.$store.getters.getUserUsername,
-              email:this.$store.getters.getUserEmail
-            },
+            usuario:{},
             obligatorio: [
                 v => !!v || 'Este campo es requerido'
             ],
         }
     },
+
+    computed:{
+        ...mapFields('user',['data']),
+    },
     methods:{
-      modificarUsuario(){
-        if(this.$refs.form.validate()){
-          this.$emit('cerrar-dialog')
-          axios.put('usuario/editar',this.usuario)
-          .then(response=>{
-              if(response.data.code == 200){
-                // seteo en vue el estado del usuario
-                this.$store.commit('setUserNombre',response.data.data.name);
-                this.$store.commit('setUserApellido',response.data.data.lastname);
-                this.$store.commit('setUserEmail',response.data.data.email);
-                this.$store.commit('setUserUsername',response.data.data.username);
-                this.notificacion('Usuario modificado','success');
-              }
-          })
+
+        getUser(){
+            return axios.get(`currentUser`);
+        },
+        async modificarUsuario(){
+            if(this.$refs.form.validate()){
+                this.$emit('cerrar-dialog')
+                try{
+                    this.data = (await this.getEditarUsuario()).data.data;
+                    this.notificacion( 'Usuario modificado','success');
+                }
+                catch(e){
+                    this.notificacion('Ha ocurrido un error, intente nuevamente','error');
+                }
+                        
+            }
+        },
+        getEditarUsuario(){
+            return axios.put('usuario/editar',this.usuario);
+        },
+        cerrar(){
+            this.$refs.form.resetValidation();
+            this.$emit('cerrar-dialog')
         }
-      },
-      cerrar(){
-        this.$refs.form.resetValidation();
-        this.$emit('cerrar-dialog')
-      }
     },
     watch:{
-        dialog(){
-          this.usuario={
-            nombre:this.$store.getters.getUserNombre,
-            apellido:this.$store.getters.getUserApellido,
-            nombreUsuario:this.$store.getters.getUserUsername,
-            email:this.$store.getters.getUserEmail
-          }
+        async dialog(){
+            if(this.dialog) this.usuario = (await this.getUser()).data.user;
         }
-    }
+    },
 
 }
 

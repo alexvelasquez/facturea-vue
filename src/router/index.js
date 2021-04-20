@@ -154,16 +154,20 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
 })
+
+
 router.beforeEach((to, from, next) => {
+  const user = store.getters['user/getField']('data');
+  const role = store.getters['user/getField']('data') ? store.getters['user/getField']('data').role : '';
   if (to.matched.some(record => record.meta.requiresAuth)) {
       // this route requires auth, check if logged in
       // if not, redirect to login page.
-      if (!store.getters.loggedIn) {
+      if (!user) {
           next({
               name: 'Login'
           })
       }
-      if (store.getters.getUserRol == 'ROLE_ADMIN') {
+      if (role == 'ROLE_ADMIN') {
           next({
               name: 'Usuarios'
           })
@@ -174,7 +178,7 @@ router.beforeEach((to, from, next) => {
   }  else if (to.matched.some(record => record.meta.requiresAdmin)) {
         // this route requires auth, check if logged in
         // if not, redirect to login page.
-        if (!store.getters.loggedIn) {
+        if (!user) {
             next({
                 name: 'Login'
             })
@@ -184,12 +188,12 @@ router.beforeEach((to, from, next) => {
         }
     }
    else if (to.matched.some(record => record.meta.requiresVisitor)) {
-      if (store.getters.loggedIn) {
+      if (user) {
           next({
-              name: (store.getters.getUserRol == 'ROLE_USER') ? 'Home' : 'Usuarios'
+              name: (role == 'ROLE_USER') ? 'Home' : 'Usuarios'
           })
       }
-      if (store.getters.getUserRol == 'ROLE_USER') {
+      if (role == 'ROLE_USER') {
           next({
               name: 'Home'
           })
@@ -203,7 +207,7 @@ router.beforeEach((to, from, next) => {
       }
       else{
         next({
-          name: (store.getters.getUserRol == 'ROLE_USER') ? 'Home' : 'Usuarios'
+          name: (role == 'ROLE_USER') ? 'Home' : 'Usuarios'
         })
       }
   }

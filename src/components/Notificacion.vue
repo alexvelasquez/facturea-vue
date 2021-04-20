@@ -1,11 +1,11 @@
 <template>
     <v-snackbar
-        v-model="notificacion.activo"
-        :color="notificacion.tipo"
+        v-model="notification.activo"
+        :color="notification.tipo"
         bottom
         right
     >
-      {{ notificacion.texto }}
+      {{ notification.texto }}
 
       <template v-slot:action="{ attrs }">
         <v-btn
@@ -19,28 +19,17 @@
     </v-snackbar>
 </template>
 <script>
-  export default {
-    methods: {
-        cerrar(){
-            this.$store.dispatch('notificacion',{
-                activo:false,
-                texto:'',
-                tipo:''
-            })
-        }
-    },
-    computed: {
-        notificacion:{
-            // getter
-            get: function () {
-                return this.$store.getters.notificacion
-            },
-            // setter
-            set: function (valor) {
-                this.$store.dispatch('notificacion',valor)
-            }
-            
-        }
+import { mapFields } from 'vuex-map-fields'
+import { mapActions } from 'vuex'
+export default {
+  computed: {
+    ...mapFields('config',['notification']),
+  },
+  methods: {
+    ...mapActions('config',['cerrarNotificacion']),
+    cerrar(){
+      this.cerrarNotificacion({})
     }
   }
+}
 </script>

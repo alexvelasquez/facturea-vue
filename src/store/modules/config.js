@@ -1,31 +1,30 @@
-import axios from 'axios'
+import { getField, updateField } from 'vuex-map-fields';
 export default{
+    namespaced:true,
     state: {
         loading: false,
-        notificacion:{}
+        notification:{
+            activo:false,
+            texto:null,
+            tipo:null
+        },
+
     },
     getters: {
-        loading(state){
-            return state.loading
-        },
-        notificacion(state){
-            return state.notificacion
-        }
+        getField
     },
     mutations: {
-        setLoading(state,loading){
-            state.loading = loading
-        },
-        setNotificacion(state,notificacion){
-            state.notificacion = notificacion
-        }
+        updateField
     },
     actions: {
-        loading:(({commit},valor)=>{
-            commit('setLoading',valor)
+        loading:(({state},valor)=>{
+            state.loading = valor;
         }),
-        notificacion:(({commit},params)=>{
-            commit('setNotificacion',params)
+        notificar:(({state},params)=>{
+            state.notification = {activo:true,texto:params.texto,tipo:params.tipo};
         }),
+        cerrarNotificacion:({state})=>{
+            state.notification = {activo:false,texto:'',tipo:''};
+        }
     }
 }

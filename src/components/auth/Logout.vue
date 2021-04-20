@@ -1,13 +1,16 @@
 <template>
 </template>
 <script>
+import { mapFields } from 'vuex-map-fields'
 export default {
-    created(){
-        this.$store.dispatch('logout')
-        .then(sucess=>{
-            this.$router.push("/login")
-        })
-        
+    
+    mounted(){
+        this.token = null;
+        this.data = null;
+        this.redirect('login')
+    },
+    computed:{
+        ...mapFields('user',['token','data']),
     }
 }
 </script>

@@ -31,12 +31,24 @@
                         item-text="descripcion"
                         label="Descripción"
                         :hint="hint"
-                        placeholder="Buscar por descripción o código"
+                        placeholder="Buscar producto"
                         outlined
                         persistent-hint
                         dense
                         color="#385F73"
                       >
+                        <template v-slot:item="data">
+                          <v-list-item-content>
+                            <v-list-item-title
+                              v-html="data.item.descripcion"
+                            ></v-list-item-title>
+                            <v-list-item-subtitle
+                              v-html="
+                                `Código: ${data.item.codigo} | Disponible: ${data.item.stock}`
+                              "
+                            ></v-list-item-subtitle>
+                          </v-list-item-content>
+                        </template>
                       </v-autocomplete>
                     </v-col>
                     <v-col cols="12" md="3">
@@ -52,8 +64,8 @@
                     </v-col>
                     <v-col cols="12" md="3" v-if="esResponsableInscripto">
                       <v-autocomplete
-                        v-model="nuevoProducto.iva"
-                        :items="tiposAliCuotas"
+                        v-model="nuevoProducto.tipo_alicuota"
+                        :items="tiposAliCuotas"           
                         return-object
                         item-text="descripcion"
                         label="IVA(%)"
@@ -84,7 +96,9 @@
             <v-card-actions>
               <v-spacer></v-spacer>
               <v-btn color="#385F73" text @click="cerrarDialog">Cancelar</v-btn>
-              <v-btn color="#385F73" text @click="editarProducto">MODIFICAR</v-btn>
+              <v-btn color="#385F73" text @click="editarProducto"
+                >MODIFICAR</v-btn
+              >
             </v-card-actions>
           </v-card>
         </v-tab-item>
@@ -104,6 +118,9 @@ export default {
       type: Object,
       default: {},
     },
+    productos: Array,
+    esResponsableInscripto: Boolean,
+    tiposAliCuotas: { type: Array, default: [] },
     reglas: {
       type: Object,
       default: {},
@@ -117,31 +134,12 @@ export default {
   data() {
     return {
       /** NUEVO PRODUCTO */
-      aliCuotas: [],
       model: null,
       allow: false,
       tab: null,
       activar: true,
       obligatorio: [(v) => !!v || "Este campo es requerido"],
-      productos: [],
-      tiposAliCuotas: [],
     };
-  },
-  mounted() {
-    axios
-      .all([
-        axios.get(`productos/negocio/${this.negocio.negocio_id}`),
-        axios.get(`afip/tiposAliCuotas`),
-      ])
-      .then(
-        axios.spread((productos, alicuotas) => {
-          this.productos = productos.data.data;
-          this.tiposAliCuotas = alicuotas.data.data;
-        })
-      )
-      .catch((error) => {
-        this.notificacion("Ha ocurrido al cargar los datos", "error");
-      });
   },
   methods: {
     editarProducto() {
