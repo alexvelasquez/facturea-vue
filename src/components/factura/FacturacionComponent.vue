@@ -823,7 +823,8 @@ export default {
     sumarImportesTotales() {
       this.resetMontosTotales();
       this.facturacion.productos.forEach((producto) => {
-        if (producto.tipo_alicuota && producto.tipo_alicuota.length) {
+        /** responsable inscripto */
+        if (producto.tipo_alicuota.afip_id) {
           /** si es exento o no gravado*/
           if (producto.tipo_alicuota.afip_id == 1 || producto.tipo_alicuota.afip_id == 2) {
             this.facturacion.importes[
@@ -836,6 +837,9 @@ export default {
             this.facturacion.importes.gravado = this.parseFloatMonto(
               this.facturaMontoGravado + producto.subtotal_sin_iva
             );
+            console.log(this.parseFloatMonto(
+              this.facturacion.importes.iva + producto.monto_iva
+            ));
             this.facturacion.importes.iva = this.parseFloatMonto(
               this.facturacion.importes.iva + producto.monto_iva
             );

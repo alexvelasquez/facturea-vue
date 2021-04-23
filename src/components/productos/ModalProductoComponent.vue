@@ -197,10 +197,10 @@
                       placeholder="subir archivo"
                       multiple
                       prepend-icon="mdi-paperclip"
-                    >
+                      accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"                  >
                       <template v-slot:selection="{ text }">
                         <v-chip small label color="#385F73">
-                          {{ text }}
+                          <span style="color:#fff">{{ text }}</span>
                         </v-chip>
                       </template>
                     </v-file-input>
@@ -298,7 +298,7 @@ export default {
       itemCategoria: {},
       itemMarca: {},
       busqueda: false,
-      files: null,
+      files: [],
       aliCuotas: [],
       model: null,
       allow: false,
@@ -376,21 +376,26 @@ export default {
       this.$emit("cerrar-dialog");
     },
     async cargarArchivo() {
-      let formData = new FormData();
-      formData.append("file", this.files[0]);
-      this.dialogProducto = false;
-      const response = await importarProductos(formData);
-      if(response.status === 201){
-        this.notificacion("Archivo subido correctamente", "success");
-        this.$emit("reload");
+      if(this.files.length){
+        let formData = new FormData();
+        formData.append("file", this.files[0]);
+        const response = await importarProductos(formData);
+        if(response.status === 201){
+          this.notificacion("Archivo subido correctamente", "success");
+          this.$emit("reload");
+          this.dialogProducto = false;
+        }
+        else{
+          try{
+            this.notificacion(response.data.message, "error");
+          }
+          catch(e){
+            this.notificacionError();
+          }
+        }
       }
       else{
-        try{
-          this.notificacion(response.response.data.message, "error");
-        }
-        catch(e){
-          this.notificacionError();
-        }
+        this.notificacion('Debe subir un archivo','error');
       }
     },
 
