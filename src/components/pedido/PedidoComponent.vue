@@ -412,6 +412,7 @@ export default {
       productos: [],
     },
     selected: [],
+    productosSelected:[],
     selectedEliminadosAlmacenados:[],
     clientes: [],
     productos: [],
@@ -457,7 +458,7 @@ export default {
     this.alicuotas = (await getTiposAlicuotas()).data.data;
     if (this.pedidoId) {
       this.pedido.cliente = (await venta(this.pedidoId)).data.data.cliente;
-      this.pedido.productos = (await getDetalleVenta(this.pedidoId)).data.data;
+      this.listado = (await getDetalleVenta(this.pedidoId)).data.data;
       this.sumarImportesTotales();
     }
   },
@@ -599,8 +600,8 @@ export default {
         `¿Estás seguro que deseas cargar este pedido?`
       );
       if (response.value) {
+        this.filterObjProducts();
         response = await nuevaVenta(this.pedido);
-        console.log(response);
         if (response.status === 201) {
               this.pedido = Object.assign({}, this.pedidoDefault);
               this.notificacion("Cargado correctamente", "success");
@@ -636,6 +637,18 @@ export default {
         this.pedido.total = this.parseFloatMonto(this.pedido.total + producto.subtotal);
       });
     },
+    /** filtro el array de productos seleccionados para que viajen solo los ids del producto y no el objeto */
+    filterObjProducts() {
+      const response = this.productosSelected.map((producto) => {
+        var obj = Object.assign({},producto);
+        obj.producto = producto.producto.producto_id;
+        if (producto.tipo_alicuota) {
+          obj.tipo_alicuota = producto.tipo_alicuota.tipo_alicuota_id;
+        }
+        return obj;
+      });
+      this.$set(this.pedido,'productos',response);
+    },
   },
   watch: {
     nuevoProductoProducto() {
@@ -650,10 +663,10 @@ export default {
   computed: {
     listado: {
       get() {
-        return this.pedido.productos;
+        return this.productosSelected;
       },
       set(value) {
-        this.pedido.productos = value;
+        this.productosSelected = value;
       },
     },
     esResponsableInscripto(){

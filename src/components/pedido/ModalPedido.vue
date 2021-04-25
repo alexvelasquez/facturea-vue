@@ -65,7 +65,7 @@
                     <v-col cols="12" md="3" v-if="esResponsableInscripto">
                       <v-autocomplete
                         v-model="nuevoProducto.tipo_alicuota"
-                        :items="tiposAliCuotas"           
+                        :items="tiposAliCuotas"
                         return-object
                         item-text="descripcion"
                         label="IVA(%)"

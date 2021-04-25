@@ -2,7 +2,7 @@
 
 <template>
   <v-row justify="center">
-    <v-dialog v-model="dialog" width="600px" persistent>
+    <v-dialog v-model="dialog" width="1000px" persistent>
       <v-card>
         <v-card-title class="justify-space-between">
           <span class="button">PEDIDO</span>
@@ -13,12 +13,14 @@
             <template v-slot:default>
               <thead>
                 <tr>
-                  <th class="text-left">Código</th>
-                  <th class="text-left">Descripción</th>
-                  <th class="text-left">Cantidad</th>
-                  <th class="text-left">Precio</th>
-                  <th class="text-left">Descuento</th>
-                  <th class="text-left">Subtotal</th>
+                  <th class="text-left">CÓDIGO</th>
+                  <th class="text-left">DESCRIPCIÓN</th>
+                  <th class="text-left">CANTIDAD</th>
+                  <th class="text-left">PRECIO</th>
+                  <th class="text-left">DESCUENTO</th>
+                  <th class="text-left">IVA %</th>
+                  <th class="text-left">TOTAL IVA</th>
+                  <th class="text-left">SUBTOTAL</th>
                 </tr>
               </thead>
               <tbody>
@@ -28,6 +30,8 @@
                   <td>{{ item.cantidad | formatNumber }}</td>
                   <td>{{ item.precio_unitario | formatPrecio }}</td>
                   <td>{{ item.bonificacion }}</td>
+                  <td>{{ item.tipo_alicuota ? item.tipo_alicuota.descripcion : '--' }}</td>
+                  <td>{{ item.monto_iva | formatPrecio  }}</td>
                   <td>{{ item.subtotal | formatPrecio}}</td>
                 </tr>
               </tbody>

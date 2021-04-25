@@ -278,6 +278,7 @@ export default {
     async verDetalle(item) {
       this.itemPedido = item;
       this.pedidoProductos = (await getDetalleVenta(item.venta)).data.data;
+      this.dialog = true;
     },
     cerrarDetalle() {
       this.dialog = false;

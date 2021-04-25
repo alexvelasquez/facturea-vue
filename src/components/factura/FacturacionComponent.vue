@@ -96,7 +96,7 @@
               <v-row class="py-0">
                 <v-col cols="12" sm="6" md="5">
                   <v-autocomplete
-                    v-model="facturacion.cliente"
+                    v-model="clienteSelected"
                     :rules="reglasValidacion.campoRequerido"
                     :items="clientes"
                     label="Buscar cliente"
@@ -171,11 +171,8 @@
                   </v-menu>
                 </v-col>
               </v-row>
-              <v-divider
-                v-if="facturacion.cliente.cliente_id"
-                class="my-5"
-              ></v-divider>
-              <v-row v-if="facturacion.cliente.cliente_id">
+              <v-divider v-if="clienteSelected" class="my-5"></v-divider>
+              <v-row v-if="clienteSelected">
                 <v-col cols="12" sm="6" md="6">
                   <v-card class="mx-auto" outlined>
                     <v-list-item four-line>
@@ -183,29 +180,25 @@
                         <v-list-item-subtitle
                           >Razón Social:
                           {{
-                            facturacion.cliente.razon_social
+                            clienteSelected.razon_social
                           }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >Documento:
-                          {{
-                            facturacion.cliente.documento
-                          }}</v-list-item-subtitle
+                          {{ clienteSelected.documento }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >Email:
-                          {{ facturacion.cliente.email }}</v-list-item-subtitle
+                          {{ clienteSelected.email }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >Domicilio:
-                          {{
-                            facturacion.cliente.direccion
-                          }}</v-list-item-subtitle
+                          {{ clienteSelected.direccion }}</v-list-item-subtitle
                         >
                         <v-list-item-subtitle class="pt-2"
                           >IVA:
                           {{
-                            facturacion.cliente.condicion_iva.descripcion
+                            clienteSelected.condicion_iva.descripcion
                           }}</v-list-item-subtitle
                         >
                       </v-list-item-content>
@@ -380,11 +373,11 @@
                 </v-col>
               </v-row>
 
-              <v-row v-if="facturacion.cliente.cliente_id">
+              <v-row v-if="clienteSelected">
                 <v-col cols="12" sm="6" md="4">
                   <v-select
                     v-model="facturacion.condicion_vta"
-                    :rules="reglasValidacion.condicionVta"
+                    :rules="reglasValidacion.campoRequerido"
                     hint="campo obligatorio(*)"
                     persistent-hint
                     :items="condicionesVenta"
@@ -404,7 +397,7 @@
             </v-form>
             <v-form
               ref="formProducto"
-              v-if="!editable && !pedidoId && facturacion.cliente.cliente_id"
+              v-if="!editable && !pedidoId && clienteSelected"
             >
               <v-row>
                 <v-col cols="12" sm="3" md="1">
@@ -510,12 +503,12 @@
                 </v-col>
               </v-row>
             </v-form>
-            <v-row v-if="facturacion.cliente.cliente_id">
+            <v-row v-if="clienteSelected">
               <v-col cols="12">
                 <v-data-table
                   v-model="selected"
                   :headers="headers"
-                  :items="facturacion.productos"
+                  :items="productosSelected"
                   item-key="producto.producto_id"
                   hide-default-footer
                 >
@@ -571,7 +564,7 @@
               </v-col>
               <v-divider class="my-5"></v-divider>
             </v-row>
-            <v-row v-if="facturacion.cliente.cliente_id">
+            <v-row v-if="clienteSelected">
               <v-col cols="12" md="4" offset-md="8">
                 <v-col cols="6"> </v-col>
                 <v-col cols="12" style="margin-top: -35px">
@@ -593,7 +586,7 @@
                 </v-col>
               </v-col>
             </v-row>
-            <v-row v-if="facturacion.cliente.cliente_id">
+            <v-row v-if="clienteSelected">
               <v-col cols="12" align="center">
                 <v-col cols="12" sm="12" md="3">
                   <v-btn
@@ -651,11 +644,13 @@ export default {
     tiposConceptos: [],
     condicionesVenta: [],
     tiposAlicuotas: [],
+    clienteSelected: null,
+    productosSelected: [],
     date: new Date().toISOString().substr(0, 10),
     facturacion: {
       cliente: {},
       concepto: 1,
-      condicion_vta: 1,
+      condicion_vta: null,
       fecha_emision: new Date().toISOString().substr(0, 10),
       fecha_desde: null,
       fecha_hasta: null,
@@ -754,9 +749,9 @@ export default {
         if (this.pedidoId) {
           const response = await venta(this.pedidoId);
           if (response.status === 200) {
-            this.facturacion.cliente = response.data.data.cliente;
+            this.clienteSelected = response.data.data.cliente;
             this.facturacion.venta = response.data.data.venta_id;
-            this.facturacion.productos = response.data.data.productos_venta;
+            this.productosSelected = response.data.data.productos_venta;
             this.facturacion.venta = this.pedidoId;
             this.sumarImportesTotales();
           } else {
@@ -774,7 +769,7 @@ export default {
     /** agrego un nuevo producto al listado de productos a facturar */
     agregarNuevoProducto() {
       if (this.$refs.formProducto.validate()) {
-        this.facturacion.productos.push(Object.assign({}, this.nuevoProducto));
+        this.productosSelected.push(Object.assign({}, this.nuevoProducto));
         /** verifico si es incluye iva */
         this.sumarImportesTotales();
         this.$nextTick(() => {
@@ -805,18 +800,21 @@ export default {
     },
     /** descargo el comprobante **/
     async descargarComprobante() {
-      const response = await generarComprobante(this.facturacion);
-      if (response.status === 200) {
-        const link = document.createElement("a");
-        link.href = response.data.data.file;
-        link.setAttribute(
-          "download",
-          `comprobante-${moment().format("dd-mm-yyyy hh:mm:ss")}.pdf`
-        );
-        document.body.appendChild(link);
-        link.click();
-      } else {
-        this.notificacionError();
+      if(this.$refs.formFactura.validate()){
+        this.facturacion.productos = this.filterObjProducts(this.productosSelected);
+        const response = await generarComprobante(this.facturacion);
+        if (response.status === 200) {
+          const link = document.createElement("a");
+          link.href = response.data.data.file;
+          link.setAttribute(
+            "download",
+            `comprobante-${moment().format("dd-mm-yyyy hh:mm:ss")}.pdf`
+          );
+          document.body.appendChild(link);
+          link.click();
+        } else {
+          this.notificacionError();
+        }
       }
     },
     /** descargo el comprobante **/
@@ -837,7 +835,7 @@ export default {
     },
     sumarImportesTotales() {
       this.resetMontosTotales();
-      this.facturacion.productos.forEach((producto) => {
+      this.productosSelected.forEach((producto) => {
         /** responsable inscripto */
         if (producto.tipo_alicuota.afip_id) {
           /** si es exento o no gravado*/
@@ -890,8 +888,8 @@ export default {
       this.cerrarDialog();
     },
     eliminarProducto(item) {
-      const index = this.facturacion.productos.indexOf(item);
-      this.facturacion.productos.splice(index, 1);
+      const index = this.productosSelected.indexOf(item);
+      this.productosSelected.splice(index, 1);
       this.sumarImportesTotales();
     },
     adaptarTablaProductos() {
@@ -924,6 +922,19 @@ export default {
         }
       );
     },
+
+    /** filtro el array de productos seleccionados para que viajen solo los ids del producto y no el objeto */
+    filterObjProducts() {
+      var productosFactura = this.productosSelected.map((producto) => {
+        var obj = Object.assign({},producto);
+        obj.producto = producto.producto.producto_id;
+        if (producto.tipo_alicuota) {
+          obj.tipo_alicuota = producto.tipo_alicuota.tipo_alicuota_id;
+        }
+        return obj;
+      });
+      return productosFactura;
+    },
   },
   watch: {
     conceptoFactura() {
@@ -936,6 +947,9 @@ export default {
         this.facturacion.fecha_hasta = null;
         this.facturacion.fecha_vto = null;
       }
+    },
+    clienteSelected() {
+      this.facturacion.cliente = this.clienteSelected.cliente_id;
     },
     async tipoFactura() {
       const tipo = this.tipoFactura ? this.negocio.condicion_iva.afip_id : null;
@@ -965,7 +979,7 @@ export default {
       return this.facturacion.importes.iva;
     },
     facturaProductos() {
-      return this.facturacion.productos;
+      return this.productosSelected;
     },
     editable() {
       return this.indexEditable != -1;

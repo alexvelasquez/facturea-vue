@@ -9,7 +9,7 @@
     <v-row no-gutters>
       <v-col cols="12">
         <p class="text-lg-h6 font-weight-bold blue-grey--text text--lighten-2">
-          Comprobantes
+          Facturas Emitidas
         </p>
       </v-col>
     </v-row>
@@ -124,7 +124,10 @@
         :headers="headers"
         :items="comprobantes"
         :search="search"
-        item-key="preventa_id"
+        :single-expand="singleExpand"
+        :expanded.sync="expanded"
+        item-key="comprobanteId"
+        show-expand
       >
         <template v-slot:[`item.fEmision`]="{ item }">
           <span>{{ item.fEmision | formatDate }}</span>
@@ -134,6 +137,24 @@
         </template>
         <template v-slot:[`item.puntoVenta`]="{ item }">
           <span v-if="item.puntoVenta">{{ zfill(item.puntoVenta, 5) }}</span>
+        </template>
+        <template v-slot:expanded-item="{ headers, item }">
+          <td :colspan="headers.length">
+            <v-row>
+              <v-col cols="12" align="center" justify="center">
+                <v-btn class="ma-2" outlined color="#385F73">DESCARGAR</v-btn>
+                <v-btn class="ma-2" outlined color="#385F73"
+                  >CREAR RECIBO</v-btn
+                >
+                <v-btn class="ma-2" outlined color="#385F73"
+                  >CREAR NOTA DEBITO A</v-btn
+                >
+                <v-btn class="ma-2" outlined color="#385F73"
+                  >CREAR NOTA CREDITO A</v-btn
+                >
+              </v-col>
+            </v-row>
+          </td>
         </template>
       </v-data-table>
     </v-card>
@@ -204,22 +225,21 @@ export default {
       comprobantes: [],
     };
   },
-  beforeMounted() {
-    this.cargarComprobantes()
+  mounted() {
+    this.cargarComprobantes();
   },
-  methods:{
+  methods: {
     async cargarComprobantes() {
       const response = await getComprobantes({
         fechaDesde: this.fechaDesde,
         fechaHasta: this.fechaHasta,
       });
-      if(response === 200){
+      if (response.status === 200) {
         this.comprobantes = response.data.data;
-      }
-      else{
+      } else {
         this.notificacionError();
       }
     },
-  }
+  },
 };
 </script>
