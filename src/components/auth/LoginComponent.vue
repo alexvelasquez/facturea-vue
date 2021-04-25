@@ -40,7 +40,6 @@
 </template>
 
 <script>
-import { mapFields } from 'vuex-map-fields'
 import { getTokens,getCurrentUser } from '@/services/usuario';
 import logo from '@/assets/images/logo.png'
 import ModalRegistro from './ModalRegistro'
@@ -61,9 +60,6 @@ export default {
             ],
         }
     },
-  computed: {
-    ...mapFields('user',['data','token']),
-  },
     methods: {
         async login() {
             if (this.$refs.form.validate()) {

@@ -433,16 +433,18 @@
                     dense
                     color="#385F73"
                   >
-                   <template v-slot:item="data">
-                              <v-list-item-content>
-                                <v-list-item-title
-                                  v-html="data.item.descripcion"
-                                ></v-list-item-title>
-                                <v-list-item-subtitle
-                                  v-html="`Código: ${data.item.codigo} | Disponible: ${data.item.stock}`"
-                                ></v-list-item-subtitle>
-                              </v-list-item-content>
-                  </template>
+                    <template v-slot:item="data">
+                      <v-list-item-content>
+                        <v-list-item-title
+                          v-html="data.item.descripcion"
+                        ></v-list-item-title>
+                        <v-list-item-subtitle
+                          v-html="
+                            `Código: ${data.item.codigo} | Disponible: ${data.item.stock}`
+                          "
+                        ></v-list-item-subtitle>
+                      </v-list-item-content>
+                    </template>
                   </v-autocomplete>
                 </v-col>
                 <v-col cols="12" sm="2" md="2">
@@ -618,17 +620,23 @@
 
 <script>
 import MensajesComponent from "@/components/MensajesComponent";
-import { negocio } from "@/services/negocio";
 import { venta } from "@/services/ventas";
 import { clientes } from "@/services/clientes";
 import { productos } from "@/services/producto";
-import {generarComprobante,getInstructivo,getTiposConceptos, getCondicionesVenta,getTiposAlicuotas,getTipoComprobante} from "@/services/afip.js";
+import {
+  generarComprobante,
+  getInstructivo,
+  getTiposConceptos,
+  getCondicionesVenta,
+  getTiposAlicuotas,
+  getTipoComprobante,
+} from "@/services/afip.js";
 import ModalFactura from "@/components/factura/ModalFacturaComponent";
 import Montos from "@/mixins/montos";
 export default {
   components: {
     ModalFactura,
-    MensajesComponent
+    MensajesComponent,
   },
   mixins: [Montos],
   props: {
@@ -638,13 +646,12 @@ export default {
     },
   },
   data: () => ({
-    active:false,
-    mensaje:{},
-    tiposConceptos:[],
-    condicionesVenta:[],
-    tiposAlicuotas:[],
+    active: false,
+    mensaje: {},
+    tiposConceptos: [],
+    condicionesVenta: [],
+    tiposAlicuotas: [],
     date: new Date().toISOString().substr(0, 10),
-    negocio:{},
     facturacion: {
       cliente: {},
       concepto: 1,
@@ -674,8 +681,10 @@ export default {
         (v) => !!v || "Este campo es requerido",
         (v) => v > 0 || "Debe ser mayor a 0",
       ],
-      condicionVta:[(v)=> !!v != -1 || "Este campo es requerido"],
-      objectoVacio: [(v) => Object.keys(v).length > 0 || "Este campo es requerido"],
+      condicionVta: [(v) => !!v != -1 || "Este campo es requerido"],
+      objectoVacio: [
+        (v) => Object.keys(v).length > 0 || "Este campo es requerido",
+      ],
       campoRequerido: [(v) => !!v || "Este campo es requerido"],
     },
     tiposComprobantes: [],
@@ -722,14 +731,17 @@ export default {
   }),
   async mounted() {
     try {
-      this.negocio =(await negocio()).data.data;
-      if(this.negocio.configuracion === 'N') {
-        this.mensaje.titulo = 'Información incompleta';
-        this.mensaje.mensaje = 'Debe completar los datos de configuración para poder utilizar este apartado.'
-        this.mensaje.redireccion = '/configuracion'
+      /** verifico que no haya completado la configuración y ademas no tenga una notificacion previa */
+      if (
+        this.negocio.configuracion === "N" &&
+        !Object.keys(this.mensaje).length
+      ) {
+        this.mensaje.titulo = "COMPLETAR DATOS";
+        this.mensaje.mensaje =
+          "Para utilizar esta sección, debe completar los datos de <strong>Configuración</strong>";
+        this.mensaje.redireccion = "/configuracion";
         this.active = true;
-      }
-      else{
+      } else {
         this.clientes = (await clientes()).data.data;
         this.productos = (await productos()).data.data;
         this.tiposConceptos = (await getTiposConceptos()).data.data;
@@ -739,23 +751,23 @@ export default {
 
         this.facturacion.comprobante = this.tiposComprobantes[0].afipId;
         /** si se factura un pedido **/
-       if(this.pedidoId) {
-          const response = (await venta(this.pedidoId));
-          if(response.status === 200) {
+        if (this.pedidoId) {
+          const response = await venta(this.pedidoId);
+          if (response.status === 200) {
             this.facturacion.cliente = response.data.data.cliente;
             this.facturacion.venta = response.data.data.venta_id;
             this.facturacion.productos = response.data.data.productos_venta;
             this.facturacion.venta = this.pedidoId;
             this.sumarImportesTotales();
-          }
-          else{
+          } else {
             this.notificacionError();
           }
         }
+        this.adaptarTablaProductos();
       }
-    }
-    catch{
-      this.notificacion('Ha ocurrido un error, intente nuevamente','error');
+    } catch (e) {
+      console.log(e);
+      this.notificacion("Ha ocurrido un error, intente nuevamente", "error");
     }
   },
   methods: {
@@ -782,7 +794,9 @@ export default {
       const textOne = item.razon_social.toLowerCase();
       const textTwo = item.documento.toString().toLowerCase();
       const searchText = queryText.toLowerCase();
-      return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1;
+      return (
+        textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
+      );
     },
     /** reestablezco el formulario de nuevo producto*/
     restartFormProducto() {
@@ -791,33 +805,34 @@ export default {
     },
     /** descargo el comprobante **/
     async descargarComprobante() {
-      const response = (await generarComprobante(this.facturacion));
-      if(response.status === 200){
-          const link = document.createElement("a");
-          link.href = response.data.data.file;
-          link.setAttribute(
-            "download",
-            `comprobante-${moment().format("dd-mm-yyyy hh:mm:ss")}.pdf`
-          );
-          document.body.appendChild(link);
-          link.click();
-      }
-      else{
+      const response = await generarComprobante(this.facturacion);
+      if (response.status === 200) {
+        const link = document.createElement("a");
+        link.href = response.data.data.file;
+        link.setAttribute(
+          "download",
+          `comprobante-${moment().format("dd-mm-yyyy hh:mm:ss")}.pdf`
+        );
+        document.body.appendChild(link);
+        link.click();
+      } else {
         this.notificacionError();
       }
     },
     /** descargo el comprobante **/
     async descargarInstructivo() {
-      const response = (await getInstructivo());
-      if(response.status === 200){
-          const link = document.createElement("a");
-          link.href = response.data.data.file;
-          link.setAttribute("download", "instructivo_facturacion_electronica.pdf");
-          document.body.appendChild(link);
-          link.click();        
-      }
-      else{
-          this.notificacionError();
+      const response = await getInstructivo();
+      if (response.status === 200) {
+        const link = document.createElement("a");
+        link.href = response.data.data.file;
+        link.setAttribute(
+          "download",
+          "instructivo_facturacion_electronica.pdf"
+        );
+        document.body.appendChild(link);
+        link.click();
+      } else {
+        this.notificacionError();
       }
     },
     sumarImportesTotales() {
@@ -826,20 +841,21 @@ export default {
         /** responsable inscripto */
         if (producto.tipo_alicuota.afip_id) {
           /** si es exento o no gravado*/
-          if (producto.tipo_alicuota.afip_id == 1 || producto.tipo_alicuota.afip_id == 2) {
+          if (
+            producto.tipo_alicuota.afip_id == 1 ||
+            producto.tipo_alicuota.afip_id == 2
+          ) {
             this.facturacion.importes[
               this.importes[producto.tipo_alicuota.afip_id]
             ] = this.parseFloatMonto(
-              this.facturacion.importes[this.importes[producto.tipo_alicuota.afip_id]] +
-                producto.subtotal_sin_iva
+              this.facturacion.importes[
+                this.importes[producto.tipo_alicuota.afip_id]
+              ] + producto.subtotal_sin_iva
             );
           } else {
             this.facturacion.importes.gravado = this.parseFloatMonto(
               this.facturaMontoGravado + producto.subtotal_sin_iva
             );
-            console.log(this.parseFloatMonto(
-              this.facturacion.importes.iva + producto.monto_iva
-            ));
             this.facturacion.importes.iva = this.parseFloatMonto(
               this.facturacion.importes.iva + producto.monto_iva
             );
@@ -878,6 +894,36 @@ export default {
       this.facturacion.productos.splice(index, 1);
       this.sumarImportesTotales();
     },
+    adaptarTablaProductos() {
+      if (this.negocio.condicion_iva && this.esResponsableInscripto) {
+        this.headers.push(
+          {
+            text: "IVA Aplicado",
+            sortable: false,
+            value: "tipo_alicuota.descripcion",
+          },
+          {
+            text: "Importe IVA",
+            sortable: false,
+            value: "monto_iva",
+          }
+        );
+      }
+      this.headers.push(
+        {
+          text: "Subtotal",
+          value: "subtotal",
+          align: "center",
+          sortable: false,
+        },
+        {
+          text: "Acciones",
+          value: "actions",
+          align: "center",
+          sortable: false,
+        }
+      );
+    },
   },
   watch: {
     conceptoFactura() {
@@ -896,42 +942,12 @@ export default {
       this.tiposComprobantes = (await getTipoComprobante(tipo)).data.data;
       this.facturacion.comprobante = this.tiposComprobantes[0].afipId;
     },
-    negocio(){
-      if(this.negocio.condicion_iva){
-        if(this.negocio.condicion_iva.afip_id == 1){
-          this.headers.push(
-            {
-              text: "IVA Aplicado",
-              sortable: false,
-              value: "tipo_alicuota.descripcion",
-            },
-            {
-              text: "Importe IVA",
-              sortable: false,
-              value: "monto_iva",
-            }
-          );
-        }
-      }
-      this.headers.push(
-        {
-          text: "Subtotal",
-          value: "subtotal",
-          align: "center",
-          sortable: false,
-        },
-        {
-          text: "Acciones",
-          value: "actions",
-          align: "center",
-          sortable: false,
-        }
-      );
-    }
   },
   computed: {
-    esResponsableInscripto(){
-      return this.negocio.condicion_iva ? this.negocio.condicion_iva.afip_id === 1 : false;
+    esResponsableInscripto() {
+      return this.negocio.condicion_iva
+        ? this.negocio.condicion_iva.afip_id === 1
+        : false;
     },
     conceptoFactura() {
       return this.facturacion.concepto;
@@ -954,9 +970,9 @@ export default {
     editable() {
       return this.indexEditable != -1;
     },
-    facturaCargada(){
-      return typeof this.pedidoId === 'string';
-    }
+    facturaCargada() {
+      return typeof this.pedidoId === "string";
+    },
   },
 };
 </script>

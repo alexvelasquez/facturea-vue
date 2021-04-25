@@ -7,7 +7,7 @@ export default {
   computed:{
     ...mapFields('user',['data','token']),
     role(){
-      return this.data ? this.data.role : '';
+      return this.data ? this.data.roles[0] : '';
     },
     loggedIn(){
       return store.getters['user/getField']('data')
@@ -15,7 +15,14 @@ export default {
     userName(){
       return `${this.data.name} ${this.data.lastname}`
     },
-
+    negocio: {
+      get(){
+        return this.data.negocio;
+      },
+      set(value){
+        store.commit('user/setNegocio',value);
+      }
+    },
     // user() {
     //   return store.getters['user/getField']('data') ?? null;
     // },
@@ -67,7 +74,6 @@ export default {
       return data.sort((a,b) => (a.descripcion > b.descripcion) ? 1 : ((b.descripcion > a.descripcion) ? -1 : 0));
     },
     urlImage(ruta){
-      console.log(`${process.env.VUE_APP_PUBLIC}/uploads/${ruta}`);
       return `${process.env.VUE_APP_PUBLIC}/uploads/${ruta}`
     },
     calcularPrecioNeto(producto){

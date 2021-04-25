@@ -99,7 +99,6 @@
 import ModalCategoria from "@/components/productos/categorias/ModalCategoriaComponent";
 import ModalAumento from "@/components/productos/ModalAumento";
 import { categorias} from "@/services/categorias"
-import { negocio} from "@/services/negocio"
 export default {
   components: {
     ModalCategoria,
@@ -132,7 +131,6 @@ export default {
     seleccionados: [],
     itemCategoria: {},
     defaultCategoria: {},
-    negocio:{},
     options: [
       {
         text: "Productos Y Servicios",
@@ -148,7 +146,6 @@ export default {
   }),
 
   async mounted() {
-    this.negocio = (await negocio()).data.data;
     this.categorias = (await categorias()).data.data;
   },
   methods: {

@@ -8,7 +8,6 @@
 
 <script>
 import { mapFields } from 'vuex-map-fields'
-import { mapActions } from 'vuex'
 export default {
   computed: {
     ...mapFields('config',['loading']),

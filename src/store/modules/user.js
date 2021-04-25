@@ -10,7 +10,10 @@ export default{
       getField
     },
     mutations: {
-      updateField
+      updateField,
+      setNegocio(state,value) {
+        state.data.negocio = value;
+      }
     },
 
 

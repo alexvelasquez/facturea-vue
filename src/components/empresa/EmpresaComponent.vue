@@ -1,4 +1,4 @@
-provincia<template>
+<template>
   <div>
     <v-row no-gutters>
       <p class="text-lg-h6 font-weight-bold blue-grey--text text--lighten-2">
@@ -18,7 +18,7 @@ provincia<template>
               <v-row style="margin-bottom:-30px">
                 <v-col cols="12" md="6">
                   <v-text-field
-                    v-model="negocio.razon_social"
+                    v-model="dataNegocio.razon_social"
                     :rules="reglasValidacion.campoRequerido"
                     label="Nombre(*)"
                     outlined
@@ -28,7 +28,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    v-model="negocio.email"
+                    v-model="dataNegocio.email"
                     :rules="reglasValidacion.campoRequerido"
                     label="Email(*)"
                     outlined
@@ -40,7 +40,7 @@ provincia<template>
               <v-row style="margin-bottom:-30px">
                 <v-col cols="12" md="6">
                   <v-autocomplete
-                    v-model="negocio.localidad.provincia.provincia_id"
+                    v-model="dataNegocio.localidad.provincia.provincia_id"
                     :items="provincias"
                     :rules="reglasValidacion.campoRequerido"
                     label="Provincia(*)"
@@ -57,7 +57,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-autocomplete
-                    v-model="negocio.localidad.localidad_id"
+                    v-model="dataNegocio.localidad.localidad_id"
                     :items="localidades"
                     :rules="reglasValidacion.campoRequerido"
                     label="Localidad(*)"
@@ -69,7 +69,7 @@ provincia<template>
                     persistent-hint
                     dense
                     color="#385F73"
-                    :disabled="negocio.localidad.provincia.provincia_id == null"
+                    :disabled="provincia == null"
                   >
                   </v-autocomplete>
                 </v-col>
@@ -77,7 +77,7 @@ provincia<template>
               <v-row>
                 <v-col cols="12" md="6">
                   <v-text-field
-                    v-model="negocio.direccion"
+                    v-model="dataNegocio.direccion"
                     :rules="reglasValidacion.campoRequerido"
                     label="Dirección fiscal(*)"
                     outlined
@@ -87,7 +87,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="3">
                   <v-text-field
-                    v-model="negocio.telefono"
+                    v-model="dataNegocio.telefono"
                     :rules="reglasValidacion.campoRequerido"
                     label="Teléfono(*)"
                     outlined
@@ -97,7 +97,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="3">
                   <v-text-field
-                    v-model="negocio.cuit_cuil"
+                    v-model="dataNegocio.cuit_cuil"
                     :rules="reglasValidacion.campoRequerido"
                     label="CUIT/CUIL(*)"
                     outlined
@@ -107,18 +107,18 @@ provincia<template>
                 </v-col>
               </v-row>
               <p
-                v-if="negocio.factura_electronica === 'S'"
+                v-if="dataNegocio.factura_electronica === 'S'"
                 class="text-subtitle-1 font-weight-bold blue-grey--text text--lighten-2"
               >
                 Datos Facturación
               </p>
               <v-row
-                v-if="negocio.factura_electronica === 'S'"
+                v-if="dataNegocio.factura_electronica === 'S'"
                 style="margin-bottom:-30px"
               >
                 <v-col cols="12" md="6">
                   <v-text-field
-                    v-model="negocio.nombre_fantasia"
+                    v-model="dataNegocio.nombre_fantasia"
                     :rules="reglasValidacion.campoRequerido"
                     label="Nombre de fantasia(*)"
                     outlined
@@ -128,7 +128,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="6">
                   <v-select
-                    v-model="negocio.condicion_iva.condicion_iva_id"
+                    v-model="dataNegocio.condicion_iva"
                     :items="condicionesIva"
                     item-value="condicion_iva_id"
                     item-text="descripcion"
@@ -143,12 +143,12 @@ provincia<template>
                 </v-col>
               </v-row>
               <v-row
-                v-if="negocio.factura_electronica === 'S'"
+                v-if="dataNegocio.factura_electronica === 'S'"
                 style="margin-bottom:-30px"
               >
                 <v-col cols="12" md="4">
                   <v-text-field
-                    v-model="negocio.iibb"
+                    v-model="dataNegocio.iibb"
                     :rules="reglasValidacion.campoRequerido"
                     label="IIBB(*)"
                     outlined
@@ -164,7 +164,7 @@ provincia<template>
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
-                        v-model="negocio.inicio_actividad"
+                        v-model="dataNegocio.inicio_actividad"
                         :rules="reglasValidacion.campoRequerido"
                         label="Inic. Actividades(*)"
                         placeholder="YYYY-MM-DD"
@@ -179,7 +179,7 @@ provincia<template>
                       ></v-text-field>
                     </template>
                     <v-date-picker
-                      v-model="negocio.inicio_actividad"
+                      v-model="dataNegocio.inicio_actividad"
                       no-title
                       @input="menu = false"
                     ></v-date-picker>
@@ -187,7 +187,7 @@ provincia<template>
                 </v-col>
                 <v-col cols="12" md="4">
                   <v-text-field
-                    v-model="negocio.punto_vta"
+                    v-model="dataNegocio.punto_vta"
                     :rules="reglasValidacion.campoRequerido"
                     label="Punto de Venta(*)"
                     outlined
@@ -274,9 +274,9 @@ provincia<template>
 </template>
 
 <script>
-import { negocio, editarNegocio } from "@/services/negocio";
+import { editarNegocio } from "@/services/negocio";
 import { getCondicionesIva } from "@/services/afip";
-import { getProvincias,getLocalidades } from "@/services/datosGeograficos";
+import { getProvincias, getLocalidades } from "@/services/datosGeograficos";
 export default {
   data() {
     return {
@@ -289,7 +289,10 @@ export default {
       menu: false,
       editable: false,
       url: "",
-      negocio: { localidad: { provincia: {} }, condicion_iva: {} },
+      dataNegocio: {
+        localidad: { localidad_id: null, provincia: { provincia_id: null } },
+        condicion_iva: {},
+      },
       errorImagen: null,
       localidades: [],
       valor: "valorr",
@@ -298,8 +301,23 @@ export default {
   },
   async mounted() {
     await this.cargarDatosLogo();
-    this.negocio = (await negocio()).data.data;
+    var response = this.negocio;
+    if (!response.localidad) {
+      response = Object.assign(response, {
+        localidad: { localidad_id: null, provincia: { provincia_id: null } },
+      });
+      this.$refs.form.reset();
+    }
+    if (!response.condicion_iva) {
+      response = Object.assign(response, {
+        condicion_iva: { condicion_iva_id: null },
+      });
+      this.$refs.form.reset();
+    }
+    this.dataNegocio = response;
+    /** provincias */
     this.provincias = (await getProvincias()).data.data;
+    /** condiciones iva */
     this.condicionesIva = (await getCondicionesIva()).data.data;
   },
   methods: {
@@ -341,9 +359,10 @@ export default {
 
     async modificar() {
       if (this.$refs.form.validate()) {
-        let response = await editarNegocio(this.negocio);
+        let response = await editarNegocio(this.dataNegocio);
         if (response.status === 200) {
           this.notificacion("Modificado correctamente", "success");
+          this.negocio = this.dataNegocio;
           this.redirect("/home");
         } else {
           this.notificacionError();
@@ -357,10 +376,8 @@ export default {
   },
   watch: {
     async provincia() {
-      if (this.provincia.provincia_id) {
-        this.localidades = (
-          await getLocalidades(this.provincia.provincia_id)
-        ).data.data;
+      if (this.provincia) {
+        this.localidades = (await getLocalidades(this.provincia)).data.data;
       }
     },
   },
@@ -376,7 +393,7 @@ export default {
       };
     },
     provincia() {
-      return this.negocio.localidad.provincia ?? null;
+      return this.dataNegocio.localidad.provincia.provincia_id;
     },
   },
 };

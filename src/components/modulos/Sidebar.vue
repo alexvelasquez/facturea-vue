@@ -38,7 +38,6 @@ export default {
     return {
       drawerSidebar:null,
       logo: logo,
-      negocio: null,
       options:[],
       optionsUserColapse:[]
 

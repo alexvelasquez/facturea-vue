@@ -381,7 +381,6 @@
 <script>
 import ModalPedido from "@/components/pedido/ModalPedido";
 import {venta,getDetalleVenta,editarVenta,nuevaVenta} from "@/services/ventas"
-import {negocio} from "@/services/negocio"
 import {clientes} from "@/services/clientes"
 import {productos} from "@/services/producto"
 import {getTiposAlicuotas} from "@/services/afip"
@@ -399,7 +398,6 @@ export default {
   },
   data: () => ({
     panel: [0],
-    negocio:{},
     dialog: false,
     indexEditable: -1,
     pedido: {
@@ -453,7 +451,6 @@ export default {
     cantidadPrevia: -1,
   }),
   async mounted() {
-    this.negocio = (await negocio()).data.data;
     this.adapterHeader();
     this.clientes = (await clientes()).data.data;
     this.productos = (await productos()).data.data;

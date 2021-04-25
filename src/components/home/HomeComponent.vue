@@ -105,7 +105,6 @@
       </v-row>
     </div>
     <div v-if="totales.graficos">
-      <mensajes-component :active="active" :mensaje="mensaje"></mensajes-component>
       <line-chart :labels="totales.graficos.labels" :datasets="totales.graficos.values"></line-chart>
     </div>
   </div>
@@ -115,10 +114,7 @@
 import LineChart from "@/components/grafics/LineChartComponent.vue";
 import MensajesComponent from "@/components/MensajesComponent.vue";
 import DateRangoFecha from "@/components/home/DateRangoFecha.vue";
-import { getNotificaciones } from "@/services/notificaciones.js";
-import { negocio } from "@/services/negocio";
 import { informe } from "@/services/home";
-import axios from "axios";
 export default {
   name: "Home",
   components: {
@@ -130,7 +126,6 @@ export default {
     return {
       active: false,
       mensaje: {},
-      negocio:{},
       periodo: {
         fechaHasta: moment().format("YYYY-MM-DD"),
         fechaDesde: moment().subtract(30, "d").format("YYYY-MM-DD"),
@@ -139,12 +134,6 @@ export default {
     };
   },
   async mounted() {
-    const response = (await getNotificaciones())
-    if(response.status === 200 && response.data.data){
-      this.mensaje = response.data.data;
-      this.active = true;
-    }
-    this.negocio = (await negocio()).data.data;
     this.totales = (await informe(this.periodo)).data.data;
   },
   watch: {

@@ -158,7 +158,7 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   const user = store.getters['user/getField']('data');
-  const role = store.getters['user/getField']('data') ? store.getters['user/getField']('data').role : '';
+  const role = store.getters['user/getField']('data') ? store.getters['user/getField']('data').roles[0] : '';
   if (to.matched.some(record => record.meta.requiresAuth)) {
       // this route requires auth, check if logged in
       // if not, redirect to login page.
