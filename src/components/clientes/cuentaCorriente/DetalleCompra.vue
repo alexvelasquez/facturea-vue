@@ -33,7 +33,7 @@
           </v-simple-table>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn color="#385F73" text @click="$emit('descargarPDF')"> DESCARGAR </v-btn>
+          <v-btn color="#385F73" text @click="$emit('descargarPDF', itemsProductos[0].venta)"> DESCARGAR </v-btn>
           <v-btn color="#385F73" text @click="$emit('closeDetalle')"> CERRAR </v-btn>
         </v-card-actions>
       </v-card>
@@ -53,7 +53,11 @@ export default {
       default: [],
     },
   },
-
+  data(){
+    return {
+      venta:null
+    }
+  },
   methods:{
     total(){
       var total = 0;

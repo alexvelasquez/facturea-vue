@@ -837,7 +837,7 @@ export default {
       this.resetMontosTotales();
       this.productosSelected.forEach((producto) => {
         /** responsable inscripto */
-        if (producto.tipo_alicuota.afip_id) {
+        if (producto.tipo_alicuota && producto.tipo_alicuota.afip_id) {
           /** si es exento o no gravado*/
           if (
             producto.tipo_alicuota.afip_id == 1 ||

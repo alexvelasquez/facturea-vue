@@ -7,7 +7,12 @@
         </p>
       </v-col>
       <v-col cols="4" align="end">
-        <v-btn color="#385F73" text @click="$router.push(`/clientes/cuentacorriente/${clienteId}`)">Volver</v-btn>
+        <v-btn
+          color="#385F73"
+          text
+          @click="$router.push(`/clientes/cuentacorriente/${clienteId}`)"
+          >Volver</v-btn
+        >
       </v-col>
     </v-row>
     <v-card>
@@ -35,7 +40,10 @@
           <span>{{ item.estado_venta.fCreacion | formatDate }}</span>
         </template>
         <template v-slot:[`item.estado_venta.estado.descripcion`]="{ item }">
-          <v-chip class="ma-2 white--text" :color="colores[item.estado_venta.estado.codigo.toLowerCase()]">
+          <v-chip
+            class="ma-2 white--text"
+            :color="colores[item.estado_venta.estado.codigo.toLowerCase()]"
+          >
             {{ item.estado_venta.estado.descripcion }}
           </v-chip>
         </template>
@@ -58,7 +66,10 @@
             </template>
             <span>Visualizar</span>
           </v-tooltip>
-          <v-tooltip top v-if="item.estado_venta.estado.codigo == 'PENDIENTECOMPROBANTE'">
+          <v-tooltip
+            top
+            v-if="item.estado_venta.estado.codigo == 'PENDIENTECOMPROBANTE'"
+          >
             <template v-slot:activator="{ on, attrs }">
               <v-icon
                 medium
@@ -66,7 +77,9 @@
                 class="mr-2"
                 v-bind="attrs"
                 v-on="on"
-                @click="redirect(`/facturacion/${item.estado_venta.venta.ventaId}`)"
+                @click="
+                  redirect(`/facturacion/${item.estado_venta.venta.ventaId}`)
+                "
               >
                 receipt_long
               </v-icon>
@@ -78,11 +91,11 @@
       <detalle-compra
         :itemsProductos="itemsProductos"
         :dialog="dialog"
-        @closeDetalle="dialog=false"
+        @closeDetalle="dialog = false"
         @descargarPDF="
           descargar(
-            `ventas/pedido/descargar/${itemPedido.venta}`,
-            `pedido ${itemPedido.fecha}.pdf`
+            `ventas/pedido/descargar/${$event}`,
+            `pedido ${$event.fVenta}.pdf`
           )
         "
       ></detalle-compra>
@@ -95,7 +108,7 @@ import DetalleCompra from "@/components/clientes/cuentaCorriente/DetalleCompra.v
 import { compras } from "@/services/clientes";
 import { getDetalleVenta } from "@/services/ventas";
 export default {
-  components:{DetalleCompra},
+  components: { DetalleCompra },
   props: {
     clienteId: {
       type: String,
@@ -103,11 +116,11 @@ export default {
   },
   data: () => ({
     dialog: false,
-    search:"",
-    compras:[],
-    itemCompra:null,
-    itemsProductos:[],
-    
+    search: "",
+    compras: [],
+    itemCompra: null,
+    itemsProductos: [],
+
     cabeceras: [
       {
         text: "Fecha de Compra",
@@ -133,7 +146,6 @@ export default {
         sortable: false,
       },
     ],
-
   }),
 
   async mounted() {
@@ -143,7 +155,6 @@ export default {
     async verDetalle(item) {
       this.itemsProductos = (await getDetalleVenta()).data.data;
     },
-  }
-
+  },
 };
 </script>

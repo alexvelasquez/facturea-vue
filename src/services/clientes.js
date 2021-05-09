@@ -10,6 +10,14 @@ export function clientes() {
 }
 
 /**
+ * Get
+ * @returns Promise 
+ */
+ export function cliente(id) {
+    return https.get(`cliente/${id}`);
+}
+
+/**
  * Post
  * @param {*} cliente 
  * @returns Promise

@@ -53,7 +53,7 @@
         </template>
         <template v-slot:[`item.monto_debido`]="{ item }">
           <span>
-            {{ (item.cuenta_corriente ? item.cuenta_corriente.monto : 0) | formatPrecio }}
+            {{ item.monto_debido | formatPrecio }}
           </span>
         </template>
         <template v-slot:[`item.actions`]="{ item }">
