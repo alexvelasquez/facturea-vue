@@ -238,10 +238,10 @@ export default {
 
   async mounted() {
     try {
-      this.clientes = (await clientes()).data.data;
       this.provincias = (await getProvincias()).data.data;
       this.condicionesIva = (await getCondicionesIva()).data.data;
       this.tiposDocumentos = (await getTiposDocumentos()).data.data;
+      this.clientes = (await clientes()).data.data;
     } catch (e) {
       this.notificacionError();
     }

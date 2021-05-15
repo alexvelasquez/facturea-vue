@@ -14,7 +14,9 @@ export default new Vuex.Store({
   actions: {
 
   },
-  plugins: [createPersistedState()],
+  plugins: [createPersistedState({
+    paths: ['user'],
+  })],
   modules: {
     user:User,
     config:Config

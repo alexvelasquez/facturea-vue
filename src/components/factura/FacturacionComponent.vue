@@ -7,7 +7,7 @@
 
 <template>
   <div>
-    <v-row v-if="!this.negocio.factura_electronica === 'S'">
+    <v-row v-if="this.negocio.factura_electronica === 'N'">
       <v-col cols="12">
         <v-alert
           type="warning"
@@ -54,24 +54,24 @@
                       <v-list-item-subtitle
                         >CUIT: {{ negocio.cuit_cuil }}</v-list-item-subtitle
                       >
-                      <v-list-item-subtitle class="pt-2"
+                      <v-list-item-subtitle v-if="this.negocio.factura_electronica == 'S'" class="pt-2"
                         >Fecha de Inicio de Actividades:
-                        {{
-                          negocio.inicio_actividad | formatDate
-                        }}</v-list-item-subtitle
+                        <span v-if="negocio.inicio_actividad">{{negocio.inicio_actividad | formatDate}}</span>
+                        <span v-else>--</span>
+                      </v-list-item-subtitle
                       >
-                      <v-list-item-subtitle
+                      <v-list-item-subtitle v-if="this.negocio.factura_electronica == 'S'"
                         >IIBB:
                         {{
-                          negocio.iibb ? negocio.iibb : "-"
+                          negocio.iibb ? negocio.iibb : "--"
                         }}</v-list-item-subtitle
                       >
-                      <v-list-item-subtitle
+                      <v-list-item-subtitle v-if="this.negocio.factura_electronica == 'S'"
                         >IVA:
                         {{
                           negocio.condicion_iva
                             ? negocio.condicion_iva.descripcion
-                            : "-"
+                            : "--"
                         }}</v-list-item-subtitle
                       >
                     </v-list-item-content>

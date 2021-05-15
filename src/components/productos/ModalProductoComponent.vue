@@ -380,7 +380,7 @@ export default {
         let formData = new FormData();
         formData.append("file", this.files[0]);
         const response = await importarProductos(formData);
-        if(response.status === 201){
+        if(response.status === 204){
           this.notificacion("Archivo subido correctamente", "success");
           this.$emit("reload");
           this.dialogProducto = false;

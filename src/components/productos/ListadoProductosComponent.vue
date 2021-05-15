@@ -117,6 +117,7 @@
             :editable="editable"
             :dialog="dialog"
             :producto="itemProducto"
+            @reload="loadProductos()"
             @cerrar-dialog="close"
             @agregar-producto="agregarProducto($event)"
             @editar-producto="editarProducto($event)"
@@ -232,13 +233,16 @@ export default {
       this.close();
     },
 
+    async loadProductos(){
+       this.productos = (await productos()).data.data;
+    },
     async eliminarProducto(item) {
       let response = await this.sweetalert(
         `warning`,
         `¿Estás seguro que deseas eliminar este producto?`
       );
       if (response.value) {
-        response = await eliminarProducto(item.propducto_id, item);
+        response = await eliminarProducto(item.producto_id);
         if (response.status === 200) {
               const index = this.productos.indexOf(item);
               this.productos.splice(index, 1);

@@ -31,7 +31,7 @@
           </v-card-subtitle>
           <v-card-text class="text-center text-h5">
               <span>{{ cuentaCorriente.total | formatPrecio }}</span>
-              <v-row class="justify-end">
+              <v-row class="justify-end" v-if="cuentaCorriente.total>0">
                 <modal-pago @abonar="abonar($event)"></modal-pago>
               </v-row>
           </v-card-text>
@@ -54,8 +54,8 @@
           <v-card-text class="text-center text-h5">
               <span v-if="movimientos.length">{{movimientos[0].monto | formatPrecio}}</span>
               <span v-else>--</span>
-              <v-row class="justify-end">
-                <modal-movimientos :cliente="clienteId" @abonar="abonar($event)"></modal-movimientos>
+              <v-row class="justify-end" v-if="movimientos.length">
+                <modal-movimientos :cliente="clienteId"></modal-movimientos>
               </v-row>
           </v-card-text>
         </v-card>

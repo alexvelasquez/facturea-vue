@@ -24,7 +24,7 @@
                                     </v-col>
                                     <v-col cols="12" md="8">
                                       <v-col cols="12" md="12">
-                                          <v-text-field label="Nombre de usuario" v-model="usuario.username" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
+                                          <v-text-field disabled label="Nombre de usuario" v-model="usuario.username" color="#385F73" placeholder="nombre de la categoria" :rules="obligatorio" outlined dense>
                                           </v-text-field>
                                       </v-col>
                                       <v-col cols="12" md="12" style="margin-top: -30px;">
