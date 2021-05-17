@@ -160,7 +160,7 @@ export default {
         .then((response) => {
           if (response.data.code == 200) {
             this.notificacion("Acción realizada correctamente.", "success");
-            this.listadoUsuarios();
+            item.negocio.facturaElectronica = item.negocio.facturaElectronica == "S" ? "N" : "S";
           }
         })
         .catch((response) => {

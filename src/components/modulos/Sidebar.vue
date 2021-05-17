@@ -67,7 +67,13 @@ export default {
                 icon: 'book_online'
             },
         ]
-        this.optionsUserColapse= [{
+        this.optionsUserColapse= [
+        {
+            title: 'CONFIGURACIÓN',
+            link: '/configuracion',
+            icon: 'miscellaneous_services'
+        },
+        {
             title: 'CLIENTES',
             link: '/clientes',
             icon: 'groups'
@@ -83,13 +89,26 @@ export default {
                 icon: 'moped'
             })
         }
-        this.optionsUserColapse.push( {
-            title: 'CONFIGURACIÓN',
-            link: '/configuracion',
-            icon: 'miscellaneous_services'
-        })
       }
   },
+  watch:{
+    negocio(){
+        if(this.negocio.pedido === 'S'){
+            let tienePedido = (this.optionsUserColapse.filter(p=>p.title === 'PEDIDOS')).length;
+            if(!tienePedido){
+                this.optionsUserColapse.push({
+                    title: 'PEDIDOS',
+                    link: '/pedidos',
+                    icon: 'moped'
+                })
+            }
+        }
+        else{
+            let optionsUser = this.optionsUserColapse.filter(p=>p.title != 'PEDIDOS');
+            this.optionsUserColapse = optionsUser;
+        }
+    }
+  }
 
 }
 </script>
