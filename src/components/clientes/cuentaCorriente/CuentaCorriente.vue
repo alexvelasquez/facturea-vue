@@ -108,7 +108,7 @@
                     medium
                     color="#385F73"
                     class="mr-2"
-                    @click="verDetalle(item.estado_venta)"
+                    @click="verDetalle(item.estado_venta.venta.ventaId)"
                     v-bind="attrs"
                     v-on="on"
                   >
@@ -236,7 +236,7 @@ export default {
       this.compras = (await compras(this.clienteId)).data.data;
     },
     async verDetalle(item) {
-      this.itemsProductos = (await getDetalleVenta(item.estadoVentaId)).data.data;
+      this.itemsProductos = (await getDetalleVenta(item)).data.data;
       this.dialog=true;
     },
   },
