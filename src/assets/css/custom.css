@@ -1,0 +1,14 @@
+.swal2-title{
+    font-family: "Roboto", sans-serif !important;
+   font-size: 25px;
+ }
+ .swal2-confirm, .swal2-cancel{
+   font-family: "Roboto", sans-serif !important;
+ }
+
+ /* a.v-breadcrumbs__item{
+   color:#385F73 !important
+ }
+ .v-expansion-panel--active > .v-expansion-panel-header {
+    margin-bottom: -35px;
+} */
